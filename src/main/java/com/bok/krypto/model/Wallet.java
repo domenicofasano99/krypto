@@ -1,5 +1,6 @@
 package com.bok.krypto.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -28,5 +29,14 @@ public class Wallet {
     @UpdateTimestamp
     private Instant updateTime;
 
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("krypto", krypto)
+                .append("availableAmount", availableAmount)
+                .append("creationTime", creationTime)
+                .append("updateTime", updateTime)
+                .toString();
+    }
 }

@@ -1,9 +1,12 @@
 package com.bok.krypto.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class Order {
+public class Order implements Serializable {
     @Id
     private Long id;
 
@@ -53,5 +56,15 @@ public class Order {
 
     public void setKryptoAmount(Double kryptoAmount) {
         this.kryptoAmount = kryptoAmount;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("krypto", krypto)
+                .append("kryptoAmount", kryptoAmount)
+                .append("orderType", orderType)
+                .toString();
     }
 }

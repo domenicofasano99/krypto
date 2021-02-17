@@ -1,6 +1,6 @@
-package com.bok.krypto.messaging;
+package com.bok.krypto.messaging.producer;
 
-import com.bok.krypto.model.Transfer;
+import com.bok.krypto.model.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,23 +8,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
-
 @Component
-public class MessageProducer {
+public class OrderProducer {
 
-    private static final Logger log = LoggerFactory.getLogger(MessageProducer.class);
+    private static final Logger log = LoggerFactory.getLogger(OrderProducer.class);
+
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${active-mq.transfers-topic}")
-    private String topic;
+    @Value("${active-mq.orders-queue}")
+    private String ordersQueue;
 
-    public void sendMessage(Transfer transfer) {
+
+    public void send(Order order) {
         try {
-            log.info("Attempting Send transfer to Topic: " + topic);
-            jmsTemplate.convertAndSend(topic, transfer);
+            log.info("Attempting Send transfer to Topic: " + ordersQueue);
+            jmsTemplate.convertAndSend(ordersQueue, order);
         } catch (Exception e) {
             log.error("Received Exception during send Message: ", e);
         }
     }
+
 }

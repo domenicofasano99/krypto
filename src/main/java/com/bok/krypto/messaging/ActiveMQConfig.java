@@ -8,7 +8,9 @@ import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 import javax.jms.ConnectionFactory;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 public class ActiveMQConfig {
@@ -21,6 +23,7 @@ public class ActiveMQConfig {
     public ConnectionFactory connectionFactory() {
         ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
         activeMQConnectionFactory.setBrokerURL(brokerUrl);
+        activeMQConnectionFactory.setTrustAllPackages(true);
         return activeMQConnectionFactory;
     }
 
@@ -28,7 +31,7 @@ public class ActiveMQConfig {
     public JmsTemplate jmsTemplate() {
         JmsTemplate jmsTemplate = new JmsTemplate();
         jmsTemplate.setConnectionFactory(connectionFactory());
-        jmsTemplate.setPubSubDomain(true);  // enable for Pub Sub to topic. Not Required for Queue.
+        //jmsTemplate.setPubSubDomain(true);  // enable for Pub Sub to topic. Not Required for Queue.
         return jmsTemplate;
     }
 
@@ -36,7 +39,7 @@ public class ActiveMQConfig {
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(){
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory());
-        factory.setPubSubDomain(true);
+        //factory.setPubSubDomain(true);
         return factory;
     }
 
