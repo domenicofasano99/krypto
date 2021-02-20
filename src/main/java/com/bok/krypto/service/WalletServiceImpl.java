@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class WalletServiceImpl implements WalletService {
     @Override
-    public WalletResponseDTO createWallet(WalletRequestDTO walletRequestDTO) {
+    public WalletResponseDTO create(WalletRequestDTO walletRequestDTO) {
         return null;
     }
 }

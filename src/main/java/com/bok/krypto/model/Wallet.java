@@ -29,6 +29,47 @@ public class Wallet {
     @UpdateTimestamp
     private Instant updateTime;
 
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Krypto getKrypto() {
+        return krypto;
+    }
+
+    public void setKrypto(Krypto krypto) {
+        this.krypto = krypto;
+    }
+
+    public BigDecimal getAvailableAmount() {
+        return availableAmount;
+    }
+
+    public void setAvailableAmount(BigDecimal availableAmount) {
+        this.availableAmount = availableAmount;
+    }
+
+    public Instant getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Instant creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public Instant getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Instant updateTime) {
+        this.updateTime = updateTime;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

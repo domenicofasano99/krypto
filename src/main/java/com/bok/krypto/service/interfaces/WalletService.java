@@ -5,5 +5,5 @@ import com.bok.krypto.dto.WalletResponseDTO;
 
 public interface WalletService {
 
-    WalletResponseDTO createWallet(WalletRequestDTO walletRequestDTO);
+    WalletResponseDTO create(WalletRequestDTO walletRequestDTO);
 }

@@ -1,0 +1,20 @@
+# ACTIVE-MQ CONFIG
+active-mq:
+  transfers-queue: transfers
+  orders-queue: orders
+  broker-url: tcp://active-mq:61616
+spring:
+  activemq:
+    packages:
+      trusted: com.bok.krypto.model
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://krypto-db:3306/kryptodb  # HSQL DB CONFIG
+    username: krypto
+    password: krypto
+  jooq:
+    sql-dialect: org.hibernate.dialect.MariaDBDialect
+  jpa:
+    hibernate:
+      ddl-auto: update
+
