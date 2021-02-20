@@ -12,23 +12,23 @@ import java.util.UUID;
 @Service
 public class ExchangeServiceImpl implements ExchangeService {
 
-    @Autowired
-    ExchangeHelper exchangeHelper;
+    //@Autowired
+    //ExchangeHelper exchangeHelper;
 
 
     @Override
     public void buy(BigDecimal amount, String kryptoCode, UUID walletId) {
-        exchangeHelper.buy(amount, kryptoCode, walletId);
+        //exchangeHelper.buy(amount, kryptoCode, walletId);
     }
 
     @Override
     public void sell(BigDecimal amount, String kryptoCode, UUID walletId) {
-        exchangeHelper.sell(amount, kryptoCode, walletId);
+        //exchangeHelper.sell(amount, kryptoCode, walletId);
     }
 
     @Override
     public void transfer(UUID from, UUID to, BigDecimal amount) {
-        exchangeHelper.transfer(from, to, amount);
+        //exchangeHelper.transfer(from, to, amount);
     }
 
 

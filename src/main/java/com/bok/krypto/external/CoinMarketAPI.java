@@ -5,6 +5,8 @@ package com.bok.krypto.external;
  * This example uses the Apache HTTPComponents library.
  */
 
+import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
@@ -15,34 +17,40 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.stereotype.Component;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KryptoPrices {
+@Slf4j
+@Component
+public class CoinMarketAPI {
 
-    private static final String apiKey = "b54bcf4d-1bca-4e8e-9a24-22ff2c3d462c";
+    private static final String apiKey = "2381b575-4d98-414d-aca3-b52be8aa66e3";
 
-    public static void main(String[] args) {
+    public CoinMarketDTO  fetch() {
         String uri = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
         List<NameValuePair> paratmers = new ArrayList<>();
         paratmers.add(new BasicNameValuePair("start","1"));
-        paratmers.add(new BasicNameValuePair("limit","5000"));
+        paratmers.add(new BasicNameValuePair("limit","10"));
         paratmers.add(new BasicNameValuePair("convert","USD"));
 
         try {
-            String result = makeAPICall(uri, paratmers);
-            System.out.println(result);
+            //System.out.println(result);
+            return makeAPICall(uri, paratmers);
         } catch (IOException e) {
-            System.out.println("Error: cannont access content - " + e.toString());
+            log.error("Error: cannont access content - " + e.toString());
         } catch (URISyntaxException e) {
-            System.out.println("Error: Invalid URL " + e.toString());
+            log.error("Error: Invalid URL " + e.toString());
         }
+        return null;
     }
 
-    public static String makeAPICall(String uri, List<NameValuePair> parameters)
+    public static CoinMarketDTO makeAPICall(String uri, List<NameValuePair> parameters)
             throws URISyntaxException, IOException {
         String response_content = "";
 
@@ -56,13 +64,13 @@ public class KryptoPrices {
         request.addHeader("X-CMC_PRO_API_KEY", apiKey);
 
         try (CloseableHttpResponse response = client.execute(request)) {
-            System.out.println(response.getStatusLine());
+            //System.out.println(response.getStatusLine());
             HttpEntity entity = response.getEntity();
             response_content = EntityUtils.toString(entity);
             EntityUtils.consume(entity);
         }
-
-        return response_content;
+        Gson gson = new Gson();
+        return gson.fromJson(response_content, CoinMarketDTO.class);
     }
 
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TransferProducer {
-
+/*
     private static final Logger log = LoggerFactory.getLogger(TransferProducer.class);
 
     @Autowired
@@ -27,4 +27,6 @@ public class TransferProducer {
             log.error("Received Exception during send Message: ", e);
         }
     }
+
+ */
 }

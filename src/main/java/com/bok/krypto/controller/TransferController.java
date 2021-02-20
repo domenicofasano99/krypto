@@ -8,6 +8,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/transfer")
 public class TransferController {
 
-    @Autowired
-    TransferService transferService;
 }

@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TransferConsumer {
 
-
+/*
     @JmsListener(destination = "${active-mq.transfers-queue}")
     public void onTransferMessage(Transfer transfer) {
         log.info("Received Message: " + transfer.toString());
     }
-
+*/
 }

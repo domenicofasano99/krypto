@@ -3,6 +3,7 @@ active-mq:
   transfers-queue: transfers
   orders-queue: orders
   broker-url: tcp://active-mq:61616
+
 spring:
   activemq:
     packages:
@@ -17,4 +18,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+coinmarket:
+  api-key: '2381b575-4d98-414d-aca3-b52be8aa66e3'
+  start: 1
+  limit: 10
+  base-currency: USD
 

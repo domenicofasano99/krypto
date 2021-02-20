@@ -26,10 +26,11 @@ public class ExchangeHelper {
         Wallet w = walletHelper.findById(walletID);
 
 
+        return new Transaction();
     }
 
     public Transaction sell(BigDecimal amount, String code, UUID walletID) {
-
+        return new Transaction();
     }
 
     public Transaction transfer(UUID from, UUID to, BigDecimal amount) {

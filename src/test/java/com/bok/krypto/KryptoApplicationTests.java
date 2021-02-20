@@ -21,14 +21,10 @@ class KryptoApplicationTests {
 
     @Test
     public void transferProducerTest() {
-        Transfer t = new Transfer();
-        transferProducer.send(t);
     }
 
     @Test
     public void orderProducerTest() {
-        Order o = new Order();
-        orderProducer.send(o);
     }
 
 }

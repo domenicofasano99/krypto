@@ -7,9 +7,11 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class OrderConsumer {
-
+    /*
     @JmsListener(destination = "${active-mq.orders-queue}")
     public void onOrderMessage(Order order) {
         log.info("Received Message: " + order.toString());
     }
+    */
+
 }
