@@ -1,12 +1,12 @@
 package com.bok.krypto.helper;
 
 import com.bok.krypto.exception.InsufficientBalanceException;
+import com.bok.krypto.exception.InvalidRequestException;
 import com.bok.krypto.exception.WalletNotFoundException;
 import com.bok.krypto.model.Transaction;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.TransactionRepository;
 import com.bok.krypto.repository.WalletRepository;
-import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,9 +48,9 @@ public class WalletHelper {
     public BigDecimal deposit(UUID walletId, BigDecimal amount) {
         Wallet w = findById(walletId);
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidRequestStateException("cannot deposit negative amounts");
+            throw new InvalidRequestException("cannot deposit negative amounts");
         }
-        log.info("depositing {} {} from wallet {}", amount, w.getKrypto().getCode(), walletId);
+        log.info("depositing {} {} from wallet {}", amount, w.getKrypto().getSymbol(), walletId);
         BigDecimal newBalance = w.getAvailableAmount().add(amount);
         w.setAvailableAmount(newBalance);
         walletRepository.saveAndFlush(w);

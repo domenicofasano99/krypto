@@ -6,8 +6,6 @@ import com.bok.krypto.repository.KryptoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
 @Component
 public class KryptoHelper {
 
@@ -15,7 +13,7 @@ public class KryptoHelper {
     KryptoRepository kryptoRepository;
 
     public Krypto findByCode(String code) {
-        return kryptoRepository.findByCode(code).orElseThrow(() -> new KryptoNotFoundException("krypto not found"));
+        return kryptoRepository.findBySymbol(code).orElseThrow(() -> new KryptoNotFoundException("krypto not found"));
     }
 
 }

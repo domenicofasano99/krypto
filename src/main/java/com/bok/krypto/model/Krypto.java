@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 @Entity
 public class Krypto {
@@ -17,10 +18,13 @@ public class Krypto {
     private String name;
 
     @Column(unique = true)
-    private String code;
+    private String symbol;
 
     @Column
     private Double networkFee;
+
+    @Column
+    private BigDecimal price;
 
     public void setId(Long id) {
         this.id = id;
@@ -46,12 +50,20 @@ public class Krypto {
         this.networkFee = networkFee;
     }
 
-    public String getCode() {
-        return code;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setSymbol(String code) {
+        this.symbol = code;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     @Override
