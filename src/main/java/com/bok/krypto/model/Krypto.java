@@ -2,11 +2,10 @@ package com.bok.krypto.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Krypto {
@@ -25,6 +24,31 @@ public class Krypto {
 
     @Column
     private BigDecimal price;
+
+    @OneToMany(cascade = {CascadeType.ALL})
+    Set<HistoricalData> historicalData = new HashSet<>();
+
+    public Krypto() {
+        //hibernate
+    }
+
+    public Krypto(String name, String symbol, BigDecimal price) {
+        this.name = name;
+        this.symbol = symbol;
+        this.price = price;
+    }
+
+    public Set<HistoricalData> getHistoricalData() {
+        return historicalData;
+    }
+
+    public void setHistoricalData(Set<HistoricalData> historicalDataSet) {
+        this.historicalData = historicalDataSet;
+    }
+
+    public void addHistoricalData(HistoricalData historicalData) {
+        this.historicalData.add(historicalData);
+    }
 
     public void setId(Long id) {
         this.id = id;

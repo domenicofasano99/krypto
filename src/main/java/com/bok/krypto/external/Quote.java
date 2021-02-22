@@ -19,7 +19,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class Quote {
 
     @JsonProperty("USD")
-    public USD uSD;
+    public USD USD;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -32,11 +32,11 @@ public class Quote {
 
     /**
      * 
-     * @param uSD
+     * @param USD
      */
-    public Quote(USD uSD) {
+    public Quote(USD USD) {
         super();
-        this.uSD = uSD;
+        this.USD = USD;
     }
 
     @JsonAnyGetter
@@ -51,7 +51,7 @@ public class Quote {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("uSD", uSD).append("additionalProperties", additionalProperties).toString();
+        return new ToStringBuilder(this).append("uSD", USD).append("additionalProperties", additionalProperties).toString();
     }
 
 }

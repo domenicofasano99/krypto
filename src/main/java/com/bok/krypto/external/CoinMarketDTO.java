@@ -1,22 +1,17 @@
 
 package com.bok.krypto.external;
 
+import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "status",
-    "data"
+        "status",
+        "data"
 })
 public class CoinMarketDTO {
 
@@ -29,13 +24,11 @@ public class CoinMarketDTO {
 
     /**
      * No args constructor for use in serialization
-     * 
      */
     public CoinMarketDTO() {
     }
 
     /**
-     * 
      * @param data
      * @param status
      */

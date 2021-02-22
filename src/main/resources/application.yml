@@ -10,7 +10,7 @@ spring:
       trusted: com.bok.krypto.model
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://krypto-db:3306/kryptodb  # HSQL DB CONFIG
+    url: jdbc:mysql://krypto-db:3306/kryptodb
     username: krypto
     password: krypto
   jooq:
@@ -20,7 +20,8 @@ spring:
       ddl-auto: update
 
 coinmarket:
-  api-key: '2381b575-4d98-414d-aca3-b52be8aa66e3'
+  endpoint: https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
+  api-key: 2381b575-4d98-414d-aca3-b52be8aa66e3
   start: 1
   limit: 10
   base-currency: USD
