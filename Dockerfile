@@ -1,7 +1,7 @@
 FROM maven:3.6.3-openjdk-8 AS build
 WORKDIR /build
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn dependency:go-offline -B
 COPY src /usr/src/app/src
 COPY pom.xml /usr/src/app
 RUN mvn -f /usr/src/app/pom.xml clean install -Dmaven.test.skip=true

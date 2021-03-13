@@ -1,10 +1,10 @@
 package com.bok.krypto.helper;
 
+import com.bok.integration.krypto.dto.KryptoInfoDTO;
+import com.bok.integration.krypto.dto.KryptoInfosDTO;
+import com.bok.integration.krypto.dto.PriceResponseDTO;
+import com.bok.integration.krypto.dto.PricesResponseDTO;
 import com.bok.krypto.core.Constants;
-import com.bok.krypto.dto.KryptoInfoDTO;
-import com.bok.krypto.dto.KryptoInfosDTO;
-import com.bok.krypto.dto.PriceResponseDTO;
-import com.bok.krypto.dto.PricesResponseDTO;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.repository.KryptoRepository;
@@ -50,7 +50,8 @@ public class KryptoHelper {
     }
 
     public KryptoInfoDTO getKryptoInfo(String symbol) {
-        return KryptoInfoDTO.of(findBySymbol(symbol));
+        Krypto k = findBySymbol(symbol);
+        return new KryptoInfoDTO(k.getName(), k.getSymbol(), k.getNetworkFee(), k.getPrice(), k.getUpdateTimestamp());
     }
 
     public KryptoInfosDTO getKryptoInfos(List<String> symbols) {

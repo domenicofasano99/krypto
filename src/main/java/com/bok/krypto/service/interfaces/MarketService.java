@@ -1,6 +1,6 @@
 package com.bok.krypto.service.interfaces;
 
-import com.bok.krypto.dto.TransactionDTO;
+import com.bok.integration.krypto.dto.TransactionDTO;
 
 import java.math.BigDecimal;
 

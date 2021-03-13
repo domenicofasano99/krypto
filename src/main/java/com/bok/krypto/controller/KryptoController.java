@@ -1,6 +1,6 @@
 package com.bok.krypto.controller;
 
-import com.bok.krypto.dto.*;
+import com.bok.integration.krypto.dto.*;
 import com.bok.krypto.service.interfaces.KryptoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

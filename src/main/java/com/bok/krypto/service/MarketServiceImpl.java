@@ -1,6 +1,6 @@
 package com.bok.krypto.service;
 
-import com.bok.krypto.dto.TransactionDTO;
+import com.bok.integration.krypto.dto.TransactionDTO;
 import com.bok.krypto.helper.KryptoHelper;
 import com.bok.krypto.helper.MarketHelper;
 import com.bok.krypto.helper.UserHelper;
@@ -40,7 +40,7 @@ public class MarketServiceImpl implements MarketService {
         Wallet wallet = walletHelper.findByUserIdAndSymbol(user.getId(), symbol);
 
         Transaction transaction = marketHelper.buy(user, wallet, amount);
-        return TransactionDTO.of(transaction);
+        return new TransactionDTO(transaction.getUser().getId(), transaction.getType().name(), transaction.getAmount());
     }
 
     @Override
@@ -52,6 +52,6 @@ public class MarketServiceImpl implements MarketService {
         User user = userHelper.findById(userId);
         Wallet wallet = walletHelper.findByUserIdAndSymbol(user.getId(), symbol);
         Transaction transaction = marketHelper.sell(user, wallet, amount);
-        return TransactionDTO.of(transaction);
+        return new TransactionDTO(transaction.getUser().getId(), transaction.getType().name(), transaction.getAmount());
     }
 }

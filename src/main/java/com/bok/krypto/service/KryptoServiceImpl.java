@@ -1,6 +1,6 @@
 package com.bok.krypto.service;
 
-import com.bok.krypto.dto.*;
+import com.bok.integration.krypto.dto.*;
 import com.bok.krypto.helper.KryptoHelper;
 import com.bok.krypto.service.interfaces.KryptoService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.bok.krypto.controller;
 
-import com.bok.krypto.dto.TransactionDTO;
-import com.bok.krypto.dto.TransactionRequestDTO;
+import com.bok.integration.krypto.dto.TransactionDTO;
+import com.bok.integration.krypto.dto.TransactionRequestDTO;
 import com.bok.krypto.service.interfaces.MarketService;
 import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;

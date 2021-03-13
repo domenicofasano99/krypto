@@ -1,6 +1,6 @@
 package com.bok.krypto.service.interfaces;
 
-import com.bok.krypto.dto.*;
+import com.bok.integration.krypto.dto.*;
 
 public interface KryptoService {
     PricesResponseDTO getKryptoPrices(PricesRequestDTO requestDTO);
