@@ -96,6 +96,14 @@ public class Krypto {
         this.price = price;
     }
 
+    public Instant getUpdateTimestamp() {
+        return updateTimestamp;
+    }
+
+    public void setUpdateTimestamp(Instant updateTimestamp) {
+        this.updateTimestamp = updateTimestamp;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

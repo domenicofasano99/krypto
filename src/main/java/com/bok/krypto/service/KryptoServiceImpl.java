@@ -1,9 +1,6 @@
 package com.bok.krypto.service;
 
-import com.bok.krypto.dto.PriceRequestDTO;
-import com.bok.krypto.dto.PriceResponseDTO;
-import com.bok.krypto.dto.PricesRequestDTO;
-import com.bok.krypto.dto.PricesResponseDTO;
+import com.bok.krypto.dto.*;
 import com.bok.krypto.helper.KryptoHelper;
 import com.bok.krypto.service.interfaces.KryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +20,15 @@ public class KryptoServiceImpl implements KryptoService {
     @Override
     public PriceResponseDTO getKryptoPrice(PriceRequestDTO priceRequestDTO) {
         return kryptoHelper.getPrice(priceRequestDTO.symbol);
+    }
+
+    @Override
+    public KryptoInfoDTO getKryptoInfo(KryptoInfoRequestDTO requestDTO) {
+        return kryptoHelper.getKryptoInfo(requestDTO.symbol);
+    }
+
+    @Override
+    public KryptoInfosDTO getKryptoInfos(KryptoInfosRequestDTO requestDTO) {
+        return kryptoHelper.getKryptoInfos(requestDTO.symbols);
     }
 }

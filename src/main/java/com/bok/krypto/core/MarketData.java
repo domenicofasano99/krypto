@@ -1,5 +1,6 @@
 package com.bok.krypto.core;
 
+import com.bok.krypto.cache.CacheService;
 import com.bok.krypto.external.CoinMarketAPI;
 import com.bok.krypto.external.CoinMarketDTO;
 import com.bok.krypto.external.Datum;
@@ -33,6 +34,9 @@ public class MarketData {
     @Autowired
     HistoricalDataRepository historicalDataRepository;
 
+    @Autowired
+    CacheService cacheService;
+
     @Scheduled(fixedDelay = 300000, initialDelay = 1000)
     public void fetchData() {
         CoinMarketDTO data = coinMarketAPI.fetch();
@@ -40,6 +44,8 @@ public class MarketData {
         Map<String, Krypto> kryptoMap = parseData(data);
         log.info("updating {} kryptocurrencies", kryptoMap.size());
         kryptoRepository.saveAll(kryptoMap.values());
+        cacheService.evictPrices();
+        cacheService.evictKryptos();
     }
 
 

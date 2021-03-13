@@ -1,8 +1,12 @@
 package com.bok.krypto.helper;
 
 import com.bok.krypto.core.Constants;
+import com.bok.krypto.dto.KryptoInfoDTO;
+import com.bok.krypto.dto.KryptoInfosDTO;
 import com.bok.krypto.dto.PriceResponseDTO;
 import com.bok.krypto.dto.PricesResponseDTO;
+import com.bok.krypto.exception.KryptoNotFoundException;
+import com.bok.krypto.model.Krypto;
 import com.bok.krypto.repository.KryptoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -40,4 +44,20 @@ public class KryptoHelper {
         return kryptoRepository.existsBySymbol(symbol);
     }
 
+    @Cacheable(value = Constants.KRYPTO, key = "#symbol")
+    public Krypto findBySymbol(String symbol) {
+        return kryptoRepository.findBySymbol(symbol).orElseThrow(() -> new KryptoNotFoundException("This Krypto does not exist"));
+    }
+
+    public KryptoInfoDTO getKryptoInfo(String symbol) {
+        return KryptoInfoDTO.of(findBySymbol(symbol));
+    }
+
+    public KryptoInfosDTO getKryptoInfos(List<String> symbols) {
+        List<KryptoInfoDTO> infos = new ArrayList<>();
+        for (String symbol : symbols) {
+            infos.add(getKryptoInfo(symbol));
+        }
+        return new KryptoInfosDTO(infos);
+    }
 }
