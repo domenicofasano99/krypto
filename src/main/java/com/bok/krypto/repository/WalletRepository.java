@@ -10,4 +10,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
     boolean existsById(UUID id);
 
     Optional<Wallet> findById(UUID walletId);
+
+    Optional<Wallet> findByUser_IdAndKrypto_Symbol(Long userId, String symbol);
 }

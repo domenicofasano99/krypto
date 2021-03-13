@@ -2,7 +2,6 @@
 active-mq:
   transfers-queue: transfers
   orders-queue: orders
-  prices-topic: prices
   broker-url: tcp://active-mq:61616
 
 spring:
@@ -10,15 +9,16 @@ spring:
     packages:
       trusted: com.bok.krypto.model
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://krypto-db:3306/kryptodb
+    driver-class-name: org.h2.Driver
     username: krypto
     password: krypto
+    url: jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1
   jooq:
-    sql-dialect: org.hibernate.dialect.MariaDBDialect
+    sql-dialect: org.hibernate.dialect.H2Dialect
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
+
 
 coinmarket:
   endpoint: https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest

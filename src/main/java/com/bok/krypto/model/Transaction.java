@@ -20,12 +20,15 @@ public class Transaction {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
+    @Column
     @ManyToOne
     private Wallet sourceWallet;
 
+    @Column
     @ManyToOne
     private Wallet destinationWallet;
 
+    @Column
     @CreationTimestamp
     private Instant timestamp;
 
@@ -36,14 +39,18 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    public Transaction(Type type, Wallet sourceWallet, Wallet destinationWallet, BigDecimal amount) {
+    @Column
+    @ManyToOne
+    private User user;
+
+    public Transaction(User user, Type type, Wallet sourceWallet, Wallet destinationWallet, BigDecimal amount) {
         this.type = type;
         this.sourceWallet = sourceWallet;
         this.destinationWallet = destinationWallet;
         this.amount = amount;
     }
 
-    public static enum Type {
+    public enum Type {
         BUY,
         SELL,
         TRANSFER
@@ -95,6 +102,14 @@ public class Transaction {
 
     public void setDestinationWallet(Wallet destinationWallet) {
         this.destinationWallet = destinationWallet;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

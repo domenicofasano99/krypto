@@ -8,24 +8,25 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderProducer {
+public class TransactionProducer {
 /*
-    private static final Logger log = LoggerFactory.getLogger(OrderProducer.class);
+    private static final Logger log = LoggerFactory.getLogger(TransferProducer.class);
 
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${active-mq.orders-queue}")
-    private String ordersQueue;
+    @Value("${active-mq.transfers-queue}")
+    private String transfersTopic;
 
 
-    public void send(Order order) {
+    public void send(Transfer transfer) {
         try {
-            log.info("Attempting Send transfer to Topic: " + ordersQueue);
-            jmsTemplate.convertAndSend(ordersQueue, order);
+            log.info("Attempting Send transfer to Topic: " + transfersTopic);
+            jmsTemplate.convertAndSend(transfersTopic, transfer);
         } catch (Exception e) {
             log.error("Received Exception during send Message: ", e);
         }
     }
-*/
+
+ */
 }

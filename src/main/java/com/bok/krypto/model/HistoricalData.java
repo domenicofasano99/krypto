@@ -12,21 +12,6 @@ public class HistoricalData {
     private Krypto krypto;
 
     @Column
-    private String name;
-
-    @Column
-    private String symbol;
-
-    @Column
-    private String slug;
-
-    @Column
-    private Integer numMarketPairs;
-
-    @Column
-    private String dateAdded;
-
-    @Column
     private Double circulatingSupply;
 
     @Column
@@ -63,9 +48,8 @@ public class HistoricalData {
         //hibernate
     }
 
-    public HistoricalData(String name, String symbol, Double price) {
-        this.name = name;
-        this.symbol = symbol;
+    public HistoricalData(Krypto krypto, Double price) {
+        this.krypto = krypto;
         this.price = price;
     }
 
@@ -83,46 +67,6 @@ public class HistoricalData {
 
     public void setKrypto(Krypto krypto) {
         this.krypto = krypto;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public Integer getNumMarketPairs() {
-        return numMarketPairs;
-    }
-
-    public void setNumMarketPairs(Integer numMarketPairs) {
-        this.numMarketPairs = numMarketPairs;
-    }
-
-    public String getDateAdded() {
-        return dateAdded;
-    }
-
-    public void setDateAdded(String dateAdded) {
-        this.dateAdded = dateAdded;
     }
 
     public Double getCirculatingSupply() {

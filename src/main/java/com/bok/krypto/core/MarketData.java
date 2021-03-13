@@ -55,7 +55,7 @@ public class MarketData {
             } else {
                 k = new Krypto(d.name, d.symbol, new BigDecimal(d.quote.USD.price));
             }
-            k.addHistoricalData(new HistoricalData(k.getName(), k.getSymbol(), k.getPrice().doubleValue()));
+            k.addHistoricalData(new HistoricalData(k, k.getPrice().doubleValue()));
             kryptoMap.put(k.getName(), k);
         }
         return kryptoMap;

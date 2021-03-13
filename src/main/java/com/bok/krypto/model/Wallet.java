@@ -18,14 +18,22 @@ public class Wallet {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
+    @Column
+    @ManyToOne
+    private User user;
+
+    @Column
     @ManyToOne
     private Krypto krypto;
 
+    @Column
     private BigDecimal availableAmount;
 
+    @Column
     @CreationTimestamp
     private Instant creationTime;
 
+    @Column
     @UpdateTimestamp
     private Instant updateTime;
 

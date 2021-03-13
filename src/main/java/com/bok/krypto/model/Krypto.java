@@ -1,9 +1,11 @@
 package com.bok.krypto.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +26,10 @@ public class Krypto {
 
     @Column
     private BigDecimal price;
+
+    @Column
+    @UpdateTimestamp
+    private Instant updateTimestamp;
 
     @OneToMany(cascade = {CascadeType.ALL})
     Set<HistoricalData> historicalData = new HashSet<>();
