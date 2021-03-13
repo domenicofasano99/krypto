@@ -5,7 +5,7 @@ import com.bok.krypto.dto.*;
 public interface KryptoService {
     PricesResponseDTO getKryptoPrices(PricesRequestDTO requestDTO);
 
-    PriceResponseDTO getKryptoPrice(PriceRequestDTO priceRequestDTO);
+    PriceResponseDTO getKryptoPrice(String symbol);
 
     KryptoInfoDTO getKryptoInfo(KryptoInfoRequestDTO requestDTO);
 

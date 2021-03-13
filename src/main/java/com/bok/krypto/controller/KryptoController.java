@@ -2,11 +2,14 @@ package com.bok.krypto.controller;
 
 import com.bok.krypto.dto.*;
 import com.bok.krypto.service.interfaces.KryptoService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@Slf4j
 public class KryptoController {
 
     @Autowired
@@ -17,9 +20,10 @@ public class KryptoController {
         return kryptoService.getKryptoPrices(requestDTO);
     }
 
-    @GetMapping("/price")
-    PriceResponseDTO getKryptoPrice(PriceRequestDTO priceRequestDTO) {
-        return kryptoService.getKryptoPrice(priceRequestDTO);
+    @GetMapping("/price/{symbol}")
+    PriceResponseDTO getKryptoPrice(@PathVariable("symbol") String symbol) {
+        log.info("received request for {} price", symbol);
+        return kryptoService.getKryptoPrice(symbol);
     }
 
     @GetMapping("/info")

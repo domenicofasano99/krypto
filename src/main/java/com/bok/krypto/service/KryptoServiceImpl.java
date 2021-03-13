@@ -18,8 +18,8 @@ public class KryptoServiceImpl implements KryptoService {
     }
 
     @Override
-    public PriceResponseDTO getKryptoPrice(PriceRequestDTO priceRequestDTO) {
-        return kryptoHelper.getPrice(priceRequestDTO.symbol);
+    public PriceResponseDTO getKryptoPrice(String symbol) {
+        return kryptoHelper.getPrice(symbol);
     }
 
     @Override
