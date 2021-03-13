@@ -5,10 +5,8 @@ import com.bok.krypto.service.interfaces.KryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/krypto")
 public class KryptoController {
 
     @Autowired
@@ -20,17 +18,17 @@ public class KryptoController {
     }
 
     @GetMapping("/price")
-    PriceResponseDTO getKryptoPrice(PriceRequestDTO priceRequestDTO){
+    PriceResponseDTO getKryptoPrice(PriceRequestDTO priceRequestDTO) {
         return kryptoService.getKryptoPrice(priceRequestDTO);
     }
 
     @GetMapping("/info")
-    KryptoInfoDTO getKryptoInfo(KryptoInfoRequestDTO requestDTO){
+    KryptoInfoDTO getKryptoInfo(KryptoInfoRequestDTO requestDTO) {
         return kryptoService.getKryptoInfo(requestDTO);
     }
 
     @GetMapping("/infos")
-    KryptoInfosDTO getKryptoInfos(KryptoInfosRequestDTO requestDTO){
+    KryptoInfosDTO getKryptoInfos(KryptoInfosRequestDTO requestDTO) {
         return kryptoService.getKryptoInfos(requestDTO);
 
     }

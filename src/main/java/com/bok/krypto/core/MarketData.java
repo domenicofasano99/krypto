@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,15 +42,15 @@ public class MarketData {
     public void fetchData() {
         CoinMarketDTO data = coinMarketAPI.fetch();
         log.info("retrieved {} kryptocurrencies from coinMarket", data.data.size());
-        Map<String, Krypto> kryptoMap = parseData(data);
+        Map<String, Krypto> kryptoMap = parseAndUpdateData(data);
         log.info("updating {} kryptocurrencies", kryptoMap.size());
         kryptoRepository.saveAll(kryptoMap.values());
         cacheService.evictPrices();
         cacheService.evictKryptos();
     }
 
-
-    public Map<String, Krypto> parseData(CoinMarketDTO coinMarketDTO) {
+    @Transactional
+    public Map<String, Krypto> parseAndUpdateData(CoinMarketDTO coinMarketDTO) {
         Map<String, Krypto> kryptoMap = new HashMap<>();
         for (Datum d : coinMarketDTO.data) {
             Optional<Krypto> kOptional = kryptoRepository.findBySymbol(d.symbol);

@@ -10,9 +10,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TransactionConsumer {
 
+    /*
     @JmsListener(destination = "${active-mq.transactions}")
     public void onTransferMessage(TransactionDTO transaction) {
         log.info("Received Message: " + transaction.toString());
     }
+
+     */
 
 }

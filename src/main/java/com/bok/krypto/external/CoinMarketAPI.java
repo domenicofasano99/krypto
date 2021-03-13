@@ -30,6 +30,8 @@ public class CoinMarketAPI {
     @Value("${coinmarket.endpoint}")
     private String endpoint;
 
+    /*
+
     @Value("${coinmarket.start}")
     private String start;
 
@@ -39,11 +41,13 @@ public class CoinMarketAPI {
     @Value("${coinmarket.convert}")
     private String convert;
 
+     */
+
     public CoinMarketDTO fetch() {
         List<NameValuePair> paratmers = new ArrayList<>();
-        paratmers.add(new BasicNameValuePair("start", start));
-        paratmers.add(new BasicNameValuePair("limit", limit));
-        paratmers.add(new BasicNameValuePair("convert", convert));
+        paratmers.add(new BasicNameValuePair("start", "1"));
+        paratmers.add(new BasicNameValuePair("limit", "10"));
+        paratmers.add(new BasicNameValuePair("convert", "USD"));
 
         try {
             return makeAPICall(endpoint, paratmers);

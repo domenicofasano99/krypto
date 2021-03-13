@@ -20,11 +20,9 @@ public class Transaction {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column
     @ManyToOne
     private Wallet sourceWallet;
 
-    @Column
     @ManyToOne
     private Wallet destinationWallet;
 
@@ -39,7 +37,6 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @Column
     @ManyToOne
     private User user;
 

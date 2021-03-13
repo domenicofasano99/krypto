@@ -15,7 +15,7 @@ import java.util.Collections;
 @Configuration
 public class ActiveMQConfig {
 
-
+/*
     @Value("${active-mq.broker-url}")
     private String brokerUrl;
 
@@ -42,5 +42,7 @@ public class ActiveMQConfig {
         //factory.setPubSubDomain(true);
         return factory;
     }
+
+ */
 
 }

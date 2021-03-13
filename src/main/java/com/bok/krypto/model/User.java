@@ -18,19 +18,15 @@ public class User {
     @Column
     private Long id;
 
-    @Column
     @OneToMany
     private Set<Wallet> wallets;
 
-    @Column
     @OneToMany
     private Set<Transaction> transactions;
 
-    @Column
     @CreationTimestamp
     private Instant creationTimestamp;
 
-    @Column
     @UpdateTimestamp
     private Instant updateTimestamp;
 

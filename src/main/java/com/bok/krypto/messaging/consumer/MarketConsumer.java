@@ -9,8 +9,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class MarketConsumer {
 
+    /*
     @JmsListener(destination = "${active-mq.market}")
     public void onTransferMessage(TransactionDTO transaction) {
         log.info("Received Message: " + transaction.toString());
     }
+
+     */
 }

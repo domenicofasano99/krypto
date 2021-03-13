@@ -18,11 +18,9 @@ public class Wallet {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column
     @ManyToOne
     private User user;
 
-    @Column
     @ManyToOne
     private Krypto krypto;
 
