@@ -19,4 +19,8 @@ public class UserHelper {
     public Boolean existsById(Long id) {
         return userRepository.existsById(id);
     }
+
+    public User save(Long userId) {
+        return userRepository.save(new User(userId));
+    }
 }
