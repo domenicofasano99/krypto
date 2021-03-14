@@ -1,6 +1,10 @@
 package com.bok.krypto.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.time.Instant;
 
 @Entity
 public class HistoricalData {
@@ -22,6 +26,9 @@ public class HistoricalData {
 
     @Column
     private String lastUpdated;
+
+    @CreationTimestamp
+    private Instant recordTimestamp;
 
     @Column
     private Double price;
@@ -155,5 +162,33 @@ public class HistoricalData {
 
     public void setMarketCap(Double marketCap) {
         this.marketCap = marketCap;
+    }
+
+    public Instant getRecordTimestamp() {
+        return recordTimestamp;
+    }
+
+    public void setRecordTimestamp(Instant recordTimestamp) {
+        this.recordTimestamp = recordTimestamp;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("krypto", krypto)
+                .append("circulatingSupply", circulatingSupply)
+                .append("totalSupply", totalSupply)
+                .append("cmcRank", cmcRank)
+                .append("lastUpdated", lastUpdated)
+                .append("recordTimestamp", recordTimestamp)
+                .append("price", price)
+                .append("volume24h", volume24h)
+                .append("percentChange1h", percentChange1h)
+                .append("percentChange24h", percentChange24h)
+                .append("percentChange7d", percentChange7d)
+                .append("percentChange30d", percentChange30d)
+                .append("marketCap", marketCap)
+                .toString();
     }
 }

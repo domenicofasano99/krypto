@@ -1,15 +1,19 @@
 package com.bok.krypto.utils;
 
 import com.bok.krypto.helper.KryptoHelper;
+import com.bok.krypto.model.HistoricalData;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.model.User;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.*;
+import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -36,7 +40,9 @@ public class ModelTestUtils {
     @Autowired
     TransactionRepository transactionRepository;
 
+
     private Random random = new Random();
+    private Faker faker = new Faker();
 
     public void populateDB() {
         kryptoRepository.save(new Krypto("Bitcoin", "BTC", new BigDecimal(50000)));
@@ -82,5 +88,27 @@ public class ModelTestUtils {
         List<Krypto> kryptoSet = kryptoRepository.findAll();
         long random = ThreadLocalRandom.current().nextLong(0, kryptoSet.size());
         return kryptoSet.get(Math.toIntExact(random));
+    }
+
+    public void generateRandomHistoricalData(Krypto krypto, Instant start, Instant end, Long numberOfRecords) {
+        List<HistoricalData> list = new ArrayList<>();
+        for (long c = 0; c < numberOfRecords; c++) {
+            HistoricalData datum = new HistoricalData();
+            datum.setRecordTimestamp(between(start, end));
+            datum.setPrice(faker.number().randomDouble(5, 100, 250));
+            datum.setKrypto(krypto);
+            list.add(datum);
+        }
+        historicalDataRepository.saveAll(list);
+    }
+
+    private static Instant between(Instant startInclusive, Instant endExclusive) {
+        long startSeconds = startInclusive.getEpochSecond();
+        long endSeconds = endExclusive.getEpochSecond();
+        long random = ThreadLocalRandom
+                .current()
+                .nextLong(startSeconds, endSeconds);
+
+        return Instant.ofEpochSecond(random);
     }
 }

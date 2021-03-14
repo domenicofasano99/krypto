@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,4 +82,17 @@ class KryptoServiceTests {
 
     }
 
+    @Test
+    void getKryptoHistoricalData() {
+        Krypto k = modelTestUtils.getRandomKrypto();
+        modelTestUtils.generateRandomHistoricalData(k, Instant.parse("2007-12-03T10:15:30.00Z"), Instant.now(), 300L);
+
+        HistoricalDataRequestDTO requestDTO = new HistoricalDataRequestDTO();
+        requestDTO.start = Instant.parse("2020-12-03T10:15:30.00Z");
+        requestDTO.end = Instant.now();
+        requestDTO.symbol = k.getSymbol();
+        HistoricalDataDTO response = kryptoService.getKryptoHistoricalData(requestDTO);
+        assertNotNull(response.history);
+        log.info(String.valueOf(response.history));
+    }
 }

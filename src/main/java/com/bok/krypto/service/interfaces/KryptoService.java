@@ -10,4 +10,6 @@ public interface KryptoService {
     KryptoInfoDTO getKryptoInfo(KryptoInfoRequestDTO requestDTO);
 
     KryptoInfosDTO getKryptoInfos(KryptoInfosRequestDTO requestDTO);
+
+    HistoricalDataDTO getKryptoHistoricalData(HistoricalDataRequestDTO historicalDataRequestDTO);
 }

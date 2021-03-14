@@ -1,18 +1,17 @@
 package com.bok.krypto.helper;
 
-import com.bok.integration.krypto.dto.KryptoInfoDTO;
-import com.bok.integration.krypto.dto.KryptoInfosDTO;
-import com.bok.integration.krypto.dto.PriceResponseDTO;
-import com.bok.integration.krypto.dto.PricesResponseDTO;
+import com.bok.integration.krypto.dto.*;
 import com.bok.krypto.core.Constants;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.model.Krypto;
+import com.bok.krypto.repository.HistoricalDataRepository;
 import com.bok.krypto.repository.KryptoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +20,7 @@ public class KryptoHelper {
 
     @Autowired
     KryptoRepository kryptoRepository;
+
 
     public PricesResponseDTO getPrices(List<String> symbols) {
         List<PriceResponseDTO> prices = new ArrayList<>();
@@ -62,4 +62,5 @@ public class KryptoHelper {
         }
         return new KryptoInfosDTO(infos);
     }
+
 }

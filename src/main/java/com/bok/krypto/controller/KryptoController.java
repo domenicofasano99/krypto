@@ -34,6 +34,10 @@ public class KryptoController {
     @GetMapping("/infos")
     KryptoInfosDTO getKryptoInfos(KryptoInfosRequestDTO requestDTO) {
         return kryptoService.getKryptoInfos(requestDTO);
+    }
 
+    @GetMapping("/history")
+    HistoricalDataDTO getKryptoHistoricalData(HistoricalDataRequestDTO requestDTO) {
+        return kryptoService.getKryptoHistoricalData(requestDTO);
     }
 }
