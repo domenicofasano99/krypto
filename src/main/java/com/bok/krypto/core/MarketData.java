@@ -38,7 +38,8 @@ public class MarketData {
     @Autowired
     CacheService cacheService;
 
-    @Scheduled(fixedDelay = 300000, initialDelay = 1000)
+    //@Scheduled(fixedDelay = 300000, initialDelay = 1000)
+    @Scheduled(fixedDelay = 3000000, initialDelay = 1000)
     public void fetchData() {
         CoinMarketDTO data = coinMarketAPI.fetch();
         log.info("retrieved {} kryptocurrencies from coinMarket", data.data.size());
