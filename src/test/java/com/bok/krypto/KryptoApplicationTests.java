@@ -11,9 +11,6 @@ class KryptoApplicationTests {
     @Autowired
     TransactionProducer transactionProducer;
 
-    //@Autowired
-    //OrderProducer orderProducer;
-
     @Test
     void contextLoads() {
     }
