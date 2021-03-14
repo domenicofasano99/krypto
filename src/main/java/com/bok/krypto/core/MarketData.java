@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @Slf4j
 @Component
+@Transactional
 public class MarketData {
     @Autowired
     CoinMarketAPI coinMarketAPI;
@@ -50,7 +51,7 @@ public class MarketData {
         cacheService.evictKryptos();
     }
 
-    @Transactional
+
     public Map<String, Krypto> parseAndUpdateData(CoinMarketDTO coinMarketDTO) {
         Map<String, Krypto> kryptoMap = new HashMap<>();
         for (Datum d : coinMarketDTO.data) {

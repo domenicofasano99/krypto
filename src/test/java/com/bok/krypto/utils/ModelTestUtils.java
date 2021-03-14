@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @Slf4j
@@ -74,5 +76,11 @@ public class ModelTestUtils {
         w = walletRepository.save(w);
         log.info("Created wallet with id: {}", w.getId());
         return w;
+    }
+
+    public Krypto getRandomKrypto() {
+        List<Krypto> kryptoSet = kryptoRepository.findAll();
+        long random = ThreadLocalRandom.current().nextLong(0, kryptoSet.size());
+        return kryptoSet.get(Math.toIntExact(random));
     }
 }

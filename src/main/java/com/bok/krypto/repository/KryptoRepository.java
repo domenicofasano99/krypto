@@ -30,6 +30,6 @@ public interface KryptoRepository extends JpaRepository<Krypto, Long> {
         }
     }
 
-    @Query("SELECT k.price FROM Krypto k WHERE k.symbol = :symbol")
+    @Query("SELECT k FROM Krypto k WHERE k.symbol = :symbol")
     Projection.KryptoPrice findPriceBySymbol(@Param("symbol") String symbol);
 }

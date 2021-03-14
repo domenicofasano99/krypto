@@ -31,7 +31,8 @@ public class KryptoHelper {
     }
 
     public PriceResponseDTO getPrice(String symbol) {
-        return new PriceResponseDTO(symbol, getKryptoPrice(symbol));
+        BigDecimal price = getKryptoPrice(symbol);
+        return new PriceResponseDTO(symbol, price);
     }
 
     @Cacheable(value = Constants.PRICES, key = "#symbol")
