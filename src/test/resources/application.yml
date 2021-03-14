@@ -2,12 +2,13 @@
 active-mq:
   transfers-queue: transfers
   orders-queue: orders
+  users-queue: users
   broker-url: tcp://active-mq:61616
 
 spring:
   activemq:
     packages:
-      trusted: com.bok.krypto.model
+      trusted: com.bok.integration
   datasource:
     driver-class-name: org.h2.Driver
     username: krypto
