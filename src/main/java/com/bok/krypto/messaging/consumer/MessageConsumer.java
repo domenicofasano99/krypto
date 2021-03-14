@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class UserCreationConsumer {
+public class MessageConsumer {
 
     @Autowired
     UserHelper userHelper;

@@ -1,6 +1,6 @@
 package com.bok.krypto;
 
-import com.bok.krypto.messaging.consumer.UserCreationConsumer;
+import com.bok.krypto.messaging.consumer.MessageConsumer;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +13,8 @@ import javax.jms.ConnectionFactory;
 public class TestContextConfiguration {
 
     @Bean
-    public UserCreationConsumer messageConsumer() {
-        return new UserCreationConsumer();
+    public MessageConsumer messageConsumer() {
+        return new MessageConsumer();
     }
 
     @Bean
