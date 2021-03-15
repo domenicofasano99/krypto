@@ -32,7 +32,8 @@ public class HistoricalDataHelper {
         dto.end = end;
         for (HistoricalDataRepository.Projection.HistoricalDataProjection datum : data) {
             RecordDTO record = new RecordDTO();
-            record.price = datum.getPrice();
+            record.id = datum.getId();
+            record.price = datum.getPrice().doubleValue();
             record.instant = datum.getRecordTimestamp();
             record.marketCap = datum.getMarketCap();
             dto.history.add(record);

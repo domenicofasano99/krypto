@@ -1,24 +1,22 @@
 package com.bok.krypto.model;
 
+import com.google.common.base.Objects;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
 public class Transaction {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue
     @Column(updatable = false, nullable = false)
-    private UUID id;
+    private Long id;
 
     @ManyToOne
     private Wallet sourceWallet;
@@ -37,11 +35,17 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private Type type;
 
+    @Column
+    @Enumerated
+    private Status status;
+
     @ManyToOne
     private User user;
 
-    public Transaction(User user, Type type, Wallet sourceWallet, Wallet destinationWallet, BigDecimal amount) {
+    public Transaction(User user, Type type, Status status, Wallet sourceWallet, Wallet destinationWallet, BigDecimal amount) {
         this.type = type;
+        this.user = user;
+        this.status = status;
         this.sourceWallet = sourceWallet;
         this.destinationWallet = destinationWallet;
         this.amount = amount;
@@ -53,11 +57,17 @@ public class Transaction {
         TRANSFER
     }
 
-    public UUID getId() {
+    public enum Status {
+        PENDING,
+        SETTLED,
+        REJECTED
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -109,6 +119,14 @@ public class Transaction {
         this.user = user;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -119,5 +137,18 @@ public class Transaction {
                 .append("amount", amount)
                 .append("type", type)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return Objects.equal(id, that.id) && Objects.equal(sourceWallet, that.sourceWallet) && Objects.equal(destinationWallet, that.destinationWallet) && Objects.equal(timestamp, that.timestamp) && Objects.equal(amount, that.amount) && type == that.type && status == that.status && Objects.equal(user, that.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, sourceWallet, destinationWallet, timestamp, amount, type, status, user);
     }
 }

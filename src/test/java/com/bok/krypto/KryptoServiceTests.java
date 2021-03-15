@@ -1,11 +1,14 @@
 package com.bok.krypto;
 
 import com.bok.integration.krypto.dto.*;
+import com.bok.krypto.model.HistoricalData;
 import com.bok.krypto.model.Krypto;
+import com.bok.krypto.repository.HistoricalDataRepository;
 import com.bok.krypto.repository.KryptoRepository;
 import com.bok.krypto.service.interfaces.KryptoService;
 import com.bok.krypto.utils.ModelTestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,9 @@ class KryptoServiceTests {
 
     @Autowired
     KryptoRepository kryptoRepository;
+
+    @Autowired
+    HistoricalDataRepository historicalDataRepository;
 
     @BeforeEach
     public void setup() {
@@ -85,7 +91,6 @@ class KryptoServiceTests {
     @Test
     void getKryptoHistoricalData() {
         Krypto k = modelTestUtils.getRandomKrypto();
-        modelTestUtils.generateRandomHistoricalData(k, Instant.parse("2007-12-03T10:15:30.00Z"), Instant.now(), 300L);
 
         HistoricalDataRequestDTO requestDTO = new HistoricalDataRequestDTO();
         requestDTO.start = Instant.parse("2020-12-03T10:15:30.00Z");
@@ -94,5 +99,23 @@ class KryptoServiceTests {
         HistoricalDataDTO response = kryptoService.getKryptoHistoricalData(requestDTO);
         assertNotNull(response.history);
         log.info(String.valueOf(response.history));
+        for (RecordDTO datum : response.history) {
+            HistoricalData savedDatum = historicalDataRepository.findById(datum.id).get();
+            assertEquals(savedDatum.getId(), datum.id);
+            assertEquals(savedDatum.getPrice(), datum.price);
+        }
+    }
+
+    @Test
+    @Ignore
+    void evaluatePerformance() {
+        int kryptos = 1000;
+        int records = 1000;
+        long start = Instant.now().toEpochMilli();
+        modelTestUtils.generateDatabaseRandomNoise(kryptos, records);
+        long end = Instant.now().toEpochMilli();
+        long elapsed = end - start;
+        long opsPorMillis = (long) kryptos * records / elapsed;
+        log.info("Geneating {} Historical records for {} Kryptos took {} ms, performing {}ops/ms", kryptos, kryptos, elapsed, opsPorMillis);
     }
 }

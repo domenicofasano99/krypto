@@ -1,5 +1,6 @@
 package com.bok.krypto.helper;
 
+import com.bok.integration.UserDTO;
 import com.bok.krypto.exception.UserNotFoundException;
 import com.bok.krypto.model.User;
 import com.bok.krypto.repository.UserRepository;
@@ -22,5 +23,9 @@ public class UserHelper {
 
     public User save(Long userId) {
         return userRepository.save(new User(userId));
+    }
+
+    public void createInternalUser(UserDTO userDTO) {
+
     }
 }

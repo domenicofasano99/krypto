@@ -40,7 +40,7 @@ public class MarketServiceImpl implements MarketService {
         Wallet wallet = walletHelper.findByUserIdAndSymbol(user.getId(), symbol);
 
         Transaction transaction = marketHelper.buy(user, wallet, amount);
-        return new TransactionDTO(transaction.getUser().getId(), transaction.getType().name(), transaction.getAmount());
+        return new TransactionDTO(transaction.getId(), transaction.getUser().getId(), transaction.getType().name(), transaction.getAmount());
     }
 
     @Override
@@ -52,6 +52,6 @@ public class MarketServiceImpl implements MarketService {
         User user = userHelper.findById(userId);
         Wallet wallet = walletHelper.findByUserIdAndSymbol(user.getId(), symbol);
         Transaction transaction = marketHelper.sell(user, wallet, amount);
-        return new TransactionDTO(transaction.getUser().getId(), transaction.getType().name(), transaction.getAmount());
+        return new TransactionDTO(transaction.getId(), transaction.getUser().getId(), transaction.getType().name(), transaction.getAmount());
     }
 }

@@ -15,6 +15,8 @@ public interface HistoricalDataRepository extends JpaRepository<HistoricalData, 
 
     public class Projection {
         public interface HistoricalDataProjection {
+            Long getId();
+
             BigDecimal getPrice();
 
             Double getMarketCap();

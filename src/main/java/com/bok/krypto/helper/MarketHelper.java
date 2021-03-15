@@ -27,7 +27,7 @@ public class MarketHelper {
 
 
     public Transaction buy(User user, Wallet wallet, BigDecimal amount) {
-        Transaction t = new Transaction(user, Transaction.Type.BUY, null, wallet, amount);
+        Transaction t = new Transaction(user, Transaction.Type.BUY, Transaction.Status.PENDING, null, wallet, amount);
         transactionRepository.save(t);
         walletHelper.deposit(wallet, amount);
         return t;
@@ -37,7 +37,7 @@ public class MarketHelper {
         if (wallet.getAvailableAmount().compareTo(amount) < 0) {
             throw new InsufficientBalanceException("wallet does not have a sufficient balance");
         }
-        Transaction t = new Transaction(user, Transaction.Type.SELL, wallet, null, amount);
+        Transaction t = new Transaction(user, Transaction.Type.SELL, Transaction.Status.PENDING, wallet, null, amount);
         transactionRepository.save(t);
         walletHelper.withdraw(wallet, amount);
         return t;

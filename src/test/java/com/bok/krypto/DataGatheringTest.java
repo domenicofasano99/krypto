@@ -6,6 +6,7 @@ import com.bok.krypto.model.Krypto;
 import com.bok.krypto.repository.KryptoRepository;
 import com.bok.krypto.utils.ModelTestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,8 @@ public class DataGatheringTest {
         modelTestUtils.populateDB();
     }
 
-    @Test
+
+    @Ignore //don't run this test if not strictly necessary, it consumes API credit
     public void testImportFromCoinMarketAPI() {
         modelTestUtils.clearAll();
 

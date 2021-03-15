@@ -47,15 +47,31 @@ public class ModelTestUtils {
     public void populateDB() {
         kryptoRepository.save(new Krypto("Bitcoin", "BTC", new BigDecimal(50000)));
         kryptoRepository.save(new Krypto("Ethereum", "ETH", new BigDecimal(1800)));
+        kryptoRepository.save(new Krypto("Litecoin", "LTC", new BigDecimal(1800)));
+        kryptoRepository.save(new Krypto("Cardano", "ADA", new BigDecimal(1800)));
+        kryptoRepository.save(new Krypto("DogeCoin", "DOGE", new BigDecimal(1800)));
 
     }
 
     public void clearAll() {
         transactionRepository.deleteAll();
         historicalDataRepository.deleteAll();
-        kryptoRepository.deleteAll();
         walletRepository.deleteAll();
+        kryptoRepository.deleteAll();
         userRepository.deleteAll();
+    }
+
+    public void generateHistoricalDataForeachKrypto() {
+        List<Krypto> kryptos = kryptoRepository.findAll();
+        for (Krypto k : kryptos) {
+            generateRandomHistoricalData(k, Instant.parse("2007-12-03T10:15:30.00Z"), Instant.now(), 30);
+        }
+    }
+
+    public User createUser(Long userId) {
+        User u = new User();
+        u.setId(userId);
+        return userRepository.save(u);
     }
 
     public User createUser() {
@@ -74,6 +90,13 @@ public class ModelTestUtils {
         return random.nextLong();
     }
 
+
+    public Wallet createWallet(User user, String symbol, BigDecimal baseAmount) {
+        Wallet w = createWallet(user, symbol);
+        w.setAvailableAmount(baseAmount);
+        return walletRepository.save(w);
+    }
+
     public Wallet createWallet(User user, String kryptoSymbol) {
         Wallet w = new Wallet();
         w.setUser(user);
@@ -90,7 +113,7 @@ public class ModelTestUtils {
         return kryptoSet.get(Math.toIntExact(random));
     }
 
-    public void generateRandomHistoricalData(Krypto krypto, Instant start, Instant end, Long numberOfRecords) {
+    public void generateRandomHistoricalData(Krypto krypto, Instant start, Instant end, Integer numberOfRecords) {
         List<HistoricalData> list = new ArrayList<>();
         for (long c = 0; c < numberOfRecords; c++) {
             HistoricalData datum = new HistoricalData();
@@ -110,5 +133,14 @@ public class ModelTestUtils {
                 .nextLong(startSeconds, endSeconds);
 
         return Instant.ofEpochSecond(random);
+    }
+
+    public void generateDatabaseRandomNoise(Integer numOfKryptos, Integer recordsPerKrypto) {
+        for (int c = 0; c < numOfKryptos; c++) {
+            //User u = createUser();
+            Krypto k = getRandomKrypto();
+            generateRandomHistoricalData(k, Instant.EPOCH, Instant.now(), recordsPerKrypto);
+            //Wallet w = createWallet(u, k.getSymbol());
+        }
     }
 }

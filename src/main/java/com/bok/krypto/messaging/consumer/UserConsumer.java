@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class MessageConsumer {
+public class UserConsumer {
 
     @Autowired
     UserHelper userHelper;
@@ -17,10 +17,9 @@ public class MessageConsumer {
     @JmsListener(destination = "${active-mq.users-queue}")
     public void onUserCreationMessage(UserCreationDTO userCreationDTO) {
         log.info("Received Message: " + userCreationDTO.toString());
-
         userHelper.save(userCreationDTO.id);
-
     }
+
 
 
 }

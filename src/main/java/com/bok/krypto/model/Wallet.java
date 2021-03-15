@@ -35,6 +35,14 @@ public class Wallet {
     @UpdateTimestamp
     private Instant updateTime;
 
+    public Wallet() {
+    }
+
+    public Wallet(User u, Krypto k) {
+        this.user = u;
+        this.krypto = k;
+    }
+
 
     public UUID getId() {
         return id;

@@ -1,8 +1,12 @@
 package com.bok.krypto.helper;
 
+import com.bok.integration.krypto.dto.WalletRequestDTO;
+import com.bok.integration.krypto.dto.WalletResponseDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.InvalidRequestException;
+import com.bok.krypto.exception.WalletAlreadyExistsException;
 import com.bok.krypto.exception.WalletNotFoundException;
+import com.bok.krypto.model.Krypto;
 import com.bok.krypto.model.Transaction;
 import com.bok.krypto.model.User;
 import com.bok.krypto.model.Wallet;
@@ -28,6 +32,9 @@ public class WalletHelper {
 
     @Autowired
     UserHelper userHelper;
+
+    @Autowired
+    KryptoHelper kryptoHelper;
 
 
     public Wallet findById(UUID id) {
@@ -71,7 +78,20 @@ public class WalletHelper {
         withdraw(source, amount);
         deposit(destination, amount);
         log.info("transferred {} from {} to {}", amount, source.getId(), destination.getId());
-        return transactionRepository.save(new Transaction(user, Transaction.Type.TRANSFER, source, destination, amount));
+        return transactionRepository.save(new Transaction(user, Transaction.Type.TRANSFER, Transaction.Status.SETTLED, source, destination, amount));
     }
 
+    public WalletResponseDTO createWallet(WalletRequestDTO requestDTO) {
+        if (walletRepository.existsByUser_IdAndKrypto_Symbol(requestDTO.userId, requestDTO.symbol)) {
+            throw new WalletAlreadyExistsException("A wallet with the same Krypto exists for this user");
+        }
+
+        User u = userHelper.findById(requestDTO.userId);
+        Krypto k = kryptoHelper.findBySymbol(requestDTO.symbol);
+        Wallet wallet = walletRepository.save(new Wallet(u, k));
+        WalletResponseDTO response = new WalletResponseDTO();
+        response.id = wallet.getId();
+        response.creationTime = wallet.getCreationTime();
+        return response;
+    }
 }
