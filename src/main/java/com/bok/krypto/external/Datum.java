@@ -1,34 +1,28 @@
-
 package com.bok.krypto.external;
+
+import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "id",
-    "name",
-    "symbol",
-    "slug",
-    "num_market_pairs",
-    "date_added",
-    "tags",
-    "max_supply",
-    "circulating_supply",
-    "total_supply",
-    "platform",
-    "cmc_rank",
-    "last_updated",
-    "quote"
+        "id",
+        "name",
+        "symbol",
+        "slug",
+        "num_market_pairs",
+        "date_added",
+        "tags",
+        "max_supply",
+        "circulating_supply",
+        "total_supply",
+        "platform",
+        "cmc_rank",
+        "last_updated",
+        "quote"
 })
 public class Datum {
 
@@ -65,13 +59,11 @@ public class Datum {
 
     /**
      * No args constructor for use in serialization
-     * 
      */
     public Datum() {
     }
 
     /**
-     * 
      * @param symbol
      * @param totalSupply
      * @param cmcRank

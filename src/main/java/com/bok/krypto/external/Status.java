@@ -1,25 +1,20 @@
-
 package com.bok.krypto.external;
+
+import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "timestamp",
-    "error_code",
-    "error_message",
-    "elapsed",
-    "credit_count",
-    "notice",
-    "total_count"
+        "timestamp",
+        "error_code",
+        "error_message",
+        "elapsed",
+        "credit_count",
+        "notice",
+        "total_count"
 })
 public class Status {
 
@@ -42,13 +37,11 @@ public class Status {
 
     /**
      * No args constructor for use in serialization
-     * 
      */
     public Status() {
     }
 
     /**
-     * 
      * @param elapsed
      * @param errorMessage
      * @param errorCode

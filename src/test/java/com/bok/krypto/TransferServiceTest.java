@@ -74,7 +74,7 @@ public class TransferServiceTest {
     }
 
     @Test
-    public void getTransferInfo(){
+    public void getTransferInfo() {
         User a = modelTestUtils.createUser(10L);
         Wallet wa = modelTestUtils.createWallet(a, BTC, new BigDecimal(100));
         User b = modelTestUtils.createUser();

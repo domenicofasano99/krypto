@@ -1,16 +1,6 @@
 package com.bok.krypto.messaging;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
-import org.springframework.jms.core.JmsTemplate;
-
-import javax.jms.ConnectionFactory;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 public class ActiveMQConfig {

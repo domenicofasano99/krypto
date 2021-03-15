@@ -11,7 +11,7 @@ public class TransactionHelper {
     @Autowired
     TransactionRepository transactionRepository;
 
-    public void handleMessage(TransactionMessage transactionMessage){
+    public void handleMessage(TransactionMessage transactionMessage) {
 
     }
 }

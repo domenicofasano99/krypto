@@ -1,4 +1,3 @@
-
 package com.bok.krypto.external;
 
 import com.fasterxml.jackson.annotation.*;
