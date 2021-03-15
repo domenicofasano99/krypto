@@ -6,6 +6,7 @@ active-mq:
   users-queue: users
   transactions-queue: transactions
   wallets-queue: wallets
+  emails-queue: emails
   broker-url: tcp://active-mq:61616
 
 spring:

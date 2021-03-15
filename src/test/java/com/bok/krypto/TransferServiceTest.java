@@ -47,7 +47,7 @@ public class TransferServiceTest {
 
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.from = wa.getId();
-        transferRequestDTO.to = wb.getId();
+        transferRequestDTO.destination = wb.getId();
         transferRequestDTO.amount = new BigDecimal(5);
         TransferResponseDTO responseDTO = transferService.transfer(transferRequestDTO);
 
@@ -67,7 +67,7 @@ public class TransferServiceTest {
 
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.from = wa.getId();
-        transferRequestDTO.to = wb.getId();
+        transferRequestDTO.destination = wb.getId();
         transferRequestDTO.amount = new BigDecimal(5);
         assertThrows(InsufficientBalanceException.class, () -> transferService.transfer(transferRequestDTO));
 
@@ -82,7 +82,7 @@ public class TransferServiceTest {
 
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.from = wa.getId();
-        transferRequestDTO.to = wb.getId();
+        transferRequestDTO.destination = wb.getId();
         transferRequestDTO.amount = new BigDecimal(5);
         TransferResponseDTO responseDTO = transferService.transfer(transferRequestDTO);
 

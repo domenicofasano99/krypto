@@ -1,23 +1,28 @@
 package com.bok.krypto.helper;
 
+import com.bok.integration.EmailMessage;
 import com.bok.integration.TransfersInfoDTO;
 import com.bok.integration.TransfersInfoRequestDTO;
 import com.bok.integration.krypto.dto.TransferInfoDTO;
 import com.bok.integration.krypto.dto.TransferInfoRequestDTO;
 import com.bok.integration.krypto.dto.TransferRequestDTO;
 import com.bok.integration.krypto.dto.TransferResponseDTO;
+import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.TransactionNotFoundException;
+import com.bok.krypto.messaging.TransferMessage;
 import com.bok.krypto.model.Transaction;
-import com.bok.krypto.model.User;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.TransactionRepository;
+import com.bok.krypto.service.interfaces.MessageService;
+import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
+
+import static com.bok.krypto.core.Constants.PENDING;
 
 @Component
 public class TransferHelper {
@@ -34,24 +39,23 @@ public class TransferHelper {
     @Autowired
     TransactionRepository transactionRepository;
 
+    @Autowired
+    MessageService messageService;
+
     public TransferResponseDTO transfer(Long userId, TransferRequestDTO transferRequestDTO) {
-        if (transferRequestDTO.amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new RuntimeException("Cannot transfer negative amount");
-        }
-        User user = userHelper.findById(userId);
-        Wallet source = walletHelper.findById(transferRequestDTO.from);
-        Wallet destination = walletHelper.findById(transferRequestDTO.to);
-        Transaction transaction = walletHelper.transfer(user, source, destination, transferRequestDTO.amount);
-        if (Objects.nonNull(transaction)) {
-            TransferResponseDTO response = new TransferResponseDTO();
-            response.status = transaction.getStatus().name();
-            response.id = transaction.getId();
-            response.amount = transaction.getAmount();
-            response.source = transaction.getSourceWallet().getId();
-            response.destination = transaction.getDestinationWallet().getId();
-            return response;
-        }
-        throw new RuntimeException("Error while performing the transfer");
+        Preconditions.checkArgument(transferRequestDTO.amount.compareTo(BigDecimal.ZERO) < 0);
+        Preconditions.checkArgument(userHelper.existsById(userId));
+        Preconditions.checkArgument(walletHelper.existsByUserIdAndSymbol(userId, transferRequestDTO.symbol));
+        TransferMessage message = new TransferMessage();
+        message.userId = userId;
+        message.symbol = transferRequestDTO.symbol;
+        message.destination = transferRequestDTO.destination;
+        message.amount = transferRequestDTO.amount;
+        messageService.send(message);
+
+        TransferResponseDTO response = new TransferResponseDTO();
+        response.status = PENDING;
+        return response;
     }
 
     public TransferInfoDTO getTransferInfo(TransferInfoRequestDTO transferInfoRequestDTO) {
@@ -75,5 +79,28 @@ public class TransferHelper {
         }
         List<Transaction> transactions = transactionRepository.findAllById(transfersIds);
         return null;
+    }
+
+    public void handle(TransferMessage transferMessage) {
+
+        Wallet source = walletHelper.findByUserIdAndSymbol(transferMessage.userId, transferMessage.symbol);
+        Wallet destination = walletHelper.findById(transferMessage.destination);
+        try {
+            walletHelper.withdraw(source, transferMessage.amount);
+        } catch (InsufficientBalanceException ex) {
+            String u = userHelper.findEmailByUserId(transferMessage.userId);
+            EmailMessage email = new EmailMessage();
+            email.subject = "Insufficient Balance in your account";
+            email.to = u;
+            email.text = "Your transfer of " + transferMessage.amount + " " + transferMessage.symbol + " has been DECLINED due to insufficient balance.";
+            messageService.send(email);
+        }
+        walletHelper.deposit(destination, transferMessage.amount);
+        String u = userHelper.findEmailByUserId(transferMessage.userId);
+        EmailMessage email = new EmailMessage();
+        email.subject = "Transfer executed";
+        email.to = u;
+        email.text = "Your transfer of " + transferMessage.amount + " " + transferMessage.symbol + " has been ACCEPTED.";
+        messageService.send(email);
     }
 }
