@@ -1,6 +1,6 @@
 package com.bok.krypto.messaging.producer;
 
-import com.bok.krypto.messaging.messages.TransactionMessage;
+import com.bok.krypto.messaging.messages.MarketMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,22 +9,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class TransactionProducer {
-
+public class MarketProducer {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${active-mq.transactions-queue}")
-    private String transfersTopic;
+    @Value("${active-mq.market-queue}")
+    private String marketQueue;
 
 
-    public void send(TransactionMessage transfer) {
+    public void send(MarketMessage marketMessage) {
         try {
-            log.info("Attempting Send transfer to Topic: " + transfersTopic);
-            jmsTemplate.convertAndSend(transfersTopic, transfer);
+            log.info("Attempting Send transfer to Queue: " + marketQueue);
+            jmsTemplate.convertAndSend(marketQueue, marketMessage);
         } catch (Exception e) {
             log.error("Received Exception during send Message: ", e);
         }
     }
-
 }

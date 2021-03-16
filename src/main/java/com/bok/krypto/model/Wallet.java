@@ -35,7 +35,18 @@ public class Wallet {
     @UpdateTimestamp
     private Instant updateTime;
 
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private Status status;
+
+
+    public enum Status{
+        PENDING,
+        CREATED,
+        FAILED
+    }
     public Wallet() {
+        //hibernate
     }
 
     public Wallet(User u, Krypto k) {
@@ -90,6 +101,14 @@ public class Wallet {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override

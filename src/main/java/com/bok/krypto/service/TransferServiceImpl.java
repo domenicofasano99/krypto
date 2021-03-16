@@ -1,5 +1,6 @@
 package com.bok.krypto.service;
 
+import com.bok.integration.StatusDTO;
 import com.bok.integration.krypto.dto.TransferInfoDTO;
 import com.bok.integration.krypto.dto.TransferInfoRequestDTO;
 import com.bok.integration.krypto.dto.TransferRequestDTO;
@@ -16,12 +17,17 @@ public class TransferServiceImpl implements TransferService {
     TransferHelper transferHelper;
 
     @Override
-    public TransferResponseDTO transfer(TransferRequestDTO transferRequestDTO) {
-        return transferHelper.transfer(10L, transferRequestDTO);
+    public TransferResponseDTO transfer(Long userId, TransferRequestDTO transferRequestDTO) {
+        return transferHelper.transfer(userId, transferRequestDTO);
     }
 
     @Override
-    public TransferInfoDTO transferInfo(TransferInfoRequestDTO transferInfoRequestDTO) {
+    public TransferInfoDTO transferInfo(Long userId, TransferInfoRequestDTO transferInfoRequestDTO) {
         return transferHelper.getTransferInfo(transferInfoRequestDTO);
+    }
+
+    @Override
+    public StatusDTO transferStatus(Long userId, Long transferId) {
+        return transferHelper.getTransferStatus(transferId);
     }
 }

@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
-@NoArgsConstructor
 public class Transaction {
 
     @Id
@@ -33,11 +32,11 @@ public class Transaction {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private Type type;
+    public Type type;
 
     @Column
-    @Enumerated
-    private Status status;
+    @Enumerated(EnumType.STRING)
+    public Status status;
 
     @ManyToOne
     private User user;
@@ -49,6 +48,15 @@ public class Transaction {
         this.sourceWallet = sourceWallet;
         this.destinationWallet = destinationWallet;
         this.amount = amount;
+    }
+
+    public Transaction() {
+
+    }
+
+    public Transaction(Type type, Status status) {
+        this.type=type;
+        this.status = status;
     }
 
     public enum Type {

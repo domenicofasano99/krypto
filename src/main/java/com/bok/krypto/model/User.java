@@ -5,10 +5,7 @@ import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.Set;
 
@@ -23,10 +20,10 @@ public class User {
     @Unique
     private String email;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.REMOVE})
     private Set<Wallet> wallets;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.REMOVE})
     private Set<Transaction> transactions;
 
     @CreationTimestamp

@@ -1,7 +1,7 @@
 # ACTIVE-MQ CONFIG
 active-mq:
   transfers-queue: transfers
-  orders-queue: orders
+  market-queue: market
   prices-topic: prices
   users-queue: users
   transactions-queue: transactions

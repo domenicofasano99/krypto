@@ -7,7 +7,7 @@ import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.InvalidRequestException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
 import com.bok.krypto.exception.WalletNotFoundException;
-import com.bok.krypto.messaging.WalletMessage;
+import com.bok.krypto.messaging.messages.WalletAbstractMessage;
 import com.bok.krypto.model.User;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.TransactionRepository;
@@ -55,7 +55,7 @@ public class WalletHelper {
     }
 
     @Transactional
-    public BigDecimal withdraw(Wallet wallet, BigDecimal amount) {
+    public synchronized BigDecimal withdraw(Wallet wallet, BigDecimal amount) {
         if (wallet.getAvailableAmount().compareTo(amount) < 0) {
             throw new InsufficientBalanceException("not enough funds to perform the withdrawal");
         }
@@ -68,7 +68,7 @@ public class WalletHelper {
     }
 
     @Transactional
-    public BigDecimal deposit(Wallet wallet, BigDecimal amount) {
+    public synchronized BigDecimal deposit(Wallet wallet, BigDecimal amount) {
         Wallet w = findById(wallet.getId());
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidRequestException("cannot deposit negative amounts");
@@ -89,14 +89,14 @@ public class WalletHelper {
         if (walletRepository.existsByUser_IdAndKrypto_Symbol(requestDTO.userId, requestDTO.symbol)) {
             throw new WalletAlreadyExistsException("A wallet with the same Krypto exists for this user");
         }
-        WalletMessage walletMessage = new WalletMessage();
+        WalletAbstractMessage walletMessage = new WalletAbstractMessage();
         walletMessage.userId = requestDTO.userId;
         walletMessage.symbol = requestDTO.symbol;
         messageService.send(walletMessage);
         return new WalletResponseDTO(WalletResponseDTO.Status.ACCEPTED);
     }
 
-    public void handleMessage(WalletMessage walletMessage) {
+    public void handleMessage(WalletAbstractMessage walletMessage) {
         Wallet w = walletRepository.findById(walletMessage.id)
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
         User u = userHelper.findById(walletMessage.userId);
@@ -112,5 +112,9 @@ public class WalletHelper {
         email.text = "Your wallet for Krypto " + w.getKrypto().getSymbol() + " has been created.";
         email.to = u.getEmail();
         return email;
+    }
+
+    public Boolean hasSufficientBalance(Long userId, String symbol, BigDecimal amount) {
+        return walletRepository.existsByUser_IdAndKrypto_SymbolAndAvailableAmountGreaterThanEqual(userId, symbol, amount);
     }
 }

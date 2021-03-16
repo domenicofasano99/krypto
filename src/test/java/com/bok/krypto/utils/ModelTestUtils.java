@@ -1,11 +1,10 @@
 package com.bok.krypto.utils;
 
 import com.bok.krypto.helper.KryptoHelper;
-import com.bok.krypto.model.HistoricalData;
-import com.bok.krypto.model.Krypto;
-import com.bok.krypto.model.User;
-import com.bok.krypto.model.Wallet;
+import com.bok.krypto.helper.TransferHelper;
+import com.bok.krypto.model.*;
 import com.bok.krypto.repository.*;
+import com.bok.krypto.service.interfaces.TransferService;
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +39,18 @@ public class ModelTestUtils {
     @Autowired
     TransactionRepository transactionRepository;
 
+    @Autowired
+    TransferHelper transferHelper;
 
-    private Random random = new Random();
-    private Faker faker = new Faker();
+    @Autowired
+    TransferService transferService;
 
-    public void populateDB() {
+
+    public static final Random random = new Random();
+    public static final Faker faker = new Faker();
+
+    public synchronized void populateDB() {
+
         kryptoRepository.save(new Krypto("Bitcoin", "BTC", new BigDecimal(50000)));
         kryptoRepository.save(new Krypto("Ethereum", "ETH", new BigDecimal(1800)));
         kryptoRepository.save(new Krypto("Litecoin", "LTC", new BigDecimal(1800)));
@@ -53,12 +59,13 @@ public class ModelTestUtils {
 
     }
 
-    public void clearAll() {
-        transactionRepository.deleteAll();
+    public synchronized void clearAll() {
         historicalDataRepository.deleteAll();
+        transactionRepository.deleteAll();
         walletRepository.deleteAll();
         kryptoRepository.deleteAll();
         userRepository.deleteAll();
+
     }
 
     public void generateHistoricalDataForeachKrypto() {
@@ -91,20 +98,16 @@ public class ModelTestUtils {
     }
 
 
-    public Wallet createWallet(User user, String symbol, BigDecimal baseAmount) {
-        Wallet w = createWallet(user, symbol);
+    public Wallet createWallet(User user, Krypto krypto, BigDecimal baseAmount) {
+        Wallet w = new Wallet();
+        w.setKrypto(krypto);
+        w.setUser(user);
         w.setAvailableAmount(baseAmount);
-        return walletRepository.save(w);
+        return walletRepository.saveAndFlush(w);
     }
 
-    public Wallet createWallet(User user, String kryptoSymbol) {
-        Wallet w = new Wallet();
-        w.setUser(user);
-        Krypto k = kryptoHelper.findBySymbol(kryptoSymbol);
-        w.setKrypto(k);
-        w = walletRepository.save(w);
-        log.info("Created wallet with id: {}", w.getId());
-        return w;
+    public Krypto getKrypto(String krypto) {
+        return kryptoRepository.findBySymbol(krypto).get();
     }
 
     public Krypto getRandomKrypto() {
@@ -142,5 +145,16 @@ public class ModelTestUtils {
             generateRandomHistoricalData(k, Instant.EPOCH, Instant.now(), recordsPerKrypto);
             //Wallet w = createWallet(u, k.getSymbol());
         }
+    }
+
+
+    public Boolean allTransfersProcessed() {
+        List<Transaction> pendingList = transactionRepository.findAllPendingTransfers();
+        return pendingList.size() == 0;
+    }
+
+    public Boolean allWalletsProcessed() {
+        List<Wallet> pendingList = walletRepository.findAllPendingWallets();
+        return pendingList.size() == 0;
     }
 }

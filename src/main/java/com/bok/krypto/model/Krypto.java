@@ -6,8 +6,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Krypto {
@@ -32,7 +32,10 @@ public class Krypto {
     private Instant updateTimestamp;
 
     @OneToMany(cascade = {CascadeType.ALL})
-    Set<HistoricalData> historicalData = new HashSet<>();
+    private List<HistoricalData> historicalData = new ArrayList<>();
+
+    @OneToMany
+    private List<Wallet> wallets = new ArrayList<>();
 
     public Krypto() {
         //hibernate
@@ -44,11 +47,11 @@ public class Krypto {
         this.price = price;
     }
 
-    public Set<HistoricalData> getHistoricalData() {
+    public List<HistoricalData> getHistoricalData() {
         return historicalData;
     }
 
-    public void setHistoricalData(Set<HistoricalData> historicalDataSet) {
+    public void setHistoricalData(List<HistoricalData> historicalDataSet) {
         this.historicalData = historicalDataSet;
     }
 
@@ -102,6 +105,14 @@ public class Krypto {
 
     public void setUpdateTimestamp(Instant updateTimestamp) {
         this.updateTimestamp = updateTimestamp;
+    }
+
+    public List<Wallet> getWallets() {
+        return wallets;
+    }
+
+    public void setWallets(List<Wallet> wallets) {
+        this.wallets = wallets;
     }
 
     @Override

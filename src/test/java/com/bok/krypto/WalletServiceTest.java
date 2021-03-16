@@ -15,6 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
+
+import static com.bok.krypto.utils.Constants.BTC;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
@@ -49,15 +52,14 @@ public class WalletServiceTest {
         requestDTO.symbol = k.getSymbol();
         WalletResponseDTO responseDTO = walletService.create(requestDTO);
         assertNotNull(responseDTO);
-        assertNotNull(responseDTO.id);
-        assertNotNull(responseDTO.creationTime);
 
     }
 
     @Test
     public void createWalletFail_NoSuchKrypto() {
         User u = modelTestUtils.createUser();
-        assertThrows(KryptoNotFoundException.class, () -> modelTestUtils.createWallet(u, "GGG"));
+        Krypto k = modelTestUtils.getKrypto(BTC);
+        assertThrows(KryptoNotFoundException.class, () -> modelTestUtils.createWallet(u, k, new BigDecimal(10)));
     }
 
     @Test
