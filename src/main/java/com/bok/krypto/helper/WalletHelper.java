@@ -3,11 +3,8 @@ package com.bok.krypto.helper;
 import com.bok.integration.EmailMessage;
 import com.bok.integration.krypto.dto.WalletRequestDTO;
 import com.bok.integration.krypto.dto.WalletResponseDTO;
-import com.bok.krypto.exception.InsufficientBalanceException;
-import com.bok.krypto.exception.InvalidRequestException;
-import com.bok.krypto.exception.WalletAlreadyExistsException;
-import com.bok.krypto.exception.WalletNotFoundException;
-import com.bok.krypto.messaging.messages.WalletAbstractMessage;
+import com.bok.krypto.exception.*;
+import com.bok.krypto.messaging.messages.WalletMessage;
 import com.bok.krypto.model.User;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.TransactionRepository;
@@ -86,17 +83,20 @@ public class WalletHelper {
     }
 
     public WalletResponseDTO createWallet(Long userId, WalletRequestDTO requestDTO) {
+        if(!kryptoHelper.existsBySymbol(requestDTO.symbol)){
+            throw new KryptoNotFoundException("This krypto doesn't exists");
+        }
         if (walletRepository.existsByUser_IdAndKrypto_Symbol(userId, requestDTO.symbol)) {
             throw new WalletAlreadyExistsException("A wallet with the same Krypto exists for this user");
         }
-        WalletAbstractMessage walletMessage = new WalletAbstractMessage();
+        WalletMessage walletMessage = new WalletMessage();
         walletMessage.userId = userId;
         walletMessage.symbol = requestDTO.symbol;
         messageService.send(walletMessage);
         return new WalletResponseDTO(WalletResponseDTO.Status.ACCEPTED);
     }
 
-    public void handleMessage(WalletAbstractMessage walletMessage) {
+    public void handleMessage(WalletMessage walletMessage) {
         Wallet w = walletRepository.findById(walletMessage.id)
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
         User u = userHelper.findById(walletMessage.userId);

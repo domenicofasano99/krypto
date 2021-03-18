@@ -20,6 +20,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
     Boolean existsByUser_IdAndKrypto_Symbol(Long userId, String symbol);
 
-    @Query("select w from Wallet w where w.status = 'PENDING' ")
-    List<Wallet> findAllPendingWallets();
+    @Query("select count(w.id) from Wallet w where w.status = 'PENDING' ")
+    Integer countPendingWallets();
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface MessageService {
-    public void send(WalletAbstractMessage walletMessage);
+    public void send(WalletMessage walletMessage);
 
     public void send(TransactionMessage transactionMessage);
 

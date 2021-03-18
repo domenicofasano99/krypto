@@ -158,10 +158,11 @@ public class ModelTestUtils {
     @SneakyThrows
     public void await() {
         int times = 0;
+        int maxTimes = 100;
         while (transferRepository.countPendingTransfers() > 0 &&
-                walletRepository.findAllPendingWallets().size() > 0 &&
-                transactionRepository.findAllPendingSellTransactions().size()>0 &&
-                times < 100) {
+                walletRepository.countPendingWallets() > 0 &&
+                transactionRepository.countPendingTransactions() > 0 &&
+                times < maxTimes) {
             Thread.sleep(100);
             times++;
         }

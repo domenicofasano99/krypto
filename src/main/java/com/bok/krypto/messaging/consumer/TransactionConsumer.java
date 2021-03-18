@@ -15,7 +15,7 @@ public class TransactionConsumer {
     TransactionHelper transactionHelper;
 
     @JmsListener(destination = "${active-mq.transactions-queue}")
-    public void onTransactionMessageReceived(TransactionMessage message) {
+    public void transactionListener(TransactionMessage message) {
         log.info("Received Message: " + message.toString());
         transactionHelper.handleMessage(message);
 

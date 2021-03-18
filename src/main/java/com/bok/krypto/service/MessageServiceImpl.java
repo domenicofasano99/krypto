@@ -35,7 +35,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void send(WalletAbstractMessage walletMessage) {
+    public void send(WalletMessage walletMessage) {
         walletProducer.send(walletMessage);
     }
 

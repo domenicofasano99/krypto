@@ -4,7 +4,7 @@ import com.bok.krypto.messaging.AbstractMessage;
 
 import java.util.UUID;
 
-public class WalletAbstractMessage extends AbstractMessage {
+public class WalletMessage extends AbstractMessage {
     public String symbol;
 
     public UUID id;

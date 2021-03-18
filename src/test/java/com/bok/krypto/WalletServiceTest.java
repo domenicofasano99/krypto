@@ -15,8 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 @SpringBootTest
 @Slf4j
@@ -57,8 +56,8 @@ public class WalletServiceTest {
         User u = modelTestUtils.createUser();
         WalletRequestDTO walletRequest = new WalletRequestDTO();
         walletRequest.symbol = "JFK";
-        modelTestUtils.await();
         assertThrows(KryptoNotFoundException.class, () -> walletService.create(u.getId(), walletRequest));
+        modelTestUtils.await();
     }
 
     @Test

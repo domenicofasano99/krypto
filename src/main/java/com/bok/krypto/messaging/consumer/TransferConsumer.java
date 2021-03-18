@@ -15,7 +15,7 @@ public class TransferConsumer {
     TransferHelper transferHelper;
 
     @JmsListener(destination = "${active-mq.transfers-queue}")
-    public void onUserCreationMessage(TransferMessage transferMessage) {
+    public void transferListener(TransferMessage transferMessage) {
         log.info("Received Message: " + transferMessage.toString());
         transferHelper.handle(transferMessage);
     }

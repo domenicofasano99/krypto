@@ -1,6 +1,6 @@
 package com.bok.krypto.messaging.producer;
 
-import com.bok.krypto.messaging.messages.WalletAbstractMessage;
+import com.bok.krypto.messaging.messages.WalletMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ public class WalletProducer {
     private String walletsQueue;
 
 
-    public void send(WalletAbstractMessage walletMessage) {
+    public void send(WalletMessage walletMessage) {
         try {
             log.info("Attempting Send transfer to Topic: " + walletsQueue);
             jmsTemplate.convertAndSend(walletsQueue, walletMessage);

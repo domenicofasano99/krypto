@@ -15,7 +15,7 @@ public class UserConsumer {
     UserHelper userHelper;
 
     @JmsListener(destination = "${active-mq.users-queue}")
-    public void onUserCreationMessage(UserCreationDTO userCreationDTO) {
+    public void userListener(UserCreationDTO userCreationDTO) {
         log.info("Received Message: " + userCreationDTO.toString());
         userHelper.save(userCreationDTO.id);
     }
