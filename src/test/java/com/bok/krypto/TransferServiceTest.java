@@ -10,6 +10,8 @@ import com.bok.krypto.model.Krypto;
 import com.bok.krypto.model.Transaction;
 import com.bok.krypto.model.User;
 import com.bok.krypto.model.Wallet;
+import com.bok.krypto.repository.TransactionRepository;
+import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.TransferService;
 import com.bok.krypto.utils.ModelTestUtils;
@@ -20,11 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-import java.util.concurrent.Callable;
 
 import static com.bok.krypto.utils.Constants.BTC;
-import static org.awaitility.Awaitility.with;
-import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.Assert.*;
 
 @SpringBootTest
@@ -41,6 +40,12 @@ public class TransferServiceTest {
 
     @Autowired
     TransferHelper transferHelper;
+
+    @Autowired
+    TransactionRepository transactionRepository;
+
+    @Autowired
+    TransferRepository transferRepository;
 
 
     @BeforeEach
@@ -61,13 +66,14 @@ public class TransferServiceTest {
         Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(100));
         User b = modelTestUtils.createUser();
         Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(10));
-        with().pollInterval(fibonacci()).await().until(transfersProcessed());
+
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.symbol = BTC;
         transferRequestDTO.destination = wb.getId();
         transferRequestDTO.amount = new BigDecimal(5);
         TransferResponseDTO responseDTO = transferService.transfer(a.getId(), transferRequestDTO);
-        with().pollInterval(fibonacci()).await().until(transfersProcessed());
+        modelTestUtils.await();
+
         Wallet fwa = walletRepository.findById(wa.getId()).get();
         Wallet fwb = walletRepository.findById(wb.getId()).get();
 
@@ -76,10 +82,11 @@ public class TransferServiceTest {
 
     }
 
+
     @Test
     public void transferNotAllowed_InsufficientBalance() {
         Krypto k = modelTestUtils.getKrypto(BTC);
-        User a = modelTestUtils.createUser(10L);
+        User a = modelTestUtils.createUser();
         Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(1));
         User b = modelTestUtils.createUser();
         Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(0));
@@ -91,20 +98,19 @@ public class TransferServiceTest {
 
     }
 
-    @Test
+    // FIXME: 18/03/21
     public void getTransferInfo() {
         Krypto k = modelTestUtils.getKrypto(BTC);
-        User a = modelTestUtils.createUser(10L);
+        User a = modelTestUtils.createUser();
         Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(100));
         User b = modelTestUtils.createUser();
         Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(10));
-
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.symbol = BTC;
         transferRequestDTO.destination = wb.getId();
         transferRequestDTO.amount = new BigDecimal(5);
         TransferResponseDTO responseDTO = transferService.transfer(a.getId(), transferRequestDTO);
-        with().pollInterval(fibonacci()).await().until(transfersProcessed());
+        modelTestUtils.await();
         TransferInfoRequestDTO req = new TransferInfoRequestDTO();
         req.transferId = responseDTO.id;
         TransferInfoDTO info = transferService.transferInfo(a.getId(), req);
@@ -112,11 +118,5 @@ public class TransferServiceTest {
         assertEquals(info.id, responseDTO.id);
     }
 
-    private Callable<Boolean> transfersProcessed() {
-        return () -> modelTestUtils.allTransfersProcessed(); // The condition that must be fulfilled
-    }
 
-    private Callable<Boolean> walletsProcessed() {
-        return () -> modelTestUtils.allWalletsProcessed();
-    }
 }

@@ -12,8 +12,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("select t.status from Transaction t where t.id = :transactionId")
     Transaction.Status findStatusById(@Param("transactionId") Long transactionId);
 
-    @Query("select t from Transaction t where t.status='PENDING' and t.type='TRANSFER'")
-    List<Transaction> findAllPendingTransfers();
+    @Query("select t from Transaction t where t.status='PENDING' and t.type='BUY'")
+    List<Transaction> findAllPendingPurchaseTransactions();
+
+    @Query("select t from Transaction t where t.status='PENDING' and t.type='SELL'")
+    List<Transaction> findAllPendingSellTransactions();
+
 
     public static class Projection {
         public interface Status {

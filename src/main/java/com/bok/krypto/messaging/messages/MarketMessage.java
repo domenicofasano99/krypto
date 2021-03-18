@@ -4,7 +4,7 @@ import com.bok.krypto.messaging.AbstractMessage;
 
 import java.math.BigDecimal;
 
-public class MarketMessage extends AbstractMessage {
+public abstract class MarketMessage extends AbstractMessage {
     public Long transactionId;
     public BigDecimal amount;
     public String symbol;

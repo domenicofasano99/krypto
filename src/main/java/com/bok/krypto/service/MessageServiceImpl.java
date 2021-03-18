@@ -1,10 +1,7 @@
 package com.bok.krypto.service;
 
 import com.bok.integration.EmailMessage;
-import com.bok.krypto.messaging.messages.MarketMessage;
-import com.bok.krypto.messaging.messages.TransactionMessage;
-import com.bok.krypto.messaging.messages.TransferMessage;
-import com.bok.krypto.messaging.messages.WalletAbstractMessage;
+import com.bok.krypto.messaging.messages.*;
 import com.bok.krypto.messaging.producer.*;
 import com.bok.krypto.service.interfaces.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +45,12 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void send(MarketMessage message) {
-        marketProducer.send(message);
+    public void send(PurchaseMessage purchaseMessage) {
+        marketProducer.send(purchaseMessage);
+    }
+
+    @Override
+    public void send(SellMessage sellMessage) {
+        marketProducer.send(sellMessage);
     }
 }

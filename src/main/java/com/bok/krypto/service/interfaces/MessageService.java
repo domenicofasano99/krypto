@@ -1,10 +1,7 @@
 package com.bok.krypto.service.interfaces;
 
 import com.bok.integration.EmailMessage;
-import com.bok.krypto.messaging.messages.MarketMessage;
-import com.bok.krypto.messaging.messages.TransactionMessage;
-import com.bok.krypto.messaging.messages.TransferMessage;
-import com.bok.krypto.messaging.messages.WalletAbstractMessage;
+import com.bok.krypto.messaging.messages.*;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,5 +14,7 @@ public interface MessageService {
 
     public void send(EmailMessage emailWalletCreation);
 
-    public void send(MarketMessage message);
+    public void send(PurchaseMessage purchaseMessage);
+
+    public void send(SellMessage sellMessage);
 }

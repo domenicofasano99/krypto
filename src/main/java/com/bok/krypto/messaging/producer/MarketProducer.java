@@ -1,6 +1,7 @@
 package com.bok.krypto.messaging.producer;
 
-import com.bok.krypto.messaging.messages.MarketMessage;
+import com.bok.krypto.messaging.messages.PurchaseMessage;
+import com.bok.krypto.messaging.messages.SellMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,14 +14,26 @@ public class MarketProducer {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${active-mq.market-queue}")
-    private String marketQueue;
+    @Value("${active-mq.market-purchase-queue}")
+    private String marketPurchaseQueue;
+
+    @Value("${active-mq.market-sell-queue}")
+    private String marketSellQueue;
 
 
-    public void send(MarketMessage marketMessage) {
+    public void send(PurchaseMessage purchaseMessage) {
         try {
-            log.info("Attempting Send transfer to Queue: " + marketQueue);
-            jmsTemplate.convertAndSend(marketQueue, marketMessage);
+            log.info("Sending purchaseMessage to Queue: " + marketPurchaseQueue);
+            jmsTemplate.convertAndSend(marketPurchaseQueue, purchaseMessage);
+        } catch (Exception e) {
+            log.error("Received Exception during send Message: ", e);
+        }
+    }
+
+    public void send(SellMessage sellMessage) {
+        try {
+            log.info("Sending sellMessage to Queue: " + marketSellQueue);
+            jmsTemplate.convertAndSend(marketSellQueue, sellMessage);
         } catch (Exception e) {
             log.error("Received Exception during send Message: ", e);
         }

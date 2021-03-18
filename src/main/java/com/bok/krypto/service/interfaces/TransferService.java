@@ -14,4 +14,6 @@ public interface TransferService {
     TransferInfoDTO transferInfo(Long userId, TransferInfoRequestDTO transferInfoRequestDTO);
 
     StatusDTO transferStatus(Long userId, Long id);
+
+    Integer pendingTransfers();
 }

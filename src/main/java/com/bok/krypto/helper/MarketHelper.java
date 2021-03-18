@@ -5,9 +5,9 @@ import com.bok.integration.krypto.PurchaseRequestDTO;
 import com.bok.integration.krypto.dto.SellRequestDTO;
 import com.bok.integration.krypto.dto.TransactionDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
-import com.bok.krypto.messaging.messages.MarketMessage;
 import com.bok.krypto.messaging.messages.PurchaseMessage;
 import com.bok.krypto.messaging.messages.SellMessage;
+import com.bok.krypto.model.Activity;
 import com.bok.krypto.model.Transaction;
 import com.bok.krypto.model.User;
 import com.bok.krypto.model.Wallet;
@@ -51,15 +51,15 @@ public class MarketHelper {
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequestDTO.symbol), KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, NEGATIVE_AMOUNT_GIVEN);
 
-        Transaction t = new Transaction(Transaction.Type.BUY, Transaction.Status.PENDING);
+        Transaction t = new Transaction(Transaction.Type.BUY, Activity.Status.PENDING);
         t = transactionRepository.save(t);
-        MarketMessage message = new MarketMessage();
+        PurchaseMessage message = new PurchaseMessage();
         message.userId = userId;
         message.transactionId = t.getId();
         message.amount = purchaseRequestDTO.amount;
         message.symbol = purchaseRequestDTO.symbol;
         messageService.send(message);
-        return new TransactionDTO(t.getId(), t.status.name(), t.type.name(), purchaseRequestDTO.amount);
+        return new TransactionDTO(t.getId(), t.status.name(), t.getType().name(), purchaseRequestDTO.amount);
     }
 
     public void handle(PurchaseMessage purchaseMessage) {
@@ -67,7 +67,7 @@ public class MarketHelper {
         Transaction t = transactionRepository.findById(purchaseMessage.transactionId).orElseThrow(() -> new RuntimeException("This transaction should have been persisted before"));
         Wallet destination = walletHelper.findByUserIdAndSymbol(purchaseMessage.userId, purchaseMessage.symbol);
         User user = userHelper.findById(purchaseMessage.userId);
-        t.setSourceWallet(destination);
+        t.setWallet(destination);
         t.setAmount(purchaseMessage.amount);
         t.setUser(user);
 
@@ -81,12 +81,13 @@ public class MarketHelper {
             t.setStatus(Transaction.Status.REJECTED);
             messageService.send(email);
         }
+        log.info("Completed purchase ID:{} for {} of {} {}", purchaseMessage.transactionId, purchaseMessage.userId, purchaseMessage.symbol, purchaseMessage.amount);
         EmailMessage email = new EmailMessage();
         email.subject = "Transfer executed";
         email.to = user.getEmail();
         email.text = "Your PURCHASE of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been ACCEPTED.";
         t.setStatus(Transaction.Status.SETTLED);
-        transactionRepository.saveAndFlush(t);
+        transactionRepository.save(t);
         messageService.send(email);
     }
 
@@ -102,13 +103,13 @@ public class MarketHelper {
 
         Transaction t = new Transaction(Transaction.Type.SELL, Transaction.Status.PENDING);
         t = transactionRepository.save(t);
-        MarketMessage message = new MarketMessage();
+        SellMessage message = new SellMessage();
         message.userId = userId;
         message.transactionId = t.getId();
         message.amount = sellRequestDTO.amount;
         message.symbol = sellRequestDTO.symbol;
         messageService.send(message);
-        return new TransactionDTO(t.getId(), t.status.name(), t.type.name(), sellRequestDTO.amount);
+        return new TransactionDTO(t.getId(), t.status.name(), t.getType().name(), sellRequestDTO.amount);
 
 
     }
@@ -118,7 +119,7 @@ public class MarketHelper {
         Transaction t = transactionRepository.findById(sellMessage.transactionId).orElseThrow(() -> new RuntimeException("This transaction should have been persisted before"));
         Wallet source = walletHelper.findByUserIdAndSymbol(sellMessage.userId, sellMessage.symbol);
         User user = userHelper.findById(sellMessage.userId);
-        t.setSourceWallet(source);
+        t.setWallet(source);
         t.setAmount(sellMessage.amount);
         t.setUser(user);
 

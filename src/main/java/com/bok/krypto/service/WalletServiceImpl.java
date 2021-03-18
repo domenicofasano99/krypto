@@ -14,7 +14,7 @@ public class WalletServiceImpl implements WalletService {
     WalletHelper walletHelper;
 
     @Override
-    public WalletResponseDTO create(WalletRequestDTO walletRequestDTO) {
-        return walletHelper.createWallet(walletRequestDTO);
+    public WalletResponseDTO create(Long userId, WalletRequestDTO walletRequestDTO) {
+        return walletHelper.createWallet(userId, walletRequestDTO);
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class EmailProducer {
+
     @Autowired
     JmsTemplate jmsTemplate;
 
@@ -19,7 +20,7 @@ public class EmailProducer {
 
     public void send(EmailMessage emailMessage) {
         try {
-            log.info("Attempting Send transfer to Topic: " + emailQueue);
+            log.info("sending email message to: {}", emailMessage.to);
             jmsTemplate.convertAndSend(emailQueue, emailMessage);
         } catch (Exception e) {
             log.error("Received Exception during send Message: ", e);

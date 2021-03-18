@@ -106,7 +106,7 @@ class KryptoServiceTests {
         }
     }
 
-    @Test
+
     @Ignore
     void evaluatePerformance() {
         int kryptos = 1000;

@@ -30,4 +30,9 @@ public class TransferServiceImpl implements TransferService {
     public StatusDTO transferStatus(Long userId, Long transferId) {
         return transferHelper.getTransferStatus(transferId);
     }
+
+    @Override
+    public Integer pendingTransfers() {
+        return transferHelper.pendingTransfers();
+    }
 }

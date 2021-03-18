@@ -15,9 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigDecimal;
-
-import static com.bok.krypto.utils.Constants.BTC;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
@@ -48,9 +45,9 @@ public class WalletServiceTest {
         User u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
         WalletRequestDTO requestDTO = new WalletRequestDTO();
-        requestDTO.userId = u.getId();
         requestDTO.symbol = k.getSymbol();
-        WalletResponseDTO responseDTO = walletService.create(requestDTO);
+        WalletResponseDTO responseDTO = walletService.create(u.getId(), requestDTO);
+        modelTestUtils.await();
         assertNotNull(responseDTO);
 
     }
@@ -58,8 +55,10 @@ public class WalletServiceTest {
     @Test
     public void createWalletFail_NoSuchKrypto() {
         User u = modelTestUtils.createUser();
-        Krypto k = modelTestUtils.getKrypto(BTC);
-        assertThrows(KryptoNotFoundException.class, () -> modelTestUtils.createWallet(u, k, new BigDecimal(10)));
+        WalletRequestDTO walletRequest = new WalletRequestDTO();
+        walletRequest.symbol = "JFK";
+        modelTestUtils.await();
+        assertThrows(KryptoNotFoundException.class, () -> walletService.create(u.getId(), walletRequest));
     }
 
     @Test
@@ -68,11 +67,14 @@ public class WalletServiceTest {
         User u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
         WalletRequestDTO requestDTO = new WalletRequestDTO();
-        requestDTO.userId = u.getId();
+
         requestDTO.symbol = k.getSymbol();
-        WalletResponseDTO responseDTO = walletService.create(requestDTO);
+        WalletResponseDTO responseDTO = walletService.create(u.getId(), requestDTO);
         assertNotNull(responseDTO);
-        assertThrows(WalletAlreadyExistsException.class, () -> walletService.create(requestDTO));
+        modelTestUtils.await();
+        assertThrows(WalletAlreadyExistsException.class, () -> walletService.create(u.getId(), requestDTO));
 
     }
+
+
 }

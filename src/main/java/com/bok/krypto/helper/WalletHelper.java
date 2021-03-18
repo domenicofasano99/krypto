@@ -85,12 +85,12 @@ public class WalletHelper {
         return walletRepository.existsByUser_IdAndKrypto_Symbol(userId, symbol);
     }
 
-    public WalletResponseDTO createWallet(WalletRequestDTO requestDTO) {
-        if (walletRepository.existsByUser_IdAndKrypto_Symbol(requestDTO.userId, requestDTO.symbol)) {
+    public WalletResponseDTO createWallet(Long userId, WalletRequestDTO requestDTO) {
+        if (walletRepository.existsByUser_IdAndKrypto_Symbol(userId, requestDTO.symbol)) {
             throw new WalletAlreadyExistsException("A wallet with the same Krypto exists for this user");
         }
         WalletAbstractMessage walletMessage = new WalletAbstractMessage();
-        walletMessage.userId = requestDTO.userId;
+        walletMessage.userId = userId;
         walletMessage.symbol = requestDTO.symbol;
         messageService.send(walletMessage);
         return new WalletResponseDTO(WalletResponseDTO.Status.ACCEPTED);

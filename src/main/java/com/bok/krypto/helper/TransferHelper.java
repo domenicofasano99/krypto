@@ -11,10 +11,8 @@ import com.bok.integration.krypto.dto.TransferResponseDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.TransactionNotFoundException;
 import com.bok.krypto.messaging.messages.TransferMessage;
-import com.bok.krypto.model.Transaction;
-import com.bok.krypto.model.User;
-import com.bok.krypto.model.Wallet;
-import com.bok.krypto.repository.TransactionRepository;
+import com.bok.krypto.model.*;
+import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +39,7 @@ public class TransferHelper {
     UserHelper userHelper;
 
     @Autowired
-    TransactionRepository transactionRepository;
+    TransferRepository transferRepository;
 
     @Autowired
     MessageService messageService;
@@ -53,11 +51,11 @@ public class TransferHelper {
         if (!walletHelper.hasSufficientBalance(userId, transferRequestDTO.symbol, transferRequestDTO.amount)) {
             throw new InsufficientBalanceException("Insufficient balance");
         }
+        Transfer t = new Transfer();
+        t.setStatus(Activity.Status.PENDING);
+        t = transferRepository.saveAndFlush(t);
+
         TransferMessage message = new TransferMessage();
-        Transaction t = new Transaction();
-        t.setType(Transaction.Type.TRANSFER);
-        t.setStatus(Transaction.Status.PENDING);
-        t = transactionRepository.saveAndFlush(t);
         message.transferId = t.getId();
         message.userId = userId;
         message.symbol = transferRequestDTO.symbol;
@@ -74,14 +72,13 @@ public class TransferHelper {
 
     public TransferInfoDTO getTransferInfo(TransferInfoRequestDTO transferInfoRequestDTO) {
         Long transferId = transferInfoRequestDTO.transferId;
-        Transaction t = transactionRepository.findById(transferId).orElseThrow(() -> new TransactionNotFoundException("Could not find a transaction with the given ID"));
+        Transfer t = transferRepository.findById(transferId).orElseThrow(() -> new TransactionNotFoundException("Could not find a transaction with the given ID"));
         TransferInfoDTO response = new TransferInfoDTO();
         response.id = t.getId();
-        response.type = t.getType().name();
         response.amount = t.getAmount();
         response.source = t.getSourceWallet().getId();
         response.destination = t.getDestinationWallet().getId();
-        response.timestamp = t.getTimestamp();
+        response.timestamp = t.getCreationTimestamp();
         response.status = t.getStatus().name();
         return response;
     }
@@ -92,13 +89,13 @@ public class TransferHelper {
             TransfersInfoDTO emptyDTO = new TransfersInfoDTO();
 
         }
-        List<Transaction> transactions = transactionRepository.findAllById(transfersIds);
+        List<Transfer> transactions = transferRepository.findAllById(transfersIds);
         return null;
     }
 
     public void handle(TransferMessage transferMessage) {
         log.info("Processing transfer {}", transferMessage);
-        Transaction t = transactionRepository.findById(transferMessage.transferId).orElseThrow(() -> new RuntimeException("This transfer should have been persisted before"));
+        Transfer t = transferRepository.findById(transferMessage.transferId).orElseThrow(() -> new RuntimeException("This transfer should have been persisted before"));
         Wallet source = walletHelper.findByUserIdAndSymbol(transferMessage.userId, transferMessage.symbol);
         Wallet destination = walletHelper.findById(transferMessage.destination);
         User user = userHelper.findById(transferMessage.userId);
@@ -124,14 +121,18 @@ public class TransferHelper {
         email.to = u;
         email.text = "Your transfer of " + transferMessage.amount + " " + transferMessage.symbol + " has been ACCEPTED.";
         t.setStatus(Transaction.Status.SETTLED);
-        transactionRepository.saveAndFlush(t);
+        transferRepository.saveAndFlush(t);
         messageService.send(email);
     }
 
     public StatusDTO getTransferStatus(Long transferId) {
-        Transaction.Status status = transactionRepository.findStatusById(transferId);
+        Transaction.Status status = transferRepository.findStatusById(transferId);
         StatusDTO statusDTO = new StatusDTO();
         statusDTO.status = status.name();
         return statusDTO;
+    }
+
+    public Integer pendingTransfers() {
+        return transferRepository.countPendingTransfers();
     }
 }
