@@ -6,6 +6,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @MappedSuperclass
 @DiscriminatorColumn(name = "transaction_type",
@@ -14,6 +15,9 @@ public abstract class Activity {
     @Id
     @GeneratedValue
     private Long id;
+
+    @GeneratedValue
+    private UUID publicId;
 
     @Column
     @CreationTimestamp
@@ -42,12 +46,25 @@ public abstract class Activity {
         REJECTED
     }
 
+    @PrePersist
+    public void prePersist() {
+        this.status = Status.PENDING;
+    }
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public UUID getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(UUID publicId) {
+        this.publicId = publicId;
     }
 
     public Instant getCreationTimestamp() {

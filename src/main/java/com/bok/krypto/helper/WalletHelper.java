@@ -1,6 +1,8 @@
 package com.bok.krypto.helper;
 
 import com.bok.integration.EmailMessage;
+import com.bok.integration.krypto.WalletDeleteRequestDTO;
+import com.bok.integration.krypto.WalletDeleteResponseDTO;
 import com.bok.integration.krypto.dto.WalletRequestDTO;
 import com.bok.integration.krypto.dto.WalletResponseDTO;
 import com.bok.krypto.exception.*;
@@ -10,6 +12,7 @@ import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.TransactionRepository;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.MessageService;
+import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,6 +39,9 @@ public class WalletHelper {
 
     @Autowired
     MessageService messageService;
+
+    @Autowired
+    MarketHelper marketHelper;
 
 
     public Wallet findById(UUID id) {
@@ -83,7 +89,7 @@ public class WalletHelper {
     }
 
     public WalletResponseDTO createWallet(Long userId, WalletRequestDTO requestDTO) {
-        if(!kryptoHelper.existsBySymbol(requestDTO.symbol)){
+        if (!kryptoHelper.existsBySymbol(requestDTO.symbol)) {
             throw new KryptoNotFoundException("This krypto doesn't exists");
         }
         if (walletRepository.existsByUser_IdAndKrypto_Symbol(userId, requestDTO.symbol)) {
@@ -117,4 +123,28 @@ public class WalletHelper {
     public Boolean hasSufficientBalance(Long userId, String symbol, BigDecimal amount) {
         return walletRepository.existsByUser_IdAndKrypto_SymbolAndAvailableAmountGreaterThanEqual(userId, symbol, amount);
     }
+
+    public WalletDeleteResponseDTO delete(Long userId, WalletDeleteRequestDTO walletDeleteRequestDTO) {
+        Preconditions.checkArgument(userHelper.existsById(userId));
+        Preconditions.checkArgument(walletRepository.existsByUser_IdAndKrypto_Symbol(userId, walletDeleteRequestDTO.symbol));
+        User user = userHelper.findById(userId);
+        Wallet wallet = findByUserIdAndSymbol(userId, walletDeleteRequestDTO.symbol);
+        marketHelper.emptyWallet(user, wallet);
+        walletRepository.delete(wallet);
+        String to, subject, text;
+        to = user.getEmail();
+        subject = "BOK - Wallet deletion";
+        text = "Your wallet " + wallet.getKrypto().getSymbol() + " has been deleted.";
+        sendMarketEmail(subject, to, text);
+        return new WalletDeleteResponseDTO(wallet.getId());
+    }
+
+    public void sendMarketEmail(String subject, String email, String text) {
+        EmailMessage emailMessage = new EmailMessage();
+        emailMessage.subject = subject;
+        emailMessage.to = email;
+        emailMessage.text = text;
+        messageService.send(emailMessage);
+    }
+
 }

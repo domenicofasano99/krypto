@@ -7,10 +7,7 @@ import com.bok.integration.krypto.dto.TransactionDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.messaging.messages.PurchaseMessage;
 import com.bok.krypto.messaging.messages.SellMessage;
-import com.bok.krypto.model.Activity;
-import com.bok.krypto.model.Transaction;
-import com.bok.krypto.model.User;
-import com.bok.krypto.model.Wallet;
+import com.bok.krypto.model.*;
 import com.bok.krypto.repository.TransactionRepository;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.google.common.base.Preconditions;
@@ -122,23 +119,55 @@ public class MarketHelper {
         t.setWallet(source);
         t.setAmount(sellMessage.amount);
         t.setUser(user);
-
+        String subject, to, text;
         try {
             walletHelper.withdraw(source, sellMessage.amount);
         } catch (InsufficientBalanceException ex) {
-            EmailMessage email = new EmailMessage();
-            email.subject = "Insufficient Balance in your account";
-            email.to = user.getEmail();
-            email.text = "Your SELL transaction of " + sellMessage.amount + " " + sellMessage.symbol + " has been DECLINED due to insufficient balance.";
+            subject = "Insufficient Balance in your account";
+            to = user.getEmail();
+            text = "Your SELL transaction of " + sellMessage.amount + " " + sellMessage.symbol + " has been DECLINED due to insufficient balance.";
             t.setStatus(Transaction.Status.REJECTED);
-            messageService.send(email);
+            sendMarketEmail(subject, to, text);
         }
-        EmailMessage email = new EmailMessage();
-        email.subject = "Transfer executed";
-        email.to = user.getEmail();
-        email.text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
+        subject = "Transfer executed";
+        to = user.getEmail();
+        text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
         t.setStatus(Transaction.Status.SETTLED);
         transactionRepository.saveAndFlush(t);
-        messageService.send(email);
+        sendMarketEmail(subject, to, text);
+    }
+
+    public Transaction emptyWallet(User user, Wallet walletToEmpty) {
+
+        BigDecimal amountToSell = walletToEmpty.getAvailableAmount();
+        Transaction sell = new Transaction();
+        sell.setAmount(amountToSell);
+        sell.setUser(user);
+        BigDecimal netWorth = convert(walletToEmpty.getKrypto(), amountToSell);
+        //send message to bank to credit netWorth USD
+
+        transactionRepository.save(sell);
+
+        String subject, to, text;
+        subject = "Wallet emptied";
+        to = user.getEmail();
+        text = "Your " + walletToEmpty.getKrypto().getSymbol() + " wallet has been emptied, you should receive " +
+                "the converted amount in your bank account in a few minutes.";
+        sendMarketEmail(subject, to, text);
+        return sell;
+
+    }
+
+
+    public BigDecimal convert(Krypto k, BigDecimal amount) {
+        return k.getPrice().multiply(amount);
+    }
+
+    public void sendMarketEmail(String subject, String email, String text) {
+        EmailMessage emailMessage = new EmailMessage();
+        emailMessage.subject = subject;
+        emailMessage.to = email;
+        emailMessage.text = text;
+        messageService.send(emailMessage);
     }
 }
