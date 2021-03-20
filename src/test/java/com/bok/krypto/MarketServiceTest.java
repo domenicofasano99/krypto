@@ -52,7 +52,7 @@ public class MarketServiceTest {
         Transaction t = transactionRepository.findById(transactionDTO.id).get();
         assertNotNull(t);
         assertEquals(t.getId(), transactionDTO.id);
-        assertEquals(t.getStatus(), Transaction.Status.SETTLED);
+        assertEquals(Transaction.Status.SETTLED, t.getStatus());
 
     }
 

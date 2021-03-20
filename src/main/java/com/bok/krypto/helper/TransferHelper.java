@@ -11,7 +11,10 @@ import com.bok.integration.krypto.dto.TransferResponseDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.TransactionNotFoundException;
 import com.bok.krypto.messaging.messages.TransferMessage;
-import com.bok.krypto.model.*;
+import com.bok.krypto.model.Transaction;
+import com.bok.krypto.model.Transfer;
+import com.bok.krypto.model.User;
+import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.google.common.base.Preconditions;
@@ -52,7 +55,6 @@ public class TransferHelper {
             throw new InsufficientBalanceException("Insufficient balance");
         }
         Transfer t = new Transfer();
-        t.setStatus(Activity.Status.PENDING);
         t = transferRepository.saveAndFlush(t);
 
         TransferMessage message = new TransferMessage();

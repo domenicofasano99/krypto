@@ -11,6 +11,8 @@ active-mq:
   broker-url: tcp://active-mq:61616
 
 spring:
+  application:
+    name: krypto
   activemq:
     packages:
       trusted: com.bok.krypto.model

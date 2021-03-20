@@ -4,12 +4,10 @@ import com.bok.integration.krypto.dto.KryptoInfoDTO;
 import com.bok.integration.krypto.dto.KryptoInfosDTO;
 import com.bok.integration.krypto.dto.PriceResponseDTO;
 import com.bok.integration.krypto.dto.PricesResponseDTO;
-import com.bok.krypto.core.Constants;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.repository.KryptoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -36,7 +34,6 @@ public class KryptoHelper {
         return new PriceResponseDTO(symbol, price);
     }
 
-    @Cacheable(value = Constants.PRICES, key = "#symbol")
     public BigDecimal getKryptoPrice(String symbol) {
         KryptoRepository.Projection.KryptoPrice price = kryptoRepository.findPriceBySymbol(symbol);
         return price.getPrice();
@@ -46,7 +43,6 @@ public class KryptoHelper {
         return kryptoRepository.existsBySymbol(symbol);
     }
 
-    @Cacheable(value = Constants.KRYPTO, key = "#symbol")
     public Krypto findBySymbol(String symbol) {
         return kryptoRepository.findBySymbol(symbol).orElseThrow(() -> new KryptoNotFoundException("This Krypto does not exist"));
     }

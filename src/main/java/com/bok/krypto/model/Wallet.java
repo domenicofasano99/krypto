@@ -39,21 +39,20 @@ public class Wallet {
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
-
-    public enum Status{
-        PENDING,
-        CREATED,
-        FAILED
-    }
     public Wallet() {
         //hibernate
     }
+
 
     public Wallet(User u, Krypto k) {
         this.user = u;
         this.krypto = k;
     }
 
+    @PrePersist
+    public void prePersist() {
+        this.status = Status.PENDING;
+    }
 
     public UUID getId() {
         return id;
@@ -120,5 +119,11 @@ public class Wallet {
                 .append("creationTime", creationTime)
                 .append("updateTime", updateTime)
                 .toString();
+    }
+
+    public enum Status {
+        PENDING,
+        CREATED,
+        FAILED
     }
 }

@@ -17,16 +17,9 @@ public class Transaction extends Activity {
         //hibernate
     }
 
-    public Transaction(Type type, Status status) {
+    public Transaction(Type type) {
         super();
         this.type = type;
-        this.status = status;
-    }
-
-
-    public enum Type {
-        BUY,
-        SELL
     }
 
     public Wallet getWallet() {
@@ -43,5 +36,10 @@ public class Transaction extends Activity {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public enum Type {
+        BUY,
+        SELL
     }
 }

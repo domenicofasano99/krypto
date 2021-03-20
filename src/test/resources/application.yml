@@ -11,6 +11,8 @@ active-mq:
   broker-url: tcp://localhost:61616
 
 spring:
+  application:
+    name: krypto
   activemq:
     packages:
       trusted:

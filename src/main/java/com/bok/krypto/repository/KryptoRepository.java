@@ -21,6 +21,8 @@ public interface KryptoRepository extends JpaRepository<Krypto, Long> {
     @Query("select k.price from Krypto k where k.symbol in : symbols")
     List<Projection.KryptoPrice> findKryptoPrices(@Param("symbols") List<String> symbols);
 
+    @Query("SELECT k FROM Krypto k WHERE k.symbol = :symbol")
+    Projection.KryptoPrice findPriceBySymbol(@Param("symbol") String symbol);
 
     public class Projection {
         public interface KryptoPrice {
@@ -29,7 +31,4 @@ public interface KryptoRepository extends JpaRepository<Krypto, Long> {
             BigDecimal getPrice();
         }
     }
-
-    @Query("SELECT k FROM Krypto k WHERE k.symbol = :symbol")
-    Projection.KryptoPrice findPriceBySymbol(@Param("symbol") String symbol);
 }

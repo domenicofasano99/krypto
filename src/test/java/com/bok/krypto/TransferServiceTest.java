@@ -47,16 +47,15 @@ public class TransferServiceTest {
     @Autowired
     TransferRepository transferRepository;
 
+    @BeforeAll
+    public static void setupMocks() {
+        //setup mocks here
+    }
 
     @BeforeEach
     public void setup() {
         modelTestUtils.clearAll();
         modelTestUtils.populateDB();
-    }
-
-    @BeforeAll
-    public static void setupMocks() {
-        //setup mocks here
     }
 
     @Test

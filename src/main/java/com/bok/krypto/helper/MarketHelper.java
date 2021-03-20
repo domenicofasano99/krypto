@@ -7,8 +7,10 @@ import com.bok.integration.krypto.dto.TransactionDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.messaging.messages.PurchaseMessage;
 import com.bok.krypto.messaging.messages.SellMessage;
-import com.bok.krypto.model.*;
-import com.bok.krypto.repository.TransactionRepository;
+import com.bok.krypto.model.Krypto;
+import com.bok.krypto.model.Transaction;
+import com.bok.krypto.model.User;
+import com.bok.krypto.model.Wallet;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,7 @@ public class MarketHelper {
     KryptoHelper kryptoHelper;
 
     @Autowired
-    TransactionRepository transactionRepository;
+    TransactionHelper transactionHelper;
 
     @Autowired
     UserHelper userHelper;
@@ -48,8 +50,8 @@ public class MarketHelper {
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequestDTO.symbol), KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, NEGATIVE_AMOUNT_GIVEN);
 
-        Transaction t = new Transaction(Transaction.Type.BUY, Activity.Status.PENDING);
-        t = transactionRepository.save(t);
+        Transaction t = new Transaction(Transaction.Type.BUY);
+        t = transactionHelper.save(t);
         PurchaseMessage message = new PurchaseMessage();
         message.userId = userId;
         message.transactionId = t.getId();
@@ -61,7 +63,7 @@ public class MarketHelper {
 
     public void handle(PurchaseMessage purchaseMessage) {
         log.info("Processing purchase {}", purchaseMessage);
-        Transaction t = transactionRepository.findById(purchaseMessage.transactionId).orElseThrow(() -> new RuntimeException("This transaction should have been persisted before"));
+        Transaction t = transactionHelper.findById(purchaseMessage.transactionId);
         Wallet destination = walletHelper.findByUserIdAndSymbol(purchaseMessage.userId, purchaseMessage.symbol);
         User user = userHelper.findById(purchaseMessage.userId);
         t.setWallet(destination);
@@ -84,7 +86,7 @@ public class MarketHelper {
         email.to = user.getEmail();
         email.text = "Your PURCHASE of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been ACCEPTED.";
         t.setStatus(Transaction.Status.SETTLED);
-        transactionRepository.save(t);
+        transactionHelper.save(t);
         messageService.send(email);
     }
 
@@ -98,8 +100,8 @@ public class MarketHelper {
         Preconditions.checkArgument(sellRequestDTO.amount.compareTo(BigDecimal.ZERO) <= 0, "Cannot SELL a negative amount.");
 
 
-        Transaction t = new Transaction(Transaction.Type.SELL, Transaction.Status.PENDING);
-        t = transactionRepository.save(t);
+        Transaction t = new Transaction(Transaction.Type.SELL);
+        t = transactionHelper.save(t);
         SellMessage message = new SellMessage();
         message.userId = userId;
         message.transactionId = t.getId();
@@ -113,7 +115,7 @@ public class MarketHelper {
 
     public void handle(SellMessage sellMessage) {
         log.info("Processing sell {}", sellMessage);
-        Transaction t = transactionRepository.findById(sellMessage.transactionId).orElseThrow(() -> new RuntimeException("This transaction should have been persisted before"));
+        Transaction t = transactionHelper.findById(sellMessage.transactionId);
         Wallet source = walletHelper.findByUserIdAndSymbol(sellMessage.userId, sellMessage.symbol);
         User user = userHelper.findById(sellMessage.userId);
         t.setWallet(source);
@@ -133,7 +135,7 @@ public class MarketHelper {
         to = user.getEmail();
         text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
         t.setStatus(Transaction.Status.SETTLED);
-        transactionRepository.saveAndFlush(t);
+        transactionHelper.save(t);
         sendMarketEmail(subject, to, text);
     }
 
@@ -146,7 +148,7 @@ public class MarketHelper {
         BigDecimal netWorth = convert(walletToEmpty.getKrypto(), amountToSell);
         //send message to bank to credit netWorth USD
 
-        transactionRepository.save(sell);
+        transactionHelper.save(sell);
 
         String subject, to, text;
         subject = "Wallet emptied";

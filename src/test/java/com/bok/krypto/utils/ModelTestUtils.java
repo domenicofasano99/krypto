@@ -25,36 +25,36 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class ModelTestUtils {
 
+    public static final Random random = new Random();
+    public static final Faker faker = new Faker();
     @Autowired
     HistoricalDataRepository historicalDataRepository;
-
     @Autowired
     KryptoHelper kryptoHelper;
-
     @Autowired
     KryptoRepository kryptoRepository;
-
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     WalletRepository walletRepository;
-
     @Autowired
     TransactionRepository transactionRepository;
-
     @Autowired
     TransferHelper transferHelper;
-
     @Autowired
     TransferService transferService;
-
     @Autowired
     TransferRepository transferRepository;
 
+    private static Instant between(Instant startInclusive, Instant endExclusive) {
+        long startSeconds = startInclusive.getEpochSecond();
+        long endSeconds = endExclusive.getEpochSecond();
+        long random = ThreadLocalRandom
+                .current()
+                .nextLong(startSeconds, endSeconds);
 
-    public static final Random random = new Random();
-    public static final Faker faker = new Faker();
+        return Instant.ofEpochSecond(random);
+    }
 
     public synchronized void populateDB() {
         kryptoRepository.save(new Krypto("Bitcoin", "BTC", new BigDecimal(50000)));
@@ -104,14 +104,14 @@ public class ModelTestUtils {
         return random.nextLong();
     }
 
-
     public Wallet createWallet(User user, Krypto krypto, BigDecimal baseAmount) {
         Wallet w = new Wallet();
         w.setKrypto(krypto);
         w.setUser(user);
         w.setAvailableAmount(baseAmount);
+        w = walletRepository.saveAndFlush(w);
         w.setStatus(Wallet.Status.CREATED);
-        return walletRepository.saveAndFlush(w);
+        return walletRepository.save(w);
     }
 
     public Krypto getKrypto(String krypto) {
@@ -136,16 +136,6 @@ public class ModelTestUtils {
         historicalDataRepository.saveAll(list);
     }
 
-    private static Instant between(Instant startInclusive, Instant endExclusive) {
-        long startSeconds = startInclusive.getEpochSecond();
-        long endSeconds = endExclusive.getEpochSecond();
-        long random = ThreadLocalRandom
-                .current()
-                .nextLong(startSeconds, endSeconds);
-
-        return Instant.ofEpochSecond(random);
-    }
-
     public void generateDatabaseRandomNoise(Integer numOfKryptos, Integer recordsPerKrypto) {
         for (int c = 0; c < numOfKryptos; c++) {
             //User u = createUser();
@@ -163,7 +153,7 @@ public class ModelTestUtils {
                 walletRepository.countPendingWallets() > 0 &&
                 transactionRepository.countPendingTransactions() > 0 &&
                 times < maxTimes) {
-            Thread.sleep(100);
+            Thread.sleep(500);
             times++;
         }
     }

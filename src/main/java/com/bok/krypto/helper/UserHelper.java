@@ -17,7 +17,7 @@ public class UserHelper {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("user does not exist"));
     }
 
-    public String findEmailByUserId(Long id){
+    public String findEmailByUserId(Long id) {
         return userRepository.findEmailById(id);
     }
 

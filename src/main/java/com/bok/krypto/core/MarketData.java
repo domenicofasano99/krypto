@@ -1,6 +1,5 @@
 package com.bok.krypto.core;
 
-import com.bok.krypto.cache.CacheService;
 import com.bok.krypto.external.CoinMarketAPI;
 import com.bok.krypto.external.CoinMarketDTO;
 import com.bok.krypto.external.Datum;
@@ -11,7 +10,6 @@ import com.bok.krypto.repository.HistoricalDataRepository;
 import com.bok.krypto.repository.KryptoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -36,8 +34,6 @@ public class MarketData {
     @Autowired
     HistoricalDataRepository historicalDataRepository;
 
-    @Autowired
-    CacheService cacheService;
 
     //@Scheduled(fixedDelay = 300000, initialDelay = 1000)
     //@Scheduled(fixedDelay = 3000000, initialDelay = 1000)
@@ -47,8 +43,6 @@ public class MarketData {
         Map<String, Krypto> kryptoMap = parseAndUpdateData(data);
         log.info("updating {} kryptocurrencies", kryptoMap.size());
         kryptoRepository.saveAll(kryptoMap.values());
-        cacheService.evictPrices();
-        cacheService.evictKryptos();
     }
 
 

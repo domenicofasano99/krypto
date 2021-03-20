@@ -12,39 +12,26 @@ import java.util.UUID;
 @DiscriminatorColumn(name = "transaction_type",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class Activity {
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @GeneratedValue
-    private UUID publicId;
-
-    @Column
-    @CreationTimestamp
-    private Instant creationTimestamp;
-
-    @Column
-    @UpdateTimestamp
-    private Instant updateTimestamp;
-
-    @ManyToOne
-    private User user;
-
-    @Column(updatable = false)
-    private BigDecimal amount;
-
-    @Column
-    private Double fee;
-
     @Column(updatable = false)
     @Enumerated(EnumType.STRING)
     public Transaction.Status status;
-
-    public enum Status {
-        PENDING,
-        SETTLED,
-        REJECTED
-    }
+    @Id
+    @GeneratedValue
+    private Long id;
+    @GeneratedValue
+    private UUID publicId;
+    @Column
+    @CreationTimestamp
+    private Instant creationTimestamp;
+    @Column
+    @UpdateTimestamp
+    private Instant updateTimestamp;
+    @ManyToOne
+    private User user;
+    @Column(updatable = false)
+    private BigDecimal amount;
+    @Column
+    private Double fee;
 
     @PrePersist
     public void prePersist() {
@@ -113,5 +100,11 @@ public abstract class Activity {
 
     public void setStatus(Transaction.Status status) {
         this.status = status;
+    }
+
+    public enum Status {
+        PENDING,
+        SETTLED,
+        REJECTED
     }
 }

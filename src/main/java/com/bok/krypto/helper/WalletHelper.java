@@ -9,7 +9,6 @@ import com.bok.krypto.exception.*;
 import com.bok.krypto.messaging.messages.WalletMessage;
 import com.bok.krypto.model.User;
 import com.bok.krypto.model.Wallet;
-import com.bok.krypto.repository.TransactionRepository;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.google.common.base.Preconditions;
@@ -29,7 +28,7 @@ public class WalletHelper {
     WalletRepository walletRepository;
 
     @Autowired
-    TransactionRepository transactionRepository;
+    TransactionHelper transactionHelper;
 
     @Autowired
     UserHelper userHelper;
@@ -95,7 +94,10 @@ public class WalletHelper {
         if (walletRepository.existsByUser_IdAndKrypto_Symbol(userId, requestDTO.symbol)) {
             throw new WalletAlreadyExistsException("A wallet with the same Krypto exists for this user");
         }
+        Wallet w = new Wallet();
+        w = walletRepository.save(w);
         WalletMessage walletMessage = new WalletMessage();
+        walletMessage.id = w.getId();
         walletMessage.userId = userId;
         walletMessage.symbol = requestDTO.symbol;
         messageService.send(walletMessage);

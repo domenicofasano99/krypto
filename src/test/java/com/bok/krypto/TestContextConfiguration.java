@@ -21,6 +21,22 @@ import java.util.concurrent.atomic.AtomicReference;
 @TestConfiguration
 public class TestContextConfiguration {
 
+    private static final AtomicReference<String> received = new AtomicReference<>();
+    private static final CountDownLatch latch = new CountDownLatch(1);
+
+    @Bean
+    public static MethodInterceptor interceptor() {
+        return invocation -> {
+            received.set((String) invocation.getArguments()[0]);
+            return invocation.proceed();
+        };
+    }
+
+    @Bean
+    public static BeanPostProcessor listenerAdvisor() {
+        return new ListenerWrapper(interceptor());
+    }
+
     @Bean
     public UserConsumer messageConsumer() {
         return new UserConsumer();
@@ -48,35 +64,17 @@ public class TestContextConfiguration {
         return new ActiveMQConnectionFactory("tcp://localhost:61616");
     }
 
-    private static final AtomicReference<String> received = new AtomicReference<>();
-
-    private static final CountDownLatch latch = new CountDownLatch(1);
-
-    @Bean
-    public static MethodInterceptor interceptor() {
-        return invocation -> {
-            received.set((String) invocation.getArguments()[0]);
-            return invocation.proceed();
-        };
-    }
-
-    @Bean
-    public static BeanPostProcessor listenerAdvisor() {
-        return new ListenerWrapper(interceptor());
-    }
-
-
     public static class ListenerWrapper implements BeanPostProcessor, Ordered {
 
         private final MethodInterceptor interceptor;
 
+        public ListenerWrapper(MethodInterceptor interceptor) {
+            this.interceptor = interceptor;
+        }
+
         @Override
         public int getOrder() {
             return Ordered.HIGHEST_PRECEDENCE;
-        }
-
-        public ListenerWrapper(MethodInterceptor interceptor) {
-            this.interceptor = interceptor;
         }
 
         @Override
