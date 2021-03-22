@@ -8,7 +8,7 @@ active-mq:
   transactions-queue: transactions
   wallets-queue: wallets
   emails-queue: emails
-  broker-url: tcp://active-mq:61616
+  broker-url: tcp://dev.faraone.ovh:61616
 
 spring:
   application:
@@ -18,9 +18,9 @@ spring:
       trusted: com.bok.krypto.model
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://krypto-db:3306/kryptodb
-    username: krypto
-    password: krypto
+    url: jdbc:mysql://dev.faraone.ovh:3307/krypto
+    username: developer
+    password: password4testing
   jooq:
     sql-dialect: org.hibernate.dialect.MariaDBDialect
   jpa:
