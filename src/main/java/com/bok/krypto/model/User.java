@@ -20,10 +20,10 @@ public class User {
     @Unique
     private String email;
 
-    @OneToMany(cascade = {CascadeType.REMOVE})
+    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE})
     private Set<Wallet> wallets;
 
-    @OneToMany(cascade = {CascadeType.REMOVE})
+    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE})
     private Set<Transaction> transactions;
 
     @CreationTimestamp

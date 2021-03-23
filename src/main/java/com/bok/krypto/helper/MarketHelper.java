@@ -11,6 +11,7 @@ import com.bok.krypto.model.Krypto;
 import com.bok.krypto.model.Transaction;
 import com.bok.krypto.model.User;
 import com.bok.krypto.model.Wallet;
+import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,9 @@ public class MarketHelper {
     @Autowired
     MessageService messageService;
 
+    @Autowired
+    BankService bankService;
+
 
     public TransactionDTO buy(Long userId, PurchaseRequestDTO purchaseRequestDTO) {
         Preconditions.checkNotNull(purchaseRequestDTO);
@@ -49,7 +53,7 @@ public class MarketHelper {
         Preconditions.checkArgument(userHelper.existsById(userId), USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequestDTO.symbol), KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, NEGATIVE_AMOUNT_GIVEN);
-
+        Preconditions.checkArgument(bankService.getUserBalance(userId).balance.compareTo(BigDecimal.ZERO) > 0);
         Transaction t = new Transaction(Transaction.Type.BUY);
         t = transactionHelper.save(t);
         PurchaseMessage message = new PurchaseMessage();

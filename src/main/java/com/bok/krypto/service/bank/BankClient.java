@@ -19,4 +19,5 @@ public interface BankClient {
 
     @PostMapping(value = "/{userId}/deposit")
     DepositResponse deposit(@PathVariable("userId") Long userId, DepositRequest request);
+
 }

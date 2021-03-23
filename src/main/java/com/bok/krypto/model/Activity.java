@@ -15,21 +15,28 @@ public abstract class Activity {
     @Column(updatable = false)
     @Enumerated(EnumType.STRING)
     public Transaction.Status status;
+
     @Id
     @GeneratedValue
     private Long id;
+
     @GeneratedValue
     private UUID publicId;
+
     @Column
     @CreationTimestamp
     private Instant creationTimestamp;
+
     @Column
     @UpdateTimestamp
     private Instant updateTimestamp;
+
     @ManyToOne
     private User user;
+
     @Column(updatable = false)
     private BigDecimal amount;
+
     @Column
     private Double fee;
 

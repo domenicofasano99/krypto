@@ -1,11 +1,13 @@
 package com.bok.krypto;
 
+import com.bok.integration.UserBalance;
 import com.bok.integration.krypto.PurchaseRequestDTO;
 import com.bok.integration.krypto.dto.*;
 import com.bok.krypto.model.*;
 import com.bok.krypto.repository.HistoricalDataRepository;
 import com.bok.krypto.repository.KryptoRepository;
 import com.bok.krypto.repository.TransactionRepository;
+import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MarketService;
 import com.bok.krypto.utils.ModelTestUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -24,8 +27,10 @@ import java.util.stream.Collectors;
 import static com.bok.krypto.utils.Constants.BTC;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Slf4j
@@ -35,9 +40,6 @@ public class MarketServiceTest {
     ModelTestUtils modelTestUtils;
 
     @Autowired
-    MarketService marketService;
-
-    @Autowired
     TransactionRepository transactionRepository;
 
     @Autowired
@@ -45,6 +47,12 @@ public class MarketServiceTest {
 
     @Autowired
     HistoricalDataRepository historicalDataRepository;
+
+    @MockBean
+    BankService bankService;
+
+    @Autowired
+    MarketService marketService;// = new MarketServiceImpl();
 
     @BeforeEach
     public void init() {
@@ -57,7 +65,7 @@ public class MarketServiceTest {
         User u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getKrypto(BTC);
         Wallet w = modelTestUtils.createWallet(u, k, new BigDecimal("0"));
-
+        when(bankService.getUserBalance(any())).thenReturn(new UserBalance(u.getId(), new BigDecimal("10000")));
         PurchaseRequestDTO purchaseRequestDTO = new PurchaseRequestDTO();
         purchaseRequestDTO.symbol = BTC;
         purchaseRequestDTO.amount = new BigDecimal("0.8989827");
@@ -71,7 +79,7 @@ public class MarketServiceTest {
     }
 
     @Test
-    void getKryptoPrice() {
+    public void getKryptoPrice() {
 
         User u = modelTestUtils.createUser();
         List<Krypto> list = kryptoRepository.findAll();
@@ -87,7 +95,7 @@ public class MarketServiceTest {
     }
 
     @Test
-    void getKryptoInfo() {
+    public void getKryptoInfo() {
         User u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
         KryptoInfoDTO responseDTO = marketService.getKryptoInfo(k.getSymbol());
@@ -99,7 +107,7 @@ public class MarketServiceTest {
     }
 
     @Test
-    void getKryptoInfos() {
+    public void getKryptoInfos() {
         User u = modelTestUtils.createUser();
         List<Krypto> list = kryptoRepository.findAll();
         KryptoInfosRequestDTO requestDTO = new KryptoInfosRequestDTO();
@@ -116,7 +124,7 @@ public class MarketServiceTest {
     }
 
     @Test
-    void getKryptoHistoricalData() {
+    public void getKryptoHistoricalData() {
         User u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
 
@@ -136,7 +144,7 @@ public class MarketServiceTest {
 
 
     @Ignore
-    void evaluatePerformance() {
+    public void evaluatePerformance() {
         int kryptos = 1000;
         int records = 1000;
         long start = Instant.now().toEpochMilli();
@@ -145,6 +153,33 @@ public class MarketServiceTest {
         long elapsed = end - start;
         long opsPorMillis = (long) kryptos * records / elapsed;
         log.info("Geneating {} Historical records for {} Kryptos took {} ms, performing {}ops/ms", kryptos, kryptos, elapsed, opsPorMillis);
+    }
+
+    @Test
+    public void deniedPurchaseTest_insufficientBalance() {
+        User u = modelTestUtils.createUser();
+        Krypto k = modelTestUtils.getKrypto(BTC);
+        when(bankService.getUserBalance(any())).thenReturn(new UserBalance(u.getId(), new BigDecimal("0")));
+
+        PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
+        purchaseRequest.amount = new BigDecimal("0.012001023");
+        purchaseRequest.symbol = BTC;
+
+        assertThrows(RuntimeException.class, () -> marketService.buy(u.getId(), purchaseRequest));
+    }
+
+    @Test
+    public void purchaseTest_permitted() {
+        User u = modelTestUtils.createUser();
+        Krypto k = modelTestUtils.getKrypto(BTC);
+        when(bankService.getUserBalance(anyLong())).thenReturn(new UserBalance(u.getId(), new BigDecimal("10000")));
+
+        PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
+        purchaseRequest.amount = new BigDecimal("0.012001023");
+        purchaseRequest.symbol = BTC;
+
+        TransactionDTO response = marketService.buy(u.getId(), purchaseRequest);
+        assertNotNull(response.id);
     }
 
 }
