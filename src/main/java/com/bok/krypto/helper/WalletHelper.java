@@ -3,6 +3,8 @@ package com.bok.krypto.helper;
 import com.bok.integration.EmailMessage;
 import com.bok.integration.krypto.WalletDeleteRequestDTO;
 import com.bok.integration.krypto.WalletDeleteResponseDTO;
+import com.bok.integration.krypto.WalletInfoDTO;
+import com.bok.integration.krypto.WalletsDTO;
 import com.bok.integration.krypto.dto.WalletRequestDTO;
 import com.bok.integration.krypto.dto.WalletResponseDTO;
 import com.bok.krypto.exception.*;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -126,11 +130,12 @@ public class WalletHelper {
         return walletRepository.existsByUser_IdAndKrypto_SymbolAndAvailableAmountGreaterThanEqual(userId, symbol, amount);
     }
 
-    public WalletDeleteResponseDTO delete(Long userId, WalletDeleteRequestDTO walletDeleteRequestDTO) {
+    public WalletDeleteResponseDTO delete(Long userId, WalletDeleteRequestDTO deleteRequestDTO) {
         Preconditions.checkArgument(userHelper.existsById(userId));
-        Preconditions.checkArgument(walletRepository.existsByUser_IdAndKrypto_Symbol(userId, walletDeleteRequestDTO.symbol));
+        Preconditions.checkArgument(walletRepository.existsByUser_IdAndKrypto_Symbol(userId, deleteRequestDTO.symbol));
+        Preconditions.checkNotNull(deleteRequestDTO.destinationIBAN);
         User user = userHelper.findById(userId);
-        Wallet wallet = findByUserIdAndSymbol(userId, walletDeleteRequestDTO.symbol);
+        Wallet wallet = findByUserIdAndSymbol(userId, deleteRequestDTO.symbol);
         marketHelper.emptyWallet(user, wallet);
         walletRepository.delete(wallet);
         String to, subject, text;
@@ -149,4 +154,31 @@ public class WalletHelper {
         messageService.send(emailMessage);
     }
 
+    public WalletInfoDTO info(Long userId, UUID walletID) {
+        Preconditions.checkArgument(userHelper.existsById(userId));
+        Preconditions.checkArgument(walletRepository.existsById(walletID));
+
+        Wallet wallet = findById(walletID);
+        return getInfoFromWallet(wallet);
+    }
+
+    public WalletsDTO wallets(Long userId) {
+        Preconditions.checkArgument(userHelper.existsById(userId));
+        List<Wallet> wallets = walletRepository.findByUser_Id(userId);
+        WalletsDTO walletsDTO = new WalletsDTO();
+        walletsDTO.wallets = new ArrayList<>();
+        for (Wallet w : wallets) {
+            walletsDTO.wallets.add(getInfoFromWallet(w));
+        }
+        return walletsDTO;
+    }
+
+    private WalletInfoDTO getInfoFromWallet(Wallet wallet) {
+        WalletInfoDTO info = new WalletInfoDTO();
+        info.availableAmount = wallet.getAvailableAmount();
+        info.symbol = wallet.getKrypto().getSymbol();
+        info.creationTimestamp = wallet.getCreationTime();
+        info.updateTimestamp = wallet.getUpdateTime();
+        return info;
+    }
 }

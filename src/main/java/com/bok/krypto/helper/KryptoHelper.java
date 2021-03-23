@@ -1,9 +1,6 @@
 package com.bok.krypto.helper;
 
-import com.bok.integration.krypto.dto.KryptoInfoDTO;
-import com.bok.integration.krypto.dto.KryptoInfosDTO;
-import com.bok.integration.krypto.dto.PriceResponseDTO;
-import com.bok.integration.krypto.dto.PricesResponseDTO;
+import com.bok.integration.krypto.dto.*;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.repository.KryptoRepository;
@@ -21,9 +18,10 @@ public class KryptoHelper {
     KryptoRepository kryptoRepository;
 
 
-    public PricesResponseDTO getPrices(List<String> symbols) {
+
+    public PricesResponseDTO getPrices(PricesRequestDTO requestDTO) {
         List<PriceResponseDTO> prices = new ArrayList<>();
-        for (String symbol : symbols) {
+        for (String symbol : requestDTO.symbols) {
             prices.add(new PriceResponseDTO(symbol, getKryptoPrice(symbol)));
         }
         return new PricesResponseDTO(prices);
@@ -52,9 +50,10 @@ public class KryptoHelper {
         return new KryptoInfoDTO(k.getName(), k.getSymbol(), k.getNetworkFee(), k.getPrice(), k.getUpdateTimestamp());
     }
 
-    public KryptoInfosDTO getKryptoInfos(List<String> symbols) {
+    public KryptoInfosDTO getKryptoInfos(KryptoInfosRequestDTO infosRequest) {
+
         List<KryptoInfoDTO> infos = new ArrayList<>();
-        for (String symbol : symbols) {
+        for (String symbol : infosRequest.symbols) {
             infos.add(getKryptoInfo(symbol));
         }
         return new KryptoInfosDTO(infos);

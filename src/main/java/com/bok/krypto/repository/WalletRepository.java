@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,4 +22,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
     @Query("select count(w.id) from Wallet w where w.status = 'PENDING' ")
     Integer countPendingWallets();
+
+    List<Wallet> findByUser_Id(Long userId);
 }

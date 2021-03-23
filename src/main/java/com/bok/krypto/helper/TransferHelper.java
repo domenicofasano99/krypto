@@ -5,7 +5,6 @@ import com.bok.integration.StatusDTO;
 import com.bok.integration.TransfersInfoDTO;
 import com.bok.integration.TransfersInfoRequestDTO;
 import com.bok.integration.krypto.dto.TransferInfoDTO;
-import com.bok.integration.krypto.dto.TransferInfoRequestDTO;
 import com.bok.integration.krypto.dto.TransferRequestDTO;
 import com.bok.integration.krypto.dto.TransferResponseDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
@@ -72,8 +71,8 @@ public class TransferHelper {
         return response;
     }
 
-    public TransferInfoDTO getTransferInfo(TransferInfoRequestDTO transferInfoRequestDTO) {
-        Long transferId = transferInfoRequestDTO.transferId;
+    public TransferInfoDTO getTransferInfo(Long userId, Long transferId) {
+        userHelper.existsById(userId);
         Transfer t = transferRepository.findById(transferId).orElseThrow(() -> new TransactionNotFoundException("Could not find a transaction with the given ID"));
         TransferInfoDTO response = new TransferInfoDTO();
         response.id = t.getId();

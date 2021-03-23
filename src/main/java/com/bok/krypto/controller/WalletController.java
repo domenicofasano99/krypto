@@ -1,9 +1,13 @@
 package com.bok.krypto.controller;
 
+import com.bok.integration.krypto.WalletDeleteRequestDTO;
+import com.bok.integration.krypto.WalletDeleteResponseDTO;
+import com.bok.integration.krypto.WalletsDTO;
+import com.bok.integration.krypto.dto.WalletRequestDTO;
+import com.bok.integration.krypto.dto.WalletResponseDTO;
 import com.bok.krypto.service.interfaces.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/wallet")
@@ -11,4 +15,19 @@ public class WalletController {
 
     @Autowired
     WalletService walletService;
+
+    @PostMapping("/{userId}/create")
+    WalletResponseDTO create(@PathVariable("userId") Long userid, WalletRequestDTO requestDTO) {
+        return walletService.create(userid, requestDTO);
+    }
+
+    @PostMapping("/{userId}/delete")
+    WalletDeleteResponseDTO delete(@PathVariable("userId") Long userId, WalletDeleteRequestDTO requestDTO) {
+        return walletService.delete(userId, requestDTO);
+    }
+
+    @GetMapping("/{userId}")
+    WalletsDTO wallets(@PathVariable("userId") Long userId) {
+        return walletService.wallets(userId);
+    }
 }

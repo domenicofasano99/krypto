@@ -112,7 +112,7 @@ public class TransferServiceTest {
         modelTestUtils.await();
         TransferInfoRequestDTO req = new TransferInfoRequestDTO();
         req.transferId = responseDTO.id;
-        TransferInfoDTO info = transferService.transferInfo(a.getId(), req);
+        TransferInfoDTO info = transferService.transferInfo(a.getId(), responseDTO.id);
         assertEquals(Transaction.Status.SETTLED.name(), info.status);
         assertEquals(info.id, responseDTO.id);
     }
