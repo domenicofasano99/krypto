@@ -31,10 +31,10 @@ public class Krypto {
     @UpdateTimestamp
     private Instant updateTimestamp;
 
-    @OneToMany(mappedBy = "id", cascade = {CascadeType.ALL})
+    @OneToMany(cascade = {CascadeType.ALL})
     private List<HistoricalData> historicalData = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id")
+    @OneToMany
     private List<Wallet> wallets = new ArrayList<>();
 
     public Krypto() {
