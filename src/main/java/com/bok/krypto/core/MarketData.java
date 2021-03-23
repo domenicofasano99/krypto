@@ -10,6 +10,7 @@ import com.bok.krypto.repository.HistoricalDataRepository;
 import com.bok.krypto.repository.KryptoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -36,7 +37,7 @@ public class MarketData {
 
 
     //@Scheduled(fixedDelay = 300000, initialDelay = 1000)
-    //@Scheduled(fixedDelay = 3000000, initialDelay = 1000)
+    @Scheduled(fixedDelay = 3000000, initialDelay = 1000)
     public void fetchData() {
         CoinMarketDTO data = coinMarketAPI.fetch();
         log.info("retrieved {} kryptocurrencies from coinMarket", data.data.size());
