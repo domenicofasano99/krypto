@@ -7,7 +7,6 @@ import com.bok.krypto.helper.KryptoHelper;
 import com.bok.krypto.model.HistoricalData;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.repository.HistoricalDataRepository;
-import com.bok.krypto.repository.KryptoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,9 +14,9 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -30,9 +29,6 @@ public class MarketData {
     KryptoHelper kryptoHelper;
 
     @Autowired
-    KryptoRepository kryptoRepository;
-
-    @Autowired
     HistoricalDataRepository historicalDataRepository;
 
 
@@ -40,28 +36,26 @@ public class MarketData {
     @Scheduled(fixedDelay = 3000000, initialDelay = 1000)
     public void fetchData() {
         CoinMarketDTO data = coinMarketAPI.fetch();
-        log.info("retrieved {} kryptocurrencies from coinMarket", data.data.size());
-        Map<String, Krypto> kryptoMap = parseAndUpdateData(data);
-        log.info("updating {} kryptocurrencies", kryptoMap.size());
-        kryptoRepository.saveAll(kryptoMap.values());
+        log.info("retrieved {} krypto-currencies from coinMarket", data.data.size());
+        saveOrUpdate(data);
     }
 
 
-    public Map<String, Krypto> parseAndUpdateData(CoinMarketDTO coinMarketDTO) {
-        Map<String, Krypto> kryptoMap = new HashMap<>();
-        for (Datum d : coinMarketDTO.data) {
-            Optional<Krypto> kOptional = kryptoRepository.findBySymbol(d.symbol);
-            Krypto k;
-            if (kOptional.isPresent()) {
-                k = kOptional.get();
-                k.setPrice(new BigDecimal(d.quote.USD.price));
-
-            } else {
-                k = new Krypto(d.name, d.symbol, new BigDecimal(d.quote.USD.price));
+    public void saveOrUpdate(CoinMarketDTO coinMarketDTO) {
+        List<Krypto> updatedKryptos = new ArrayList<>();
+        for (Datum datum : coinMarketDTO.data) {
+            Krypto krypto = kryptoHelper.findBySymbolOrNull(datum.symbol);
+            if (Objects.isNull(krypto)) {
+                krypto = new Krypto(datum.name, datum.symbol);
             }
-            k.addHistoricalData(new HistoricalData(k, k.getPrice().doubleValue()));
-            kryptoMap.put(k.getName(), k);
+            krypto.setPrice(new BigDecimal(datum.quote.USD.price));
+
+            HistoricalData dataRecord = new HistoricalData();
+            dataRecord.setPrice(krypto.getPrice().doubleValue());
+            dataRecord.setCirculatingSupply(datum.circulatingSupply);
+            krypto.addHistoricalData(dataRecord);
+            updatedKryptos.add(krypto);
         }
-        return kryptoMap;
+        kryptoHelper.saveAll(updatedKryptos);
     }
 }

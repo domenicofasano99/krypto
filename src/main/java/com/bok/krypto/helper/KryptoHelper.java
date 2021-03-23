@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -16,7 +17,6 @@ public class KryptoHelper {
 
     @Autowired
     KryptoRepository kryptoRepository;
-
 
 
     public PricesResponseDTO getPrices(PricesRequestDTO requestDTO) {
@@ -59,4 +59,11 @@ public class KryptoHelper {
         return new KryptoInfosDTO(infos);
     }
 
+    public Krypto findBySymbolOrNull(String symbol) {
+        return kryptoRepository.findBySymbol(symbol).orElse(null);
+    }
+
+    public void saveAll(Collection<Krypto> values) {
+        kryptoRepository.saveAll(values);
+    }
 }

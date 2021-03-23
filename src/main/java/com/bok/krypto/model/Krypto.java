@@ -47,6 +47,11 @@ public class Krypto {
         this.price = price;
     }
 
+    public Krypto(String name, String symbol) {
+        this.name = name;
+        this.symbol = symbol;
+    }
+
     public List<HistoricalData> getHistoricalData() {
         return historicalData;
     }
