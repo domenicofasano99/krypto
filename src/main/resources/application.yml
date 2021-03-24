@@ -37,7 +37,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://dev.faraone.ovh:8761
+      defaultZone: http://dev.faraone.ovh:8761/eureka
 
 coinmarket:
   endpoint: https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
