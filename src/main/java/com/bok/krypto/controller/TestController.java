@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class Test {
+public class TestController {
 
     @GetMapping("/hello")
     public String hello(@RequestParam("userId") Long userId) {
-        return userId + "hello from the other side";
+        return userId + " hello from the other side";
     }
 }
