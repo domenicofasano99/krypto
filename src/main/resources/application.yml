@@ -33,15 +33,12 @@ spring:
     open-in-view: false
 
 server:
-  port: 8080
+  port: 8081
 
 eureka:
   client:
-    registerWithEureka: false
-    fetchRegistry: false
     serviceUrl:
-      defaultZone: http://eureka:8761/eureka
-    enabled: true
+      defaultZone: http://dev.faraone.ovh:8761/eureka
 
 coinmarket:
   endpoint: https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
