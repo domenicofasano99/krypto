@@ -13,20 +13,35 @@ active-mq:
 spring:
   application:
     name: krypto
+
   activemq:
     packages:
       trusted: com.bok.krypto.model
+
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mysql://dev.faraone.ovh:3307/krypto
     username: developer
     password: password4testing
+
   jooq:
     sql-dialect: org.hibernate.dialect.MariaDBDialect
+
   jpa:
     hibernate:
       ddl-auto: update
     open-in-view: false
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka
+    enabled: true
 
 coinmarket:
   endpoint: https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
