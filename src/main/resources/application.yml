@@ -10,11 +10,12 @@ active-mq:
   transactions-queue: transactions
   wallets-queue: wallets
   emails-queue: emails
-  broker-url: tcp://dev.faraone.ovh:61616
+  broker-url: tcp://eureka:61616
 
 spring:
   application:
     name: krypto
+  ##profiles: prod
 
   activemq:
     packages:
@@ -37,7 +38,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://dev.faraone.ovh:8761/eureka
+      defaultZone: http://eureka:8761/eureka
   instance:
     lease-renewal-interval-in-seconds: 30
 
