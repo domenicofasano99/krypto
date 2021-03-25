@@ -10,12 +10,11 @@ active-mq:
   transactions-queue: transactions
   wallets-queue: wallets
   emails-queue: emails
-  broker-url: tcp://eureka:61616
+  broker-url: tcp://activemq:61616
 
 spring:
   application:
     name: krypto
-  ##profiles: prod
 
   activemq:
     packages:
