@@ -18,6 +18,9 @@ public class Wallet {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
+    @Column(unique = true)
+    private String address;
+
     @ManyToOne
     private User user;
 
@@ -60,6 +63,14 @@ public class Wallet {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Krypto getKrypto() {
@@ -114,6 +125,7 @@ public class Wallet {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
+                .append("address", address)
                 .append("krypto", krypto)
                 .append("availableAmount", availableAmount)
                 .append("creationTime", creationTime)

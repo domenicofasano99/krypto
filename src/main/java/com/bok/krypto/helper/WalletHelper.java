@@ -7,6 +7,7 @@ import com.bok.integration.krypto.WalletInfoDTO;
 import com.bok.integration.krypto.WalletsDTO;
 import com.bok.integration.krypto.dto.WalletRequestDTO;
 import com.bok.integration.krypto.dto.WalletResponseDTO;
+import com.bok.krypto.core.AddressGenerator;
 import com.bok.krypto.exception.*;
 import com.bok.krypto.messaging.messages.WalletMessage;
 import com.bok.krypto.model.User;
@@ -45,6 +46,9 @@ public class WalletHelper {
 
     @Autowired
     MarketHelper marketHelper;
+
+    @Autowired
+    AddressGenerator addressGenerator;
 
 
     public Wallet findById(UUID id) {
@@ -114,6 +118,7 @@ public class WalletHelper {
         User u = userHelper.findById(walletMessage.userId);
         w.setUser(u);
         w.setKrypto(kryptoHelper.findBySymbol(walletMessage.symbol));
+        w.setAddress(addressGenerator.generateAddress());
         walletRepository.save(w);
         messageService.send(emailWalletCreation(w, u));
     }
