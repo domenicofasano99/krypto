@@ -16,18 +16,18 @@ public class WalletController {
     @Autowired
     WalletService walletService;
 
-    @PostMapping("/{userId}/create")
-    WalletResponseDTO create(@PathVariable("userId") Long userid, WalletRequestDTO requestDTO) {
+    @PostMapping("/create")
+    WalletResponseDTO create(@RequestParam("userId") Long userid, WalletRequestDTO requestDTO) {
         return walletService.create(userid, requestDTO);
     }
 
     @PostMapping("/{userId}/delete")
-    WalletDeleteResponseDTO delete(@PathVariable("userId") Long userId, WalletDeleteRequestDTO requestDTO) {
+    WalletDeleteResponseDTO delete(@RequestParam("userId")  Long userId, WalletDeleteRequestDTO requestDTO) {
         return walletService.delete(userId, requestDTO);
     }
 
     @GetMapping("/{userId}")
-    WalletsDTO wallets(@PathVariable("userId") Long userId) {
+    WalletsDTO wallets(@RequestParam("userId")  Long userId) {
         return walletService.wallets(userId);
     }
 }

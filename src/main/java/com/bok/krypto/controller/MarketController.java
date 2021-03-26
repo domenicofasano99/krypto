@@ -13,14 +13,14 @@ public class MarketController {
     @Autowired
     MarketService marketService;
 
-    @PostMapping("/{userId}/buy")
-    public TransactionDTO buy(@PathVariable("userId") Long userId, PurchaseRequestDTO purchaseRequestDTO) {
+    @PostMapping("/buy")
+    public TransactionDTO buy(@RequestParam("userId")  Long userId, PurchaseRequestDTO purchaseRequestDTO) {
         return marketService.buy(userId, purchaseRequestDTO);
 
     }
 
-    @PostMapping("/{userId}/sell")
-    public TransactionDTO sell(@PathVariable("userId") Long userId, SellRequestDTO sellRequestDTO) {
+    @PostMapping("/sell")
+    public TransactionDTO sell(@RequestParam("userId")  Long userId, SellRequestDTO sellRequestDTO) {
         return marketService.sell(userId, sellRequestDTO);
     }
 

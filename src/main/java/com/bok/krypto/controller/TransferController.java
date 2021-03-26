@@ -13,13 +13,13 @@ public class TransferController {
     @Autowired
     TransferService transferService;
 
-    @GetMapping("/{userId}/{transferId}")
-    TransferInfoDTO transferInfo(@PathVariable("userId") Long userId, @PathVariable("transferId") Long transferId) {
+    @GetMapping("/{transferId}")
+    TransferInfoDTO transferInfo(@RequestParam("userId")  Long userId, @PathVariable("transferId") Long transferId) {
         return transferService.transferInfo(userId, transferId);
     }
 
-    @PostMapping("/{userId}")
-    TransferResponseDTO transfer(@PathVariable("userId") Long userId, TransferRequestDTO requestDTO) {
+    @PostMapping("/")
+    TransferResponseDTO transfer(@RequestParam("userId")  Long userId, TransferRequestDTO requestDTO) {
         return transferService.transfer(userId, requestDTO);
     }
 
