@@ -1,4 +1,4 @@
-package com.bok.krypto;
+package com.bok.krypto.market;
 
 import com.bok.integration.UserBalance;
 import com.bok.integration.krypto.PurchaseRequestDTO;

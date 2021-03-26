@@ -14,18 +14,18 @@ public class MarketController {
     MarketService marketService;
 
     @PostMapping("/buy")
-    public TransactionDTO buy(@RequestParam("userId")  Long userId, PurchaseRequestDTO purchaseRequestDTO) {
+    public TransactionDTO buy(@RequestParam("userId") Long userId, @RequestBody PurchaseRequestDTO purchaseRequestDTO) {
         return marketService.buy(userId, purchaseRequestDTO);
 
     }
 
     @PostMapping("/sell")
-    public TransactionDTO sell(@RequestParam("userId")  Long userId, SellRequestDTO sellRequestDTO) {
+    public TransactionDTO sell(@RequestParam("userId") Long userId, @RequestBody SellRequestDTO sellRequestDTO) {
         return marketService.sell(userId, sellRequestDTO);
     }
 
     @GetMapping("/prices")
-    PricesResponseDTO getKryptoPrices(PricesRequestDTO requestDTO) {
+    PricesResponseDTO getKryptoPrices(@RequestBody PricesRequestDTO requestDTO) {
         return marketService.getKryptoPrices(requestDTO);
     }
 
@@ -40,12 +40,12 @@ public class MarketController {
     }
 
     @GetMapping("/infos")
-    KryptoInfosDTO getKryptoInfos(KryptoInfosRequestDTO requestDTO) {
+    KryptoInfosDTO getKryptoInfos(@RequestBody KryptoInfosRequestDTO requestDTO) {
         return marketService.getKryptoInfos(requestDTO);
     }
 
     @GetMapping("/history")
-    HistoricalDataDTO getKryptoHistoricalData(HistoricalDataRequestDTO requestDTO) {
+    HistoricalDataDTO getKryptoHistoricalData(@RequestBody HistoricalDataRequestDTO requestDTO) {
         return marketService.getKryptoHistoricalData(requestDTO);
     }
 

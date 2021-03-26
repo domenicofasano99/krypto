@@ -1,4 +1,4 @@
-package com.bok.krypto;
+package com.bok.krypto.wallet;
 
 import com.bok.integration.krypto.WalletDeleteRequestDTO;
 import com.bok.integration.krypto.WalletDeleteResponseDTO;

@@ -17,17 +17,17 @@ public class WalletController {
     WalletService walletService;
 
     @PostMapping("/create")
-    WalletResponseDTO create(@RequestParam("userId") Long userid, WalletRequestDTO requestDTO) {
+    WalletResponseDTO create(@RequestParam("userId") Long userid, @RequestBody WalletRequestDTO requestDTO) {
         return walletService.create(userid, requestDTO);
     }
 
     @PostMapping("/{userId}/delete")
-    WalletDeleteResponseDTO delete(@RequestParam("userId")  Long userId, WalletDeleteRequestDTO requestDTO) {
+    WalletDeleteResponseDTO delete(@RequestParam("userId") Long userId, @RequestBody WalletDeleteRequestDTO requestDTO) {
         return walletService.delete(userId, requestDTO);
     }
 
     @GetMapping("/{userId}")
-    WalletsDTO wallets(@RequestParam("userId")  Long userId) {
+    WalletsDTO wallets(@RequestParam("userId") Long userId) {
         return walletService.wallets(userId);
     }
 }
