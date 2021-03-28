@@ -17,7 +17,7 @@ public class MarketServiceImpl implements MarketService {
     WalletHelper walletHelper;
 
     @Autowired
-    UserHelper userHelper;
+    AccountHelper accountHelper;
 
     @Autowired
     KryptoHelper kryptoHelper;

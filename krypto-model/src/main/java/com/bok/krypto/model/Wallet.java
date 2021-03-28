@@ -19,7 +19,7 @@ public class Wallet {
     private UUID id;
 
     @ManyToOne
-    private User user;
+    private Account account;
 
     @ManyToOne
     private Krypto krypto;
@@ -44,8 +44,8 @@ public class Wallet {
     }
 
 
-    public Wallet(User u, Krypto k) {
-        this.user = u;
+    public Wallet(Account u, Krypto k) {
+        this.account = u;
         this.krypto = k;
     }
 
@@ -94,12 +94,12 @@ public class Wallet {
         this.updateTime = updateTime;
     }
 
-    public User getUser() {
-        return user;
+    public Account getUser() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Account account) {
+        this.account = account;
     }
 
     public Status getStatus() {

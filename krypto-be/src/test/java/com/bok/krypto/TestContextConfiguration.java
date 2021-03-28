@@ -1,6 +1,6 @@
 package com.bok.krypto;
 
-import com.bok.krypto.messaging.consumer.UserConsumer;
+import com.bok.krypto.messaging.consumer.AccountConsumer;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.aop.framework.ProxyFactory;
@@ -38,8 +38,8 @@ public class TestContextConfiguration {
     }
 
     @Bean
-    public UserConsumer messageConsumer() {
-        return new UserConsumer();
+    public AccountConsumer messageConsumer() {
+        return new AccountConsumer();
     }
 
     @Bean

@@ -1,16 +1,16 @@
 package com.bok.krypto.helper;
 
-import com.bok.krypto.model.User;
+import com.bok.krypto.model.Account;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserHelper {
+public class AccountHelper {
 
     public boolean existsById(Long userId) {
         return false;
     }
 
-    public User findById(Long userId) {
+    public Account findById(Long userId) {
         return null;
     }
 

@@ -62,7 +62,7 @@ public class MarketServiceTest {
 
     @Test
     public void purchaseTest() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getKrypto(BTC);
         Wallet w = modelTestUtils.createWallet(u, k, new BigDecimal("0"));
         when(bankService.getUserBalance(any())).thenReturn(new UserBalance(u.getId(), new BigDecimal("10000")));
@@ -81,7 +81,7 @@ public class MarketServiceTest {
     @Test
     public void getKryptoPrice() {
 
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         List<Krypto> list = kryptoRepository.findAll();
 
         Krypto k = list.get(0);
@@ -96,7 +96,7 @@ public class MarketServiceTest {
 
     @Test
     public void getKryptoInfo() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
         KryptoInfoDTO responseDTO = marketService.getKryptoInfo(k.getSymbol());
         Assert.assertNotNull(responseDTO);
@@ -108,7 +108,7 @@ public class MarketServiceTest {
 
     @Test
     public void getKryptoInfos() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         List<Krypto> list = kryptoRepository.findAll();
         KryptoInfosRequestDTO requestDTO = new KryptoInfosRequestDTO();
         requestDTO.symbols = list.stream().map(Krypto::getSymbol).collect(Collectors.toList());
@@ -125,7 +125,7 @@ public class MarketServiceTest {
 
     @Test
     public void getKryptoHistoricalData() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
 
         HistoricalDataRequestDTO requestDTO = new HistoricalDataRequestDTO();
@@ -157,7 +157,7 @@ public class MarketServiceTest {
 
     @Test
     public void deniedPurchaseTest_insufficientBalance() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getKrypto(BTC);
         when(bankService.getUserBalance(any())).thenReturn(new UserBalance(u.getId(), new BigDecimal("0")));
 
@@ -170,7 +170,7 @@ public class MarketServiceTest {
 
     @Test
     public void purchaseTest_permitted() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getKrypto(BTC);
         when(bankService.getUserBalance(anyLong())).thenReturn(new UserBalance(u.getId(), new BigDecimal("10000")));
 

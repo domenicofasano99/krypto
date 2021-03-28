@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.Set;
 
 @Entity
-public class User {
+public class Account {
 
     @Id
     @Column
@@ -32,15 +32,15 @@ public class User {
     @UpdateTimestamp
     private Instant updateTimestamp;
 
-    public User() {
+    public Account() {
         //hibernate
     }
 
-    public User(Long id) {
+    public Account(Long id) {
         this.id = id;
     }
 
-    public User(Set<Wallet> wallets, Set<Transaction> transactions) {
+    public Account(Set<Wallet> wallets, Set<Transaction> transactions) {
         this.wallets = wallets;
         this.transactions = transactions;
     }

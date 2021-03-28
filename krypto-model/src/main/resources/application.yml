@@ -6,7 +6,7 @@ active-mq:
   market-sell-queue: market-sell
   market-purchase-queue: market-purchase
   prices-topic: prices
-  users-queue: users
+  krypto-users: krypto-accounts
   transactions-queue: transactions
   wallets-queue: wallets
   emails-queue: emails

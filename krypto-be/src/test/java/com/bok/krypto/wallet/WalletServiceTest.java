@@ -8,7 +8,7 @@ import com.bok.integration.krypto.dto.WalletResponseDTO;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
 import com.bok.krypto.model.Krypto;
-import com.bok.krypto.model.User;
+import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.WalletService;
@@ -49,7 +49,7 @@ public class WalletServiceTest {
     @Test
     public void createWalletSuccessful() {
 
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
         WalletRequestDTO requestDTO = new WalletRequestDTO();
         requestDTO.symbol = k.getSymbol();
@@ -61,7 +61,7 @@ public class WalletServiceTest {
 
     @Test
     public void createWalletFail_NoSuchKrypto() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         WalletRequestDTO walletRequest = new WalletRequestDTO();
         walletRequest.symbol = "JFK";
         assertThrows(KryptoNotFoundException.class, () -> walletService.create(u.getId(), walletRequest));
@@ -71,7 +71,7 @@ public class WalletServiceTest {
     @Test
     public void createWallet_ErrorWalletAlreadyExists() {
 
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
         WalletRequestDTO requestDTO = new WalletRequestDTO();
 
@@ -85,7 +85,7 @@ public class WalletServiceTest {
 
     @Test
     public void deleteWallet_ok() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
         Wallet w = modelTestUtils.createWallet(u, k, BigDecimal.TEN);
 
@@ -98,7 +98,7 @@ public class WalletServiceTest {
 
     @Test
     public void deleteWallet_walletDoesNotExist() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
 
         WalletDeleteRequestDTO deleteRequestDTO = new WalletDeleteRequestDTO();
@@ -109,7 +109,7 @@ public class WalletServiceTest {
 
     @Test
     public void deleteWallet_IBAN_not_given() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getRandomKrypto();
         Wallet w = modelTestUtils.createWallet(u, k, BigDecimal.TEN);
 
@@ -122,7 +122,7 @@ public class WalletServiceTest {
 
     @Test
     public void getAllWallets() {
-        User u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createUser();
         Krypto btc = modelTestUtils.getKrypto(BTC);
         Krypto eth = modelTestUtils.getKrypto(ETH);
         Wallet wa = modelTestUtils.createWallet(u, btc, BigDecimal.TEN);

@@ -14,14 +14,14 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
     Optional<Wallet> findById(UUID walletId);
 
-    Optional<Wallet> findByUser_IdAndKrypto_Symbol(Long userId, String symbol);
+    Optional<Wallet> findByAccount_IdAndKrypto_Symbol(Long accountId, String symbol);
 
-    Boolean existsByUser_IdAndKrypto_SymbolAndAvailableAmountGreaterThanEqual(Long userId, String symbol, BigDecimal amount);
+    Boolean existsByAccount_IdAndKrypto_SymbolAndAvailableAmountGreaterThanEqual(Long accountId, String symbol, BigDecimal amount);
 
-    Boolean existsByUser_IdAndKrypto_Symbol(Long userId, String symbol);
+    Boolean existsByAccount_IdAndKrypto_Symbol(Long accountId, String symbol);
 
     @Query("select count(w.id) from Wallet w where w.status = 'PENDING' ")
     Integer countPendingWallets();
 
-    List<Wallet> findByUser_Id(Long userId);
+    List<Wallet> findByAccount_Id(Long accountId);
 }

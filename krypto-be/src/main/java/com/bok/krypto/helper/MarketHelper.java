@@ -10,7 +10,7 @@ import com.bok.krypto.messaging.messages.PurchaseMessage;
 import com.bok.krypto.messaging.messages.SellMessage;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.model.Transaction;
-import com.bok.krypto.model.User;
+import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MessageService;
@@ -35,7 +35,7 @@ public class MarketHelper {
     TransactionHelper transactionHelper;
 
     @Autowired
-    UserHelper userHelper;
+    AccountHelper accountHelper;
 
     @Autowired
     MessageService messageService;
@@ -49,7 +49,7 @@ public class MarketHelper {
         Preconditions.checkNotNull(purchaseRequestDTO.symbol);
         Preconditions.checkNotNull(purchaseRequestDTO.amount);
         Preconditions.checkNotNull(purchaseRequestDTO.amount);
-        Preconditions.checkArgument(userHelper.existsById(userId), ErrorCodes.USER_DOES_NOT_EXIST);
+        Preconditions.checkArgument(accountHelper.existsById(userId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequestDTO.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
         Preconditions.checkArgument(bankService.getUserBalance(userId).balance.compareTo(BigDecimal.ZERO) > 0);
@@ -68,17 +68,17 @@ public class MarketHelper {
         log.info("Processing purchase {}", purchaseMessage);
         Transaction t = transactionHelper.findById(purchaseMessage.transactionId);
         Wallet destination = walletHelper.findByUserIdAndSymbol(purchaseMessage.userId, purchaseMessage.symbol);
-        User user = userHelper.findById(purchaseMessage.userId);
+        Account account = accountHelper.findById(purchaseMessage.userId);
         t.setWallet(destination);
         t.setAmount(purchaseMessage.amount);
-        t.setUser(user);
+        t.setUser(account);
 
         try {
             walletHelper.deposit(destination, purchaseMessage.amount);
         } catch (InsufficientBalanceException ex) {
             EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";
-            email.to = user.getEmail();
+            email.to = account.getEmail();
             email.text = "Your PURCHASE transaction of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been DECLINED due to insufficient balance.";
             t.setStatus(Transaction.Status.REJECTED);
             messageService.send(email);
@@ -86,7 +86,7 @@ public class MarketHelper {
         log.info("Completed purchase ID:{} for {} of {} {}", purchaseMessage.transactionId, purchaseMessage.userId, purchaseMessage.symbol, purchaseMessage.amount);
         EmailMessage email = new EmailMessage();
         email.subject = "Transfer executed";
-        email.to = user.getEmail();
+        email.to = account.getEmail();
         email.text = "Your PURCHASE of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been ACCEPTED.";
         t.setStatus(Transaction.Status.SETTLED);
         transactionHelper.save(t);
@@ -98,7 +98,7 @@ public class MarketHelper {
         Preconditions.checkNotNull(sellRequestDTO.userId);
         Preconditions.checkNotNull(sellRequestDTO.symbol);
         Preconditions.checkNotNull(sellRequestDTO.amount);
-        Preconditions.checkArgument(userHelper.existsById(userId), ErrorCodes.USER_DOES_NOT_EXIST);
+        Preconditions.checkArgument(accountHelper.existsById(userId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(sellRequestDTO.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(sellRequestDTO.amount.compareTo(BigDecimal.ZERO) <= 0, "Cannot SELL a negative amount.");
 
@@ -120,34 +120,34 @@ public class MarketHelper {
         log.info("Processing sell {}", sellMessage);
         Transaction t = transactionHelper.findById(sellMessage.transactionId);
         Wallet source = walletHelper.findByUserIdAndSymbol(sellMessage.userId, sellMessage.symbol);
-        User user = userHelper.findById(sellMessage.userId);
+        Account account = accountHelper.findById(sellMessage.userId);
         t.setWallet(source);
         t.setAmount(sellMessage.amount);
-        t.setUser(user);
+        t.setUser(account);
         String subject, to, text;
         try {
             walletHelper.withdraw(source, sellMessage.amount);
         } catch (InsufficientBalanceException ex) {
             subject = "Insufficient Balance in your account";
-            to = user.getEmail();
+            to = account.getEmail();
             text = "Your SELL transaction of " + sellMessage.amount + " " + sellMessage.symbol + " has been DECLINED due to insufficient balance.";
             t.setStatus(Transaction.Status.REJECTED);
             sendMarketEmail(subject, to, text);
         }
         subject = "Transfer executed";
-        to = user.getEmail();
+        to = account.getEmail();
         text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
         t.setStatus(Transaction.Status.SETTLED);
         transactionHelper.save(t);
         sendMarketEmail(subject, to, text);
     }
 
-    public Transaction emptyWallet(User user, Wallet walletToEmpty) {
+    public Transaction emptyWallet(Account account, Wallet walletToEmpty) {
 
         BigDecimal amountToSell = walletToEmpty.getAvailableAmount();
         Transaction sell = new Transaction();
         sell.setAmount(amountToSell);
-        sell.setUser(user);
+        sell.setUser(account);
         BigDecimal netWorth = convert(walletToEmpty.getKrypto(), amountToSell);
         //send message to bank to credit netWorth USD
 
@@ -155,7 +155,7 @@ public class MarketHelper {
 
         String subject, to, text;
         subject = "Wallet emptied";
-        to = user.getEmail();
+        to = account.getEmail();
         text = "Your " + walletToEmpty.getKrypto().getSymbol() + " wallet has been emptied, you should receive " +
                 "the converted amount in your bank account in a few minutes.";
         sendMarketEmail(subject, to, text);

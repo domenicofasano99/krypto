@@ -4,7 +4,7 @@ import com.bok.krypto.helper.KryptoHelper;
 import com.bok.krypto.helper.TransferHelper;
 import com.bok.krypto.model.HistoricalData;
 import com.bok.krypto.model.Krypto;
-import com.bok.krypto.model.User;
+import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.*;
 import com.bok.krypto.service.interfaces.TransferService;
@@ -34,7 +34,7 @@ public class ModelTestUtils {
     @Autowired
     KryptoRepository kryptoRepository;
     @Autowired
-    UserRepository userRepository;
+    AccountRepository accountRepository;
     @Autowired
     WalletRepository walletRepository;
     @Autowired
@@ -71,7 +71,7 @@ public class ModelTestUtils {
         transferRepository.deleteAll();
         walletRepository.deleteAll();
         kryptoRepository.deleteAll();
-        userRepository.deleteAll();
+        accountRepository.deleteAll();
 
     }
 
@@ -82,18 +82,18 @@ public class ModelTestUtils {
         }
     }
 
-    public User createUser(Long userId) {
-        User u = new User();
+    public Account createUser(Long userId) {
+        Account u = new Account();
         u.setId(userId);
-        return userRepository.save(u);
+        return accountRepository.save(u);
     }
 
-    public User createUser() {
+    public Account createUser() {
         //Id for this class should reflect parent User ids
-        User u = new User();
+        Account u = new Account();
         u.setId(randomID());
         log.info("Created user with id: {}", u.getId());
-        return userRepository.save(u);
+        return accountRepository.save(u);
     }
 
     public Long randomID() {
@@ -104,10 +104,10 @@ public class ModelTestUtils {
         return random.nextLong();
     }
 
-    public Wallet createWallet(User user, Krypto krypto, BigDecimal baseAmount) {
+    public Wallet createWallet(Account account, Krypto krypto, BigDecimal baseAmount) {
         Wallet w = new Wallet();
         w.setKrypto(krypto);
-        w.setUser(user);
+        w.setUser(account);
         w.setAvailableAmount(baseAmount);
         w = walletRepository.saveAndFlush(w);
         w.setStatus(Wallet.Status.CREATED);

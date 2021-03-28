@@ -8,7 +8,7 @@ import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.helper.TransferHelper;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.model.Transaction;
-import com.bok.krypto.model.User;
+import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.TransactionRepository;
 import com.bok.krypto.repository.TransferRepository;
@@ -60,10 +60,10 @@ public class TransferServiceTest {
 
     @Test
     public void transferAllowedBetweenUsers() {
-        User a = modelTestUtils.createUser();
+        Account a = modelTestUtils.createUser();
         Krypto k = modelTestUtils.getKrypto(BTC);
         Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(100));
-        User b = modelTestUtils.createUser();
+        Account b = modelTestUtils.createUser();
         Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(10));
 
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
@@ -85,9 +85,9 @@ public class TransferServiceTest {
     @Test
     public void transferNotAllowed_InsufficientBalance() {
         Krypto k = modelTestUtils.getKrypto(BTC);
-        User a = modelTestUtils.createUser();
+        Account a = modelTestUtils.createUser();
         Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(1));
-        User b = modelTestUtils.createUser();
+        Account b = modelTestUtils.createUser();
         Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(0));
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.symbol = BTC;
@@ -100,9 +100,9 @@ public class TransferServiceTest {
     // FIXME: 18/03/21
     public void getTransferInfo() {
         Krypto k = modelTestUtils.getKrypto(BTC);
-        User a = modelTestUtils.createUser();
+        Account a = modelTestUtils.createUser();
         Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(100));
-        User b = modelTestUtils.createUser();
+        Account b = modelTestUtils.createUser();
         Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(10));
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.symbol = BTC;

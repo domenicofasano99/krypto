@@ -9,7 +9,7 @@ import com.bok.integration.krypto.dto.WalletRequestDTO;
 import com.bok.integration.krypto.dto.WalletResponseDTO;
 import com.bok.krypto.exception.*;
 import com.bok.krypto.messaging.messages.WalletMessage;
-import com.bok.krypto.model.User;
+import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.MessageService;
@@ -35,7 +35,7 @@ public class WalletHelper {
     TransactionHelper transactionHelper;
 
     @Autowired
-    UserHelper userHelper;
+    AccountHelper accountHelper;
 
     @Autowired
     KryptoHelper kryptoHelper;
@@ -56,7 +56,7 @@ public class WalletHelper {
     }
 
     public Wallet findByUserIdAndSymbol(Long userId, String symbol) {
-        return walletRepository.findByUser_IdAndKrypto_Symbol(userId, symbol).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
+        return walletRepository.findByAccount_IdAndKrypto_Symbol(userId, symbol).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
 
     }
 
@@ -88,14 +88,14 @@ public class WalletHelper {
     }
 
     public Boolean existsByUserIdAndSymbol(Long userId, String symbol) {
-        return walletRepository.existsByUser_IdAndKrypto_Symbol(userId, symbol);
+        return walletRepository.existsByAccount_IdAndKrypto_Symbol(userId, symbol);
     }
 
     public WalletResponseDTO createWallet(Long userId, WalletRequestDTO requestDTO) {
         if (!kryptoHelper.existsBySymbol(requestDTO.symbol)) {
             throw new KryptoNotFoundException("This krypto doesn't exists");
         }
-        if (walletRepository.existsByUser_IdAndKrypto_Symbol(userId, requestDTO.symbol)) {
+        if (walletRepository.existsByAccount_IdAndKrypto_Symbol(userId, requestDTO.symbol)) {
             throw new WalletAlreadyExistsException("A wallet with the same Krypto exists for this user");
         }
         Wallet w = new Wallet();
@@ -111,14 +111,14 @@ public class WalletHelper {
     public void handleMessage(WalletMessage walletMessage) {
         Wallet w = walletRepository.findById(walletMessage.id)
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
-        User u = userHelper.findById(walletMessage.userId);
+        Account u = accountHelper.findById(walletMessage.userId);
         w.setUser(u);
         w.setKrypto(kryptoHelper.findBySymbol(walletMessage.symbol));
         walletRepository.save(w);
         messageService.send(emailWalletCreation(w, u));
     }
 
-    private EmailMessage emailWalletCreation(Wallet w, User u) {
+    private EmailMessage emailWalletCreation(Wallet w, Account u) {
         EmailMessage email = new EmailMessage();
         email.subject = "BOK - Wallet creation";
         email.text = "Your wallet for Krypto " + w.getKrypto().getSymbol() + " has been created.";
@@ -127,19 +127,19 @@ public class WalletHelper {
     }
 
     public Boolean hasSufficientBalance(Long userId, String symbol, BigDecimal amount) {
-        return walletRepository.existsByUser_IdAndKrypto_SymbolAndAvailableAmountGreaterThanEqual(userId, symbol, amount);
+        return walletRepository.existsByAccount_IdAndKrypto_SymbolAndAvailableAmountGreaterThanEqual(userId, symbol, amount);
     }
 
     public WalletDeleteResponseDTO delete(Long userId, WalletDeleteRequestDTO deleteRequestDTO) {
-        Preconditions.checkArgument(userHelper.existsById(userId));
-        Preconditions.checkArgument(walletRepository.existsByUser_IdAndKrypto_Symbol(userId, deleteRequestDTO.symbol));
+        Preconditions.checkArgument(accountHelper.existsById(userId));
+        Preconditions.checkArgument(walletRepository.existsByAccount_IdAndKrypto_Symbol(userId, deleteRequestDTO.symbol));
         Preconditions.checkNotNull(deleteRequestDTO.destinationIBAN);
-        User user = userHelper.findById(userId);
+        Account account = accountHelper.findById(userId);
         Wallet wallet = findByUserIdAndSymbol(userId, deleteRequestDTO.symbol);
-        marketHelper.emptyWallet(user, wallet);
+        marketHelper.emptyWallet(account, wallet);
         walletRepository.delete(wallet);
         String to, subject, text;
-        to = user.getEmail();
+        to = account.getEmail();
         subject = "BOK - Wallet deletion";
         text = "Your wallet " + wallet.getKrypto().getSymbol() + " has been deleted.";
         sendMarketEmail(subject, to, text);
@@ -155,7 +155,7 @@ public class WalletHelper {
     }
 
     public WalletInfoDTO info(Long userId, UUID walletID) {
-        Preconditions.checkArgument(userHelper.existsById(userId));
+        Preconditions.checkArgument(accountHelper.existsById(userId));
         Preconditions.checkArgument(walletRepository.existsById(walletID));
 
         Wallet wallet = findById(walletID);
@@ -163,8 +163,8 @@ public class WalletHelper {
     }
 
     public WalletsDTO wallets(Long userId) {
-        Preconditions.checkArgument(userHelper.existsById(userId));
-        List<Wallet> wallets = walletRepository.findByUser_Id(userId);
+        Preconditions.checkArgument(accountHelper.existsById(userId));
+        List<Wallet> wallets = walletRepository.findByAccount_Id(userId);
         WalletsDTO walletsDTO = new WalletsDTO();
         walletsDTO.wallets = new ArrayList<>();
         for (Wallet w : wallets) {

@@ -32,7 +32,7 @@ public abstract class Activity {
     private Instant updateTimestamp;
 
     @ManyToOne
-    private User user;
+    private Account account;
 
     @Column(updatable = false)
     private BigDecimal amount;
@@ -77,12 +77,12 @@ public abstract class Activity {
         this.updateTimestamp = updateTimestamp;
     }
 
-    public User getUser() {
-        return user;
+    public Account getUser() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Account account) {
+        this.account = account;
     }
 
     public BigDecimal getAmount() {
