@@ -1,6 +1,6 @@
 package com.bok.krypto;
 
-import com.bok.krypto.messaging.consumer.AccountConsumer;
+import com.bok.krypto.consumer.AccountConsumer;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.aop.framework.ProxyFactory;

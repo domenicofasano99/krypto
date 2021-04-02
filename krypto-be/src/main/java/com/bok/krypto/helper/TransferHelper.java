@@ -8,7 +8,7 @@ import com.bok.integration.krypto.dto.TransferInfoDTO;
 import com.bok.integration.krypto.dto.TransferRequestDTO;
 import com.bok.integration.krypto.dto.TransferResponseDTO;
 import com.bok.krypto.core.Constants;
-import com.bok.krypto.messaging.messages.TransferMessage;
+import com.bok.krypto.communication.messages.TransferMessage;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.TransactionNotFoundException;
 import com.bok.krypto.model.Transaction;

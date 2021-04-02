@@ -1,6 +1,6 @@
 package com.bok.krypto.helper;
 
-import com.bok.krypto.messaging.messages.TransactionMessage;
+import com.bok.krypto.communication.messages.TransactionMessage;
 import com.bok.krypto.model.Transaction;
 import com.bok.krypto.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.bok.krypto.service.interfaces;
 
 import com.bok.integration.EmailMessage;
-import com.bok.krypto.messaging.messages.*;
+import com.bok.krypto.communication.messages.*;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -23,7 +23,7 @@ public class Account {
     @OneToMany(cascade = {CascadeType.REMOVE})
     private Set<Wallet> wallets;
 
-    @OneToMany( cascade = {CascadeType.REMOVE})
+    @OneToMany(cascade = {CascadeType.REMOVE})
     private Set<Transaction> transactions;
 
     @CreationTimestamp

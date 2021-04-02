@@ -8,7 +8,7 @@ import com.bok.integration.krypto.WalletsDTO;
 import com.bok.integration.krypto.dto.WalletRequestDTO;
 import com.bok.integration.krypto.dto.WalletResponseDTO;
 import com.bok.krypto.exception.*;
-import com.bok.krypto.messaging.messages.WalletMessage;
+import com.bok.krypto.communication.messages.WalletMessage;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.WalletRepository;

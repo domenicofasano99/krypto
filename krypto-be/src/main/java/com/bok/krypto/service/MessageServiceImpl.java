@@ -1,8 +1,8 @@
 package com.bok.krypto.service;
 
 import com.bok.integration.EmailMessage;
-import com.bok.krypto.messaging.messages.*;
-import com.bok.krypto.messaging.producer.*;
+import com.bok.krypto.communication.messages.*;
+import com.bok.krypto.communication.producer.*;
 import com.bok.krypto.service.interfaces.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
