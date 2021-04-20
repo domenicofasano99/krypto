@@ -1,7 +1,16 @@
 package com.bok.krypto.service.interfaces;
 
 import com.bok.integration.krypto.PurchaseRequestDTO;
-import com.bok.integration.krypto.dto.*;
+import com.bok.integration.krypto.dto.HistoricalDataDTO;
+import com.bok.integration.krypto.dto.HistoricalDataRequestDTO;
+import com.bok.integration.krypto.dto.KryptoInfoDTO;
+import com.bok.integration.krypto.dto.KryptoInfosDTO;
+import com.bok.integration.krypto.dto.KryptoInfosRequestDTO;
+import com.bok.integration.krypto.dto.PriceResponseDTO;
+import com.bok.integration.krypto.dto.PricesRequestDTO;
+import com.bok.integration.krypto.dto.PricesResponseDTO;
+import com.bok.integration.krypto.dto.SellRequestDTO;
+import com.bok.integration.krypto.dto.TransactionDTO;
 
 public interface MarketService {
 

@@ -3,7 +3,11 @@ package com.bok.krypto.model;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.time.Instant;
 
 @Entity

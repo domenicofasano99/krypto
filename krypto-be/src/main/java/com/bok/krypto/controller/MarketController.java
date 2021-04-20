@@ -1,10 +1,18 @@
 package com.bok.krypto.controller;
 
 import com.bok.integration.krypto.PurchaseRequestDTO;
-import com.bok.integration.krypto.dto.*;
+import com.bok.integration.krypto.dto.HistoricalDataDTO;
+import com.bok.integration.krypto.dto.HistoricalDataRequestDTO;
+import com.bok.integration.krypto.dto.KryptoInfoDTO;
+import com.bok.integration.krypto.dto.KryptoInfosDTO;
+import com.bok.integration.krypto.dto.KryptoInfosRequestDTO;
+import com.bok.integration.krypto.dto.PriceResponseDTO;
+import com.bok.integration.krypto.dto.PricesRequestDTO;
+import com.bok.integration.krypto.dto.PricesResponseDTO;
+import com.bok.integration.krypto.dto.SellRequestDTO;
+import com.bok.integration.krypto.dto.TransactionDTO;
 import com.bok.krypto.service.interfaces.MarketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/market")

@@ -3,7 +3,12 @@ package com.bok.krypto.model;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;

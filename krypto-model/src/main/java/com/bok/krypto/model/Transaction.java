@@ -1,6 +1,11 @@
 package com.bok.krypto.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 
 @Entity
 @DiscriminatorValue("transaction")

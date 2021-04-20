@@ -1,6 +1,10 @@
 package com.bok.krypto.service.bank;
 
-import com.bok.integration.*;
+import com.bok.integration.DepositRequest;
+import com.bok.integration.DepositResponse;
+import com.bok.integration.UserBalance;
+import com.bok.integration.WithdrawalRequest;
+import com.bok.integration.WithdrawalResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

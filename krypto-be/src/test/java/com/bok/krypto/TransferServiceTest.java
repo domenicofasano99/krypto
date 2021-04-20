@@ -6,16 +6,15 @@ import com.bok.integration.krypto.dto.TransferRequestDTO;
 import com.bok.integration.krypto.dto.TransferResponseDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.helper.TransferHelper;
+import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.model.Transaction;
-import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.TransactionRepository;
 import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.TransferService;
 import com.bok.krypto.utils.ModelTestUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 
 import static com.bok.krypto.utils.Constants.BTC;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 @SpringBootTest
 public class TransferServiceTest {

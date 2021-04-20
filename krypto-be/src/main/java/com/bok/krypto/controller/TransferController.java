@@ -5,7 +5,6 @@ import com.bok.integration.krypto.dto.TransferRequestDTO;
 import com.bok.integration.krypto.dto.TransferResponseDTO;
 import com.bok.krypto.service.interfaces.TransferService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/transfer")

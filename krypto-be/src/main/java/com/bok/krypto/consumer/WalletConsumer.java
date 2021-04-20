@@ -1,7 +1,7 @@
 package com.bok.krypto.consumer;
 
-import com.bok.krypto.helper.WalletHelper;
 import com.bok.krypto.communication.messages.WalletMessage;
+import com.bok.krypto.helper.WalletHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
