@@ -15,6 +15,7 @@ import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.TransferService;
 import com.bok.krypto.utils.ModelTestUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
