@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @GetMapping("/hello")
-    public String hello(@RequestParam("userId") Long userId) {
+    public String hello(@RequestParam("accountId") Long userId) {
         return userId + " hello from the other side";
     }
 }

@@ -29,13 +29,13 @@ public class MarketController {
     MarketService marketService;
 
     @PostMapping("/buy")
-    public TransactionDTO buy(@RequestParam("userId") Long userId, @RequestBody PurchaseRequestDTO purchaseRequestDTO) {
+    public TransactionDTO buy(@RequestParam("accountId") Long userId, @RequestBody PurchaseRequestDTO purchaseRequestDTO) {
         return marketService.buy(userId, purchaseRequestDTO);
 
     }
 
     @PostMapping("/sell")
-    public TransactionDTO sell(@RequestParam("userId") Long userId, @RequestBody SellRequestDTO sellRequestDTO) {
+    public TransactionDTO sell(@RequestParam("accountId") Long userId, @RequestBody SellRequestDTO sellRequestDTO) {
         return marketService.sell(userId, sellRequestDTO);
     }
 

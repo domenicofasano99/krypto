@@ -20,12 +20,12 @@ public class TransferController {
     TransferService transferService;
 
     @GetMapping("/{transferId}")
-    TransferInfoDTO transferInfo(@RequestParam("userId") Long userId, @PathVariable("transferId") Long transferId) {
+    TransferInfoDTO transferInfo(@RequestParam("accountId") Long userId, @PathVariable("transferId") Long transferId) {
         return transferService.transferInfo(userId, transferId);
     }
 
     @PostMapping("/")
-    TransferResponseDTO transfer(@RequestParam("userId") Long userId, @RequestBody TransferRequestDTO requestDTO) {
+    TransferResponseDTO transfer(@RequestParam("accountId") Long userId, @RequestBody TransferRequestDTO requestDTO) {
         return transferService.transfer(userId, requestDTO);
     }
 
