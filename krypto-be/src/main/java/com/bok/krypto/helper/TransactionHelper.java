@@ -15,7 +15,7 @@ public class TransactionHelper {
     public void handleMessage(TransactionMessage transactionMessage) {
     }
 
-    public Transaction save(Transaction transaction) {
+    public Transaction saveOrUpdate(Transaction transaction) {
         return transactionRepository.save(transaction);
     }
 

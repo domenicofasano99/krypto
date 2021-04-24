@@ -1,7 +1,7 @@
 package com.bok.krypto.consumer;
 
-import com.bok.integration.UserCreationDTO;
 import com.bok.krypto.helper.AccountHelper;
+import com.bok.parent.message.KryptoAccountCreationMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
@@ -15,9 +15,9 @@ public class AccountConsumer {
     AccountHelper accountHelper;
 
     @JmsListener(destination = "${active-mq.krypto-users}")
-    public void userListener(UserCreationDTO userCreationDTO) {
-        log.info("Received Message: " + userCreationDTO.toString());
-        accountHelper.save(userCreationDTO.id);
+    public void userListener(KryptoAccountCreationMessage message) {
+        log.info("Received Message: " + message.toString());
+        accountHelper.saveOrUpdate(message);
     }
 
 

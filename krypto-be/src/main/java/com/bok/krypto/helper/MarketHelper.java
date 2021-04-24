@@ -54,7 +54,7 @@ public class MarketHelper {
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
         Preconditions.checkArgument(bankService.getUserBalance(userId).balance.compareTo(BigDecimal.ZERO) > 0);
         Transaction t = new Transaction(Transaction.Type.BUY);
-        t = transactionHelper.save(t);
+        t = transactionHelper.saveOrUpdate(t);
         PurchaseMessage message = new PurchaseMessage();
         message.userId = userId;
         message.transactionId = t.getId();
@@ -89,7 +89,7 @@ public class MarketHelper {
         email.to = account.getEmail();
         email.text = "Your PURCHASE of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been ACCEPTED.";
         t.setStatus(Transaction.Status.SETTLED);
-        transactionHelper.save(t);
+        transactionHelper.saveOrUpdate(t);
         messageService.send(email);
     }
 
@@ -104,7 +104,7 @@ public class MarketHelper {
 
 
         Transaction t = new Transaction(Transaction.Type.SELL);
-        t = transactionHelper.save(t);
+        t = transactionHelper.saveOrUpdate(t);
         SellMessage message = new SellMessage();
         message.userId = userId;
         message.transactionId = t.getId();
@@ -138,7 +138,7 @@ public class MarketHelper {
         to = account.getEmail();
         text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
         t.setStatus(Transaction.Status.SETTLED);
-        transactionHelper.save(t);
+        transactionHelper.saveOrUpdate(t);
         sendMarketEmail(subject, to, text);
     }
 
@@ -151,7 +151,7 @@ public class MarketHelper {
         BigDecimal netWorth = convert(walletToEmpty.getKrypto(), amountToSell);
         //send message to bank to credit netWorth USD
 
-        transactionHelper.save(sell);
+        transactionHelper.saveOrUpdate(sell);
 
         String subject, to, text;
         subject = "Wallet emptied";

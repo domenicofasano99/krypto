@@ -23,7 +23,9 @@ import java.math.BigDecimal;
 
 import static com.bok.krypto.utils.Constants.BTC;
 import static com.bok.krypto.utils.Constants.ETH;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Slf4j
@@ -49,8 +51,9 @@ public class WalletServiceTest {
     @Test
     public void createWalletSuccessful() {
 
-        Account u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createAccount();
         Krypto k = modelTestUtils.getRandomKrypto();
+
         WalletRequestDTO requestDTO = new WalletRequestDTO();
         requestDTO.symbol = k.getSymbol();
         WalletResponseDTO responseDTO = walletService.create(u.getId(), requestDTO);
@@ -61,7 +64,7 @@ public class WalletServiceTest {
 
     @Test
     public void createWalletFail_NoSuchKrypto() {
-        Account u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createAccount();
         WalletRequestDTO walletRequest = new WalletRequestDTO();
         walletRequest.symbol = "JFK";
         assertThrows(KryptoNotFoundException.class, () -> walletService.create(u.getId(), walletRequest));
@@ -71,21 +74,19 @@ public class WalletServiceTest {
     @Test
     public void createWallet_ErrorWalletAlreadyExists() {
 
-        Account u = modelTestUtils.createUser();
+        Account account = modelTestUtils.createAccount();
         Krypto k = modelTestUtils.getRandomKrypto();
-        WalletRequestDTO requestDTO = new WalletRequestDTO();
+        Wallet w = modelTestUtils.createWallet(account, k, BigDecimal.TEN);
 
+        WalletRequestDTO requestDTO = new WalletRequestDTO();
         requestDTO.symbol = k.getSymbol();
-        WalletResponseDTO responseDTO = walletService.create(u.getId(), requestDTO);
-        assertNotNull(responseDTO);
-        modelTestUtils.await();
-        assertThrows(WalletAlreadyExistsException.class, () -> walletService.create(u.getId(), requestDTO));
+        assertThrows(WalletAlreadyExistsException.class, () -> walletService.create(account.getId(), requestDTO));
 
     }
 
     @Test
     public void deleteWallet_ok() {
-        Account u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createAccount();
         Krypto k = modelTestUtils.getRandomKrypto();
         Wallet w = modelTestUtils.createWallet(u, k, BigDecimal.TEN);
 
@@ -98,7 +99,7 @@ public class WalletServiceTest {
 
     @Test
     public void deleteWallet_walletDoesNotExist() {
-        Account u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createAccount();
         Krypto k = modelTestUtils.getRandomKrypto();
 
         WalletDeleteRequestDTO deleteRequestDTO = new WalletDeleteRequestDTO();
@@ -109,7 +110,7 @@ public class WalletServiceTest {
 
     @Test
     public void deleteWallet_IBAN_not_given() {
-        Account u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createAccount();
         Krypto k = modelTestUtils.getRandomKrypto();
         Wallet w = modelTestUtils.createWallet(u, k, BigDecimal.TEN);
 
@@ -122,7 +123,7 @@ public class WalletServiceTest {
 
     @Test
     public void getAllWallets() {
-        Account u = modelTestUtils.createUser();
+        Account u = modelTestUtils.createAccount();
         Krypto btc = modelTestUtils.getKrypto(BTC);
         Krypto eth = modelTestUtils.getKrypto(ETH);
         Wallet wa = modelTestUtils.createWallet(u, btc, BigDecimal.TEN);

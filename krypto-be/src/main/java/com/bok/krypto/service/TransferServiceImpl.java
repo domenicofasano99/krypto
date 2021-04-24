@@ -15,12 +15,12 @@ public class TransferServiceImpl implements TransferService {
     TransferHelper transferHelper;
 
     @Override
-    public TransferResponseDTO transfer(Long userId, TransferRequestDTO transferRequestDTO) {
-        return transferHelper.transfer(userId, transferRequestDTO);
+    public TransferResponseDTO transfer(Long accountId, TransferRequestDTO transferRequestDTO) {
+        return transferHelper.transfer(accountId, transferRequestDTO);
     }
 
     @Override
-    public TransferInfoDTO transferInfo(Long userId, Long transferId) {
-        return transferHelper.getTransferInfo(userId, transferId);
+    public TransferInfoDTO transferInfo(Long accountId, Long transferId) {
+        return transferHelper.getTransferInfo(accountId, transferId);
     }
 }

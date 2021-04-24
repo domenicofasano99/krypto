@@ -46,8 +46,9 @@ public class TransferHelper {
     MessageService messageService;
 
     public TransferResponseDTO transfer(Long userId, TransferRequestDTO transferRequestDTO) {
+        Account a = accountHelper.findById(userId);
+        Preconditions.checkNotNull(a);
         Preconditions.checkArgument(transferRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0);
-        Preconditions.checkArgument(accountHelper.existsById(userId));
         Preconditions.checkArgument(walletHelper.existsByUserIdAndSymbol(userId, transferRequestDTO.symbol));
         if (!walletHelper.hasSufficientBalance(userId, transferRequestDTO.symbol, transferRequestDTO.amount)) {
             throw new InsufficientBalanceException("Insufficient balance");
@@ -115,7 +116,7 @@ public class TransferHelper {
             messageService.send(email);
         }
         walletHelper.deposit(destination, transferMessage.amount);
-        String u = accountHelper.findEmailByUserId(transferMessage.userId);
+        String u = accountHelper.findEmailByAccountId(transferMessage.userId);
         EmailMessage email = new EmailMessage();
         email.subject = "Transfer executed";
         email.to = u;

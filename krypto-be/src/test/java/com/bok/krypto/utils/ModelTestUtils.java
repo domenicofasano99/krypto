@@ -87,13 +87,13 @@ public class ModelTestUtils {
         }
     }
 
-    public Account createUser(Long userId) {
+    public Account createAccount(Long accountId) {
         Account u = new Account();
-        u.setId(userId);
+        u.setId(accountId);
         return accountRepository.save(u);
     }
 
-    public Account createUser() {
+    public Account createAccount() {
         //Id for this class should reflect parent User ids
         Account u = new Account();
         u.setId(randomID());

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
 
@@ -62,10 +63,10 @@ public class TransferServiceTest {
 
     @Test
     public void transferAllowedBetweenUsers() {
-        Account a = modelTestUtils.createUser();
+        Account a = modelTestUtils.createAccount();
         Krypto k = modelTestUtils.getKrypto(BTC);
         Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(100));
-        Account b = modelTestUtils.createUser();
+        Account b = modelTestUtils.createAccount();
         Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(10));
 
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
@@ -87,9 +88,9 @@ public class TransferServiceTest {
     @Test
     public void transferNotAllowed_InsufficientBalance() {
         Krypto k = modelTestUtils.getKrypto(BTC);
-        Account a = modelTestUtils.createUser();
+        Account a = modelTestUtils.createAccount();
         Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(1));
-        Account b = modelTestUtils.createUser();
+        Account b = modelTestUtils.createAccount();
         Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(0));
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.symbol = BTC;
@@ -102,9 +103,9 @@ public class TransferServiceTest {
     // FIXME: 18/03/21
     public void getTransferInfo() {
         Krypto k = modelTestUtils.getKrypto(BTC);
-        Account a = modelTestUtils.createUser();
+        Account a = modelTestUtils.createAccount();
         Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(100));
-        Account b = modelTestUtils.createUser();
+        Account b = modelTestUtils.createAccount();
         Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(10));
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.symbol = BTC;

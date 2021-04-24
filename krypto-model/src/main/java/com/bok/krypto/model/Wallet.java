@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -28,7 +29,7 @@ public class Wallet {
     @ManyToOne
     private Account account;
 
-    @ManyToOne
+    @OneToOne
     private Krypto krypto;
 
     @Column

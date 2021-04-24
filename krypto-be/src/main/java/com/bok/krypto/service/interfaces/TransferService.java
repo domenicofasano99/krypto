@@ -7,8 +7,8 @@ import com.bok.integration.krypto.dto.TransferResponseDTO;
 
 public interface TransferService {
 
-    TransferResponseDTO transfer(Long userId, TransferRequestDTO transferRequestDTO);
+    TransferResponseDTO transfer(Long accountId, TransferRequestDTO transferRequestDTO);
 
-    TransferInfoDTO transferInfo(Long userId, Long transferId);
+    TransferInfoDTO transferInfo(Long accountId, Long transferId);
 
 }
