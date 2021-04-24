@@ -8,6 +8,7 @@ active-mq:
   transactions-queue: transactions
   wallets-queue: wallets
   emails-queue: emails
+  krypto-users: krypto-accounts
   broker-url: tcp://localhost:61616
 
 spring:
