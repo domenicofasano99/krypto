@@ -44,19 +44,20 @@ public class MarketHelper {
     BankService bankService;
 
 
-    public TransactionDTO buy(Long userId, PurchaseRequestDTO purchaseRequestDTO) {
+    public TransactionDTO buy(Long accountId, PurchaseRequestDTO purchaseRequestDTO) {
         Preconditions.checkNotNull(purchaseRequestDTO);
         Preconditions.checkNotNull(purchaseRequestDTO.symbol);
         Preconditions.checkNotNull(purchaseRequestDTO.amount);
         Preconditions.checkNotNull(purchaseRequestDTO.amount);
-        Preconditions.checkArgument(accountHelper.existsById(userId), ErrorCodes.USER_DOES_NOT_EXIST);
+        Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequestDTO.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
-        Preconditions.checkArgument(bankService.getUserBalance(userId).balance.compareTo(BigDecimal.ZERO) > 0);
+        Preconditions.checkArgument(bankService.getUserBalance(accountId).balance.compareTo(BigDecimal.ZERO) > 0);
+        Account account = accountHelper.findById(accountId);
         Transaction t = new Transaction(Transaction.Type.BUY);
         t = transactionHelper.saveOrUpdate(t);
         PurchaseMessage message = new PurchaseMessage();
-        message.userId = userId;
+        message.userId = account.getId();
         message.transactionId = t.getId();
         message.amount = purchaseRequestDTO.amount;
         message.symbol = purchaseRequestDTO.symbol;
@@ -67,11 +68,11 @@ public class MarketHelper {
     public void handle(PurchaseMessage purchaseMessage) {
         log.info("Processing purchase {}", purchaseMessage);
         Transaction t = transactionHelper.findById(purchaseMessage.transactionId);
-        Wallet destination = walletHelper.findByUserIdAndSymbol(purchaseMessage.userId, purchaseMessage.symbol);
+        Wallet destination = walletHelper.findByAccountIdAndSymbol(purchaseMessage.userId, purchaseMessage.symbol);
         Account account = accountHelper.findById(purchaseMessage.userId);
         t.setWallet(destination);
         t.setAmount(purchaseMessage.amount);
-        t.setUser(account);
+        t.setAccount(account);
 
         try {
             walletHelper.deposit(destination, purchaseMessage.amount);
@@ -119,11 +120,11 @@ public class MarketHelper {
     public void handle(SellMessage sellMessage) {
         log.info("Processing sell {}", sellMessage);
         Transaction t = transactionHelper.findById(sellMessage.transactionId);
-        Wallet source = walletHelper.findByUserIdAndSymbol(sellMessage.userId, sellMessage.symbol);
+        Wallet source = walletHelper.findByAccountIdAndSymbol(sellMessage.userId, sellMessage.symbol);
         Account account = accountHelper.findById(sellMessage.userId);
         t.setWallet(source);
         t.setAmount(sellMessage.amount);
-        t.setUser(account);
+        t.setAccount(account);
         String subject, to, text;
         try {
             walletHelper.withdraw(source, sellMessage.amount);
@@ -147,7 +148,7 @@ public class MarketHelper {
         BigDecimal amountToSell = walletToEmpty.getAvailableAmount();
         Transaction sell = new Transaction();
         sell.setAmount(amountToSell);
-        sell.setUser(account);
+        sell.setAccount(account);
         BigDecimal netWorth = convert(walletToEmpty.getKrypto(), amountToSell);
         //send message to bank to credit netWorth USD
 

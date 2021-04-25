@@ -46,6 +46,13 @@ public class TransferHelper {
     MessageService messageService;
 
     public TransferResponseDTO transfer(Long accountId, TransferRequestDTO transferRequestDTO) {
+        Preconditions.checkNotNull(accountId);
+        Preconditions.checkNotNull(transferRequestDTO);
+        Preconditions.checkNotNull(transferRequestDTO.symbol);
+        Preconditions.checkNotNull(transferRequestDTO.source);
+        Preconditions.checkNotNull(transferRequestDTO.destination);
+        Preconditions.checkNotNull(transferRequestDTO.amount);
+
         Account a = accountHelper.findById(accountId);
         Wallet source = walletHelper.findByPublicId(transferRequestDTO.source);
 
@@ -101,13 +108,13 @@ public class TransferHelper {
         log.info("Processing transfer {}", transferMessage);
         Account account = accountHelper.findById(transferMessage.userId);
         Transfer transfer = transferRepository.findById(transferMessage.transferId).orElseThrow(() -> new RuntimeException("This transfer should have been persisted before"));
-        Wallet source = walletHelper.findByUserIdAndSymbol(transferMessage.userId, transferMessage.symbol);
+        Wallet source = walletHelper.findByAccountIdAndSymbol(transferMessage.userId, transferMessage.symbol);
         Wallet destination = walletHelper.findByPublicId(transferMessage.destination);
 
         transfer.setSourceWallet(source);
         transfer.setDestinationWallet(destination);
         transfer.setAmount(transferMessage.amount);
-        transfer.setUser(account);
+        transfer.setAccount(account);
 
         try {
             transfer(source, destination, transferMessage.amount);

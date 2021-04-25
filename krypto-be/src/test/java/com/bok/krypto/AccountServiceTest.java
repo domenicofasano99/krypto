@@ -34,6 +34,7 @@ public class AccountServiceTest {
         AccountCreationMessage accountCreationMessage = new AccountCreationMessage();
         accountCreationMessage.accountId = accountId;
         accountCreationMessage.email = email;
+
         accountHelper.handle(accountCreationMessage);
 
         Account account = accountRepository.findById(accountCreationMessage.accountId).orElseThrow(RuntimeException::new);

@@ -59,7 +59,7 @@ public class WalletHelper {
         return walletRepository.existsByPublicId(publicId);
     }
 
-    public Wallet findByUserIdAndSymbol(Long userId, String symbol) {
+    public Wallet findByAccountIdAndSymbol(Long userId, String symbol) {
         return walletRepository.findByAccount_IdAndKrypto_Symbol(userId, symbol).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
 
     }
@@ -140,7 +140,7 @@ public class WalletHelper {
         Preconditions.checkArgument(walletRepository.existsByAccount_IdAndKrypto_Symbol(accountId, deleteRequestDTO.symbol));
         Preconditions.checkNotNull(deleteRequestDTO.destinationIBAN);
         Account account = accountHelper.findById(accountId);
-        Wallet wallet = findByUserIdAndSymbol(accountId, deleteRequestDTO.symbol);
+        Wallet wallet = findByAccountIdAndSymbol(accountId, deleteRequestDTO.symbol);
         marketHelper.emptyWallet(account, wallet);
         walletRepository.delete(wallet);
         String to, subject, text;

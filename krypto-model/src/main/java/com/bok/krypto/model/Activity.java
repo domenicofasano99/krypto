@@ -54,6 +54,14 @@ public abstract class Activity {
         this.status = Status.PENDING;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }
@@ -74,8 +82,8 @@ public abstract class Activity {
         return creationTimestamp;
     }
 
-    public void setCreationTimestamp(Instant timestamp) {
-        this.creationTimestamp = timestamp;
+    public void setCreationTimestamp(Instant creationTimestamp) {
+        this.creationTimestamp = creationTimestamp;
     }
 
     public Instant getUpdateTimestamp() {
@@ -86,11 +94,11 @@ public abstract class Activity {
         this.updateTimestamp = updateTimestamp;
     }
 
-    public Account getUser() {
+    public Account getAccount() {
         return account;
     }
 
-    public void setUser(Account account) {
+    public void setAccount(Account account) {
         this.account = account;
     }
 
@@ -108,14 +116,6 @@ public abstract class Activity {
 
     public void setFee(Double fee) {
         this.fee = fee;
-    }
-
-    public Transaction.Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Transaction.Status status) {
-        this.status = status;
     }
 
     public enum Status {

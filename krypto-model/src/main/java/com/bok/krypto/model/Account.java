@@ -30,6 +30,9 @@ public class Account {
     @OneToMany(cascade = {CascadeType.REMOVE})
     private Set<Transaction> transactions;
 
+    @OneToMany(cascade = {CascadeType.REMOVE})
+    private Set<Transfer> transfers;
+
     @CreationTimestamp
     private Instant creationTimestamp;
 
@@ -95,6 +98,14 @@ public class Account {
 
     public void setTransactions(Set<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public Set<Transfer> getTransfers() {
+        return transfers;
+    }
+
+    public void setTransfers(Set<Transfer> transfers) {
+        this.transfers = transfers;
     }
 
     @Override
