@@ -3,7 +3,7 @@ package com.bok.krypto.helper;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.AccountRepository;
-import com.bok.parent.message.AccountCreationMessage;
+import com.bok.integration.AccountCreationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

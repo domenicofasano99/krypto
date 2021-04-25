@@ -4,7 +4,7 @@ import com.bok.krypto.helper.AccountHelper;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.repository.AccountRepository;
 import com.bok.krypto.utils.ModelTestUtils;
-import com.bok.parent.message.AccountCreationMessage;
+import com.bok.integration.AccountCreationMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
