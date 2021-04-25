@@ -21,10 +21,11 @@ import java.util.UUID;
 @Entity
 public class Wallet {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
-    private UUID id;
+    @GeneratedValue
+    private Long id;
+
+    @Column(length = 36, unique = true)
+    private String publicId;
 
     @ManyToOne
     private Account account;
@@ -62,12 +63,28 @@ public class Wallet {
         this.status = Status.PENDING;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String id) {
+        this.publicId = id;
     }
 
     public Krypto getKrypto() {
@@ -122,10 +139,13 @@ public class Wallet {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
+                .append("publicId", publicId)
+                .append("account", account)
                 .append("krypto", krypto)
                 .append("availableAmount", availableAmount)
                 .append("creationTime", creationTime)
                 .append("updateTime", updateTime)
+                .append("status", status)
                 .toString();
     }
 

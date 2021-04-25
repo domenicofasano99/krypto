@@ -1,4 +1,4 @@
-package com.bok.krypto.market;
+package com.bok.krypto;
 
 import com.bok.integration.UserBalance;
 import com.bok.integration.krypto.PurchaseRequestDTO;
@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -46,6 +47,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Slf4j
+@ActiveProfiles("test")
 public class MarketServiceTest {
 
     @Autowired
@@ -69,7 +71,7 @@ public class MarketServiceTest {
     @BeforeEach
     public void init() {
         modelTestUtils.clearAll();
-        modelTestUtils.populateDB();
+        modelTestUtils.createBaseKryptos();
     }
 
     @Test

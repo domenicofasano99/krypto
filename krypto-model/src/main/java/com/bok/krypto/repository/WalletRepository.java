@@ -10,9 +10,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
-    boolean existsById(UUID id);
+    boolean existsByPublicId(String publicId);
 
-    Optional<Wallet> findById(UUID walletId);
+    Optional<Wallet> findByPublicId(String publicId);
 
     Optional<Wallet> findByAccount_IdAndKrypto_Symbol(Long accountId, String symbol);
 

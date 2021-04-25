@@ -27,13 +27,6 @@ spring:
     username: developer
     password: password4testing
 
-
-  parent-datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://dev.faraone.ovh:3307/parent
-    username: developer
-    password: password4testing
-
   jpa:
     hibernate:
       ddl-auto: update

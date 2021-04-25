@@ -1,8 +1,9 @@
 package com.bok.krypto.helper;
 
 import com.bok.krypto.model.Account;
+import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.AccountRepository;
-import com.bok.parent.message.KryptoAccountCreationMessage;
+import com.bok.parent.message.AccountCreationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,10 +29,14 @@ public class AccountHelper {
         return accountRepository.save(account);
     }
 
-    public void saveOrUpdate(KryptoAccountCreationMessage message) {
+    public void handle(AccountCreationMessage message) {
         Account a = new Account();
         a.setId(message.accountId);
         a.setEmail(message.email);
-        accountRepository.save(a);
+        saveOrUpdate(a);
+    }
+
+    public Boolean checkRightsOnResource(Account account, Wallet wallet) {
+        return wallet.getAccount().equals(account);
     }
 }

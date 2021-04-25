@@ -15,7 +15,7 @@ public interface WalletService {
 
     WalletDeleteResponseDTO delete(Long userId, WalletDeleteRequestDTO walletDeleteRequestDTO);
 
-    WalletInfoDTO info(Long userId, UUID walletID);
+    WalletInfoDTO info(Long userId, String walletId);
 
     WalletsDTO wallets(Long userId);
 }

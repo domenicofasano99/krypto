@@ -32,7 +32,7 @@ public class DataGatheringTest {
     @BeforeEach
     public void beforeEach() {
         modelTestUtils.clearAll();
-        modelTestUtils.populateDB();
+        modelTestUtils.createBaseKryptos();
     }
 
 

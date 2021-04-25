@@ -1,4 +1,4 @@
-package com.bok.krypto.wallet;
+package com.bok.krypto;
 
 import com.bok.integration.krypto.WalletDeleteRequestDTO;
 import com.bok.integration.krypto.WalletDeleteResponseDTO;
@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Slf4j
+@ActiveProfiles("test")
 public class WalletServiceTest {
 
     @Autowired
@@ -44,7 +46,7 @@ public class WalletServiceTest {
     public void configureTests() {
         modelTestUtils.clearAll();
         log.info("DB dropped correctly.");
-        modelTestUtils.populateDB();
+        modelTestUtils.createBaseKryptos();
         log.info("DB populated correctly.");
     }
 

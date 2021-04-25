@@ -14,9 +14,9 @@ public interface MessageService {
 
     public void send(TransactionMessage transactionMessage);
 
-    public void send(TransferMessage transferMessage);
+    public void sendTransfer(TransferMessage transferMessage);
 
-    public void send(EmailMessage emailWalletCreation);
+    public void sendEmail(EmailMessage emailWalletCreation);
 
     public void send(PurchaseMessage purchaseMessage);
 

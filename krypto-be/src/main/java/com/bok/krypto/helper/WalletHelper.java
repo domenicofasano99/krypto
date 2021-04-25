@@ -51,12 +51,12 @@ public class WalletHelper {
     MarketHelper marketHelper;
 
 
-    public Wallet findById(UUID id) {
-        return walletRepository.findById(id).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
+    public Wallet findByPublicId(String publicId) {
+        return walletRepository.findByPublicId(publicId).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
     }
 
-    public Boolean existsById(UUID id) {
-        return walletRepository.existsById(id);
+    public Boolean existsByPublicId(String publicId) {
+        return walletRepository.existsByPublicId(publicId);
     }
 
     public Wallet findByUserIdAndSymbol(Long userId, String symbol) {
@@ -69,25 +69,25 @@ public class WalletHelper {
         if (wallet.getAvailableAmount().compareTo(amount) < 0) {
             throw new InsufficientBalanceException("not enough funds to perform the withdrawal");
         }
-        log.info("withdrawing {} from wallet {}", amount, wallet.getId());
+        log.info("withdrawing {} from wallet {}", amount, wallet.getPublicId());
         BigDecimal newBalance = wallet.getAvailableAmount().subtract(amount);
         wallet.setAvailableAmount(newBalance);
         walletRepository.saveAndFlush(wallet);
-        log.info("wallet {} balance: {}", wallet.getId(), newBalance);
+        log.info("wallet {} balance: {}", wallet.getPublicId(), newBalance);
         return amount;
     }
 
     @Transactional
     public synchronized BigDecimal deposit(Wallet wallet, BigDecimal amount) {
-        Wallet w = findById(wallet.getId());
+        Wallet w = findByPublicId(wallet.getPublicId());
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidRequestException("cannot deposit negative amounts");
         }
-        log.info("depositing {} {} from wallet {}", amount, w.getKrypto().getSymbol(), wallet.getId());
+        log.info("depositing {} {} from wallet {}", amount, w.getKrypto().getSymbol(), wallet.getPublicId());
         BigDecimal newBalance = w.getAvailableAmount().add(amount);
         w.setAvailableAmount(newBalance);
         walletRepository.saveAndFlush(w);
-        log.info("wallet {} balance: {}", wallet.getId(), newBalance);
+        log.info("wallet {} balance: {}", wallet.getPublicId(), newBalance);
         return amount;
     }
 
@@ -117,9 +117,10 @@ public class WalletHelper {
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
         Account u = accountHelper.findById(walletMessage.userId);
         w.setUser(u);
+        w.setPublicId(UUID.randomUUID().toString());
         w.setKrypto(kryptoHelper.findBySymbol(walletMessage.symbol));
         walletRepository.save(w);
-        messageService.send(emailWalletCreation(w, u));
+        messageService.sendEmail(emailWalletCreation(w, u));
     }
 
     private EmailMessage emailWalletCreation(Wallet w, Account u) {
@@ -130,16 +131,16 @@ public class WalletHelper {
         return email;
     }
 
-    public Boolean hasSufficientBalance(Long userId, String symbol, BigDecimal amount) {
-        return walletRepository.existsByAccount_IdAndKrypto_SymbolAndAvailableAmountGreaterThanEqual(userId, symbol, amount);
+    public Boolean hasSufficientBalance(Long accountId, String symbol, BigDecimal amount) {
+        return walletRepository.existsByAccount_IdAndKrypto_SymbolAndAvailableAmountGreaterThanEqual(accountId, symbol, amount);
     }
 
-    public WalletDeleteResponseDTO delete(Long userId, WalletDeleteRequestDTO deleteRequestDTO) {
-        Preconditions.checkArgument(accountHelper.existsById(userId));
-        Preconditions.checkArgument(walletRepository.existsByAccount_IdAndKrypto_Symbol(userId, deleteRequestDTO.symbol));
+    public WalletDeleteResponseDTO delete(Long accountId, WalletDeleteRequestDTO deleteRequestDTO) {
+        Preconditions.checkArgument(accountHelper.existsById(accountId));
+        Preconditions.checkArgument(walletRepository.existsByAccount_IdAndKrypto_Symbol(accountId, deleteRequestDTO.symbol));
         Preconditions.checkNotNull(deleteRequestDTO.destinationIBAN);
-        Account account = accountHelper.findById(userId);
-        Wallet wallet = findByUserIdAndSymbol(userId, deleteRequestDTO.symbol);
+        Account account = accountHelper.findById(accountId);
+        Wallet wallet = findByUserIdAndSymbol(accountId, deleteRequestDTO.symbol);
         marketHelper.emptyWallet(account, wallet);
         walletRepository.delete(wallet);
         String to, subject, text;
@@ -147,7 +148,7 @@ public class WalletHelper {
         subject = "BOK - Wallet deletion";
         text = "Your wallet " + wallet.getKrypto().getSymbol() + " has been deleted.";
         sendMarketEmail(subject, to, text);
-        return new WalletDeleteResponseDTO(wallet.getId());
+        return new WalletDeleteResponseDTO(wallet.getPublicId());
     }
 
     public void sendMarketEmail(String subject, String email, String text) {
@@ -155,20 +156,20 @@ public class WalletHelper {
         emailMessage.subject = subject;
         emailMessage.to = email;
         emailMessage.text = text;
-        messageService.send(emailMessage);
+        messageService.sendEmail(emailMessage);
     }
 
-    public WalletInfoDTO info(Long userId, UUID walletID) {
-        Preconditions.checkArgument(accountHelper.existsById(userId));
-        Preconditions.checkArgument(walletRepository.existsById(walletID));
+    public WalletInfoDTO info(Long accountId, String walletID) {
+        Preconditions.checkArgument(accountHelper.existsById(accountId));
+        Preconditions.checkArgument(walletRepository.existsByPublicId(walletID));
 
-        Wallet wallet = findById(walletID);
+        Wallet wallet = findByPublicId(walletID);
         return getInfoFromWallet(wallet);
     }
 
-    public WalletsDTO wallets(Long userId) {
-        Preconditions.checkArgument(accountHelper.existsById(userId));
-        List<Wallet> wallets = walletRepository.findByAccount_Id(userId);
+    public WalletsDTO wallets(Long accountId) {
+        Preconditions.checkArgument(accountHelper.existsById(accountId));
+        List<Wallet> wallets = walletRepository.findByAccount_Id(accountId);
         WalletsDTO walletsDTO = new WalletsDTO();
         walletsDTO.wallets = new ArrayList<>();
         for (Wallet w : wallets) {

@@ -81,7 +81,7 @@ public class MarketHelper {
             email.to = account.getEmail();
             email.text = "Your PURCHASE transaction of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been DECLINED due to insufficient balance.";
             t.setStatus(Transaction.Status.REJECTED);
-            messageService.send(email);
+            messageService.sendEmail(email);
         }
         log.info("Completed purchase ID:{} for {} of {} {}", purchaseMessage.transactionId, purchaseMessage.userId, purchaseMessage.symbol, purchaseMessage.amount);
         EmailMessage email = new EmailMessage();
@@ -90,7 +90,7 @@ public class MarketHelper {
         email.text = "Your PURCHASE of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been ACCEPTED.";
         t.setStatus(Transaction.Status.SETTLED);
         transactionHelper.saveOrUpdate(t);
-        messageService.send(email);
+        messageService.sendEmail(email);
     }
 
     public TransactionDTO sell(Long userId, SellRequestDTO sellRequestDTO) {
@@ -173,6 +173,6 @@ public class MarketHelper {
         emailMessage.subject = subject;
         emailMessage.to = email;
         emailMessage.text = text;
-        messageService.send(emailMessage);
+        messageService.sendEmail(emailMessage);
     }
 }

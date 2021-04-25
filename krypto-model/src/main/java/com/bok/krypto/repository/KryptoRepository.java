@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface KryptoRepository extends JpaRepository<Krypto, Long> {
 
-    Optional<Krypto> findBySymbol(String name);
+    Optional<Krypto> findBySymbolIgnoreCase(String name);
 
     List<Krypto> findBySymbolIn(List<String> codes);
 

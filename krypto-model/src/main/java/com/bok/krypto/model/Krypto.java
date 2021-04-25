@@ -36,7 +36,7 @@ public class Krypto {
     @UpdateTimestamp
     private Instant updateTimestamp;
 
-    @OneToMany(cascade = {CascadeType.ALL})
+    @OneToMany
     private List<HistoricalData> historicalData = new ArrayList<>();
 
     @OneToMany

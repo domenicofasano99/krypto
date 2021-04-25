@@ -50,7 +50,7 @@ public class KryptoHelper {
     }
 
     public Krypto findBySymbol(String symbol) {
-        return kryptoRepository.findBySymbol(symbol).orElseThrow(() -> new KryptoNotFoundException("This Krypto does not exist"));
+        return kryptoRepository.findBySymbolIgnoreCase(symbol).orElseThrow(() -> new KryptoNotFoundException("This Krypto does not exist"));
     }
 
     public KryptoInfoDTO getKryptoInfo(String symbol) {
@@ -68,7 +68,7 @@ public class KryptoHelper {
     }
 
     public Krypto findBySymbolOrNull(String symbol) {
-        return kryptoRepository.findBySymbol(symbol).orElse(null);
+        return kryptoRepository.findBySymbolIgnoreCase(symbol).orElse(null);
     }
 
     public void saveAll(Collection<Krypto> values) {

@@ -15,12 +15,11 @@ import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.TransferService;
 import com.bok.krypto.utils.ModelTestUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 
@@ -30,6 +29,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class TransferServiceTest {
 
     @Autowired
@@ -50,37 +50,36 @@ public class TransferServiceTest {
     @Autowired
     TransferRepository transferRepository;
 
-    @BeforeAll
-    public static void setupMocks() {
-        //setup mocks here
-    }
-
     @BeforeEach
     public void setup() {
         modelTestUtils.clearAll();
-        modelTestUtils.populateDB();
+        modelTestUtils.createBaseKryptos();
     }
 
     @Test
     public void transferAllowedBetweenUsers() {
         Account a = modelTestUtils.createAccount();
-        Krypto k = modelTestUtils.getKrypto(BTC);
-        Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(100));
         Account b = modelTestUtils.createAccount();
-        Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(10));
+
+        Krypto k = modelTestUtils.getKrypto(BTC);
+
+        Wallet wa = modelTestUtils.createWallet(a, k, BigDecimal.valueOf(100));
+        Wallet wb = modelTestUtils.createWallet(b, k, BigDecimal.valueOf(10));
 
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
+        transferRequestDTO.source = wa.getPublicId();
+        transferRequestDTO.destination = wb.getPublicId();
         transferRequestDTO.symbol = BTC;
-        transferRequestDTO.destination = wb.getId();
-        transferRequestDTO.amount = new BigDecimal(5);
+        transferRequestDTO.amount = BigDecimal.valueOf(5);
+
         TransferResponseDTO responseDTO = transferService.transfer(a.getId(), transferRequestDTO);
         modelTestUtils.await();
 
         Wallet fwa = walletRepository.findById(wa.getId()).get();
         Wallet fwb = walletRepository.findById(wb.getId()).get();
 
-        assertTrue(fwa.getAvailableAmount().compareTo(new BigDecimal(95)) == 0);
-        assertTrue(fwb.getAvailableAmount().compareTo(new BigDecimal(15)) == 0);
+        assertTrue(fwa.getAvailableAmount().compareTo(BigDecimal.valueOf(95)) == 0);
+        assertTrue(fwb.getAvailableAmount().compareTo(BigDecimal.valueOf(15)) == 0);
 
     }
 
@@ -89,13 +88,14 @@ public class TransferServiceTest {
     public void transferNotAllowed_InsufficientBalance() {
         Krypto k = modelTestUtils.getKrypto(BTC);
         Account a = modelTestUtils.createAccount();
-        Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(1));
+        Wallet wa = modelTestUtils.createWallet(a, k, BigDecimal.valueOf(1));
         Account b = modelTestUtils.createAccount();
-        Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(0));
+        Wallet wb = modelTestUtils.createWallet(b, k, BigDecimal.valueOf(0));
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
+        transferRequestDTO.source = wa.getPublicId();
+        transferRequestDTO.destination = wb.getPublicId();
         transferRequestDTO.symbol = BTC;
-        transferRequestDTO.destination = wb.getId();
-        transferRequestDTO.amount = new BigDecimal(5);
+        transferRequestDTO.amount = BigDecimal.valueOf(5);
         assertThrows(InsufficientBalanceException.class, () -> transferService.transfer(a.getId(), transferRequestDTO));
 
     }
@@ -104,13 +104,13 @@ public class TransferServiceTest {
     public void getTransferInfo() {
         Krypto k = modelTestUtils.getKrypto(BTC);
         Account a = modelTestUtils.createAccount();
-        Wallet wa = modelTestUtils.createWallet(a, k, new BigDecimal(100));
+        Wallet wa = modelTestUtils.createWallet(a, k, BigDecimal.valueOf(100));
         Account b = modelTestUtils.createAccount();
-        Wallet wb = modelTestUtils.createWallet(b, k, new BigDecimal(10));
+        Wallet wb = modelTestUtils.createWallet(b, k, BigDecimal.valueOf(10));
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.symbol = BTC;
-        transferRequestDTO.destination = wb.getId();
-        transferRequestDTO.amount = new BigDecimal(5);
+        transferRequestDTO.destination = wb.getPublicId();
+        transferRequestDTO.amount = BigDecimal.valueOf(5);
         TransferResponseDTO responseDTO = transferService.transfer(a.getId(), transferRequestDTO);
         modelTestUtils.await();
         TransferInfoRequestDTO req = new TransferInfoRequestDTO();

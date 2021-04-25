@@ -45,7 +45,7 @@ public class MarketData {
     public void saveOrUpdate(CoinMarketDTO coinMarketDTO) {
         List<Krypto> updatedKryptos = new ArrayList<>();
         for (Datum datum : coinMarketDTO.data) {
-            Krypto krypto = kryptoRepository.findBySymbol(datum.symbol).orElse(null);
+            Krypto krypto = kryptoRepository.findBySymbolIgnoreCase(datum.symbol).orElse(null);
             if (Objects.isNull(krypto)) {
                 krypto = new Krypto(datum.name, datum.symbol);
             }

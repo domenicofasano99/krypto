@@ -30,8 +30,8 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletInfoDTO info(Long userId, UUID walletID) {
-        return walletHelper.info(userId, walletID);
+    public WalletInfoDTO info(Long userId, String walletId) {
+        return walletHelper.info(userId, walletId);
     }
 
     @Override

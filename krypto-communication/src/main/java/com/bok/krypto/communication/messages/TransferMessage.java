@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class TransferMessage extends AbstractMessage {
     public String symbol;
-    public UUID destination;
+    public String destination;
     public BigDecimal amount;
     public Long transferId;
 }

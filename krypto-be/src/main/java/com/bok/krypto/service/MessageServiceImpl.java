@@ -38,7 +38,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void send(TransferMessage transferMessage) {
+    public void sendTransfer(TransferMessage transferMessage) {
         transferProducer.send(transferMessage);
     }
 
@@ -48,7 +48,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void send(EmailMessage emailMessage) {
+    public void sendEmail(EmailMessage emailMessage) {
         emailProducer.send(emailMessage);
     }
 

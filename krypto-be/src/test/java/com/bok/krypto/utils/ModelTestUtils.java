@@ -24,6 +24,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
@@ -61,16 +62,17 @@ public class ModelTestUtils {
         return Instant.ofEpochSecond(random);
     }
 
-    public synchronized void populateDB() {
-        kryptoRepository.save(new Krypto("Bitcoin", "BTC", new BigDecimal(50000)));
-        kryptoRepository.save(new Krypto("Ethereum", "ETH", new BigDecimal(1800)));
-        kryptoRepository.save(new Krypto("Litecoin", "LTC", new BigDecimal(1800)));
-        kryptoRepository.save(new Krypto("Cardano", "ADA", new BigDecimal(1800)));
-        kryptoRepository.save(new Krypto("DogeCoin", "DOGE", new BigDecimal(1800)));
-
+    public void createBaseKryptos() {
+        List<Krypto> kryptoList = new ArrayList<>();
+        kryptoList.add(new Krypto("Bitcoin", "BTC", new BigDecimal(50000)));
+        kryptoList.add(new Krypto("Ethereum", "ETH", new BigDecimal(1800)));
+        kryptoList.add(new Krypto("Litecoin", "LTC", new BigDecimal(1800)));
+        kryptoList.add(new Krypto("Cardano", "ADA", new BigDecimal(1800)));
+        kryptoList.add(new Krypto("DogeCoin", "DOGE", new BigDecimal(1800)));
+        kryptoRepository.saveAll(kryptoList);
     }
 
-    public synchronized void clearAll() {
+    public void clearAll() {
         historicalDataRepository.deleteAll();
         transactionRepository.deleteAll();
         transferRepository.deleteAll();
@@ -97,6 +99,7 @@ public class ModelTestUtils {
         //Id for this class should reflect parent User ids
         Account u = new Account();
         u.setId(randomID());
+        u.setEmail(faker.internet().emailAddress());
         log.info("Created user with id: {}", u.getId());
         return accountRepository.save(u);
     }
@@ -111,6 +114,7 @@ public class ModelTestUtils {
 
     public Wallet createWallet(Account account, Krypto krypto, BigDecimal baseAmount) {
         Wallet w = new Wallet();
+        w.setPublicId(UUID.randomUUID().toString());
         w.setKrypto(krypto);
         w.setUser(account);
         w.setAvailableAmount(baseAmount);
@@ -120,7 +124,7 @@ public class ModelTestUtils {
     }
 
     public Krypto getKrypto(String krypto) {
-        return kryptoRepository.findBySymbol(krypto).get();
+        return kryptoRepository.findBySymbolIgnoreCase(krypto).get();
     }
 
     public Krypto getRandomKrypto() {
@@ -154,13 +158,13 @@ public class ModelTestUtils {
     public void await() {
         int times = 0;
         int maxTimes = 100;
-        while (transferRepository.countPendingTransfers() > 0 &&
-                walletRepository.countPendingWallets() > 0 &&
-                transactionRepository.countPendingTransactions() > 0 &&
-                times < maxTimes) {
+        do {
             Thread.sleep(500);
             times++;
-        }
+        } while (transferRepository.countPendingTransfers() > 0 &&
+                walletRepository.countPendingWallets() > 0 &&
+                transactionRepository.countPendingTransactions() > 0 &&
+                times < maxTimes);
     }
 
 

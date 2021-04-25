@@ -45,12 +45,15 @@ public class TransferHelper {
     @Autowired
     MessageService messageService;
 
-    public TransferResponseDTO transfer(Long userId, TransferRequestDTO transferRequestDTO) {
-        Account a = accountHelper.findById(userId);
+    public TransferResponseDTO transfer(Long accountId, TransferRequestDTO transferRequestDTO) {
+        Account a = accountHelper.findById(accountId);
+        Wallet source = walletHelper.findByPublicId(transferRequestDTO.source);
+
         Preconditions.checkNotNull(a);
+        //Preconditions.checkArgument(accountHelper.checkRightsOnResource(a, source));
         Preconditions.checkArgument(transferRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0);
-        Preconditions.checkArgument(walletHelper.existsByUserIdAndSymbol(userId, transferRequestDTO.symbol));
-        if (!walletHelper.hasSufficientBalance(userId, transferRequestDTO.symbol, transferRequestDTO.amount)) {
+        Preconditions.checkArgument(walletHelper.existsByUserIdAndSymbol(accountId, transferRequestDTO.symbol));
+        if (!walletHelper.hasSufficientBalance(accountId, transferRequestDTO.symbol, transferRequestDTO.amount)) {
             throw new InsufficientBalanceException("Insufficient balance");
         }
         Transfer t = new Transfer();
@@ -58,12 +61,12 @@ public class TransferHelper {
 
         TransferMessage message = new TransferMessage();
         message.transferId = t.getId();
-        message.userId = userId;
+        message.userId = accountId;
         message.symbol = transferRequestDTO.symbol;
         message.destination = transferRequestDTO.destination;
         message.amount = transferRequestDTO.amount;
 
-        messageService.send(message);
+        messageService.sendTransfer(message);
 
         TransferResponseDTO response = new TransferResponseDTO();
         response.id = t.getId();
@@ -77,8 +80,8 @@ public class TransferHelper {
         TransferInfoDTO response = new TransferInfoDTO();
         response.id = t.getId();
         response.amount = t.getAmount();
-        response.source = t.getSourceWallet().getId();
-        response.destination = t.getDestinationWallet().getId();
+        response.source = t.getSourceWallet().getPublicId();
+        response.destination = t.getDestinationWallet().getPublicId();
         response.timestamp = t.getCreationTimestamp();
         response.status = t.getStatus().name();
         return response;
@@ -96,34 +99,38 @@ public class TransferHelper {
 
     public void handle(TransferMessage transferMessage) {
         log.info("Processing transfer {}", transferMessage);
-        Transfer t = transferRepository.findById(transferMessage.transferId).orElseThrow(() -> new RuntimeException("This transfer should have been persisted before"));
-        Wallet source = walletHelper.findByUserIdAndSymbol(transferMessage.userId, transferMessage.symbol);
-        Wallet destination = walletHelper.findById(transferMessage.destination);
         Account account = accountHelper.findById(transferMessage.userId);
-        t.setSourceWallet(source);
-        t.setDestinationWallet(destination);
-        t.setAmount(transferMessage.amount);
-        t.setUser(account);
+        Transfer transfer = transferRepository.findById(transferMessage.transferId).orElseThrow(() -> new RuntimeException("This transfer should have been persisted before"));
+        Wallet source = walletHelper.findByUserIdAndSymbol(transferMessage.userId, transferMessage.symbol);
+        Wallet destination = walletHelper.findByPublicId(transferMessage.destination);
+
+        transfer.setSourceWallet(source);
+        transfer.setDestinationWallet(destination);
+        transfer.setAmount(transferMessage.amount);
+        transfer.setUser(account);
 
         try {
-            walletHelper.withdraw(source, transferMessage.amount);
+            transfer(source, destination, transferMessage.amount);
         } catch (InsufficientBalanceException ex) {
             EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";
             email.to = account.getEmail();
             email.text = "Your transfer of " + transferMessage.amount + " " + transferMessage.symbol + " has been DECLINED due to insufficient balance.";
-            t.setStatus(Transaction.Status.REJECTED);
-            messageService.send(email);
+            transfer.setStatus(Transaction.Status.REJECTED);
+            messageService.sendEmail(email);
         }
-        walletHelper.deposit(destination, transferMessage.amount);
-        String u = accountHelper.findEmailByAccountId(transferMessage.userId);
         EmailMessage email = new EmailMessage();
         email.subject = "Transfer executed";
-        email.to = u;
+        email.to = account.getEmail();
         email.text = "Your transfer of " + transferMessage.amount + " " + transferMessage.symbol + " has been ACCEPTED.";
-        t.setStatus(Transaction.Status.SETTLED);
-        transferRepository.saveAndFlush(t);
-        messageService.send(email);
+        transfer.setStatus(Transaction.Status.SETTLED);
+        transferRepository.saveAndFlush(transfer);
+        messageService.sendEmail(email);
+    }
+
+    public void transfer(Wallet source, Wallet destination, BigDecimal amount) {
+        BigDecimal withdrawn = walletHelper.withdraw(source, amount);
+        walletHelper.deposit(destination, withdrawn);
     }
 
     public StatusDTO getTransferStatus(Long transferId) {

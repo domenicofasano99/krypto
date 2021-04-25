@@ -7,5 +7,5 @@ import java.util.UUID;
 public class WalletMessage extends AbstractMessage {
     public String symbol;
 
-    public UUID id;
+    public Long id;
 }
