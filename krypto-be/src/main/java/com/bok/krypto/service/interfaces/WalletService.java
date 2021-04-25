@@ -7,8 +7,6 @@ import com.bok.integration.krypto.WalletsDTO;
 import com.bok.integration.krypto.dto.WalletRequestDTO;
 import com.bok.integration.krypto.dto.WalletResponseDTO;
 
-import java.util.UUID;
-
 public interface WalletService {
 
     WalletResponseDTO create(Long userId, WalletRequestDTO walletRequestDTO);

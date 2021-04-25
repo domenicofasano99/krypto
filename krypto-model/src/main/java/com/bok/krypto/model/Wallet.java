@@ -2,7 +2,6 @@ package com.bok.krypto.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
@@ -16,7 +15,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 public class Wallet {
