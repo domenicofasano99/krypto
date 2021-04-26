@@ -1,6 +1,6 @@
 package com.bok.krypto.helper;
 
-import com.bok.integration.AccountBalance;
+import com.bok.integration.BankAccountBalance;
 import com.bok.integration.EmailMessage;
 import com.bok.integration.krypto.WalletDeleteRequestDTO;
 import com.bok.integration.krypto.WalletDeleteResponseDTO;
@@ -83,9 +83,9 @@ public class WalletHelper {
     }
 
     public BigDecimal deposit(Account account, Wallet wallet, BigDecimal amount) {
-        AccountBalance accountBalance = bankService.getAccountBalance(account.getId());
+        BankAccountBalance bankAccountBalance = bankService.getAccountBalance(account.getId());
         BigDecimal value = marketHelper.convertIntoUSD(wallet.getKrypto(), amount);
-        if (accountBalance.balance.compareTo(value) < 0) {
+        if (bankAccountBalance.balance.compareTo(value) < 0) {
             throw new InsufficientBalanceException("Account has insufficient balance");
         }
         return deposit(wallet, amount);

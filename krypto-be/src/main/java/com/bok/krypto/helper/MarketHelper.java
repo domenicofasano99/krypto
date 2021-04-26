@@ -52,7 +52,7 @@ public class MarketHelper {
         Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequestDTO.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
-        Preconditions.checkArgument(bankService.getAccountBalance(accountId).balance.compareTo(BigDecimal.ZERO) > 0);
+        Preconditions.checkArgument(bankService.getAccountBalance(accountId).balance.compareTo(convertIntoUSD(purchaseRequestDTO.symbol, purchaseRequestDTO.amount)) >= 0, "Insufficient balance");
         Account account = accountHelper.findById(accountId);
 
         Transaction transaction = new Transaction(Transaction.Type.BUY);
@@ -165,6 +165,10 @@ public class MarketHelper {
         sendMarketEmail(subject, to, text);
         return sell;
 
+    }
+
+    public BigDecimal convertIntoUSD(String symbol, BigDecimal amount) {
+        return convertIntoUSD(kryptoHelper.findBySymbol(symbol), amount);
     }
 
 

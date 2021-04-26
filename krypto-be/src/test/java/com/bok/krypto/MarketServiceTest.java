@@ -1,6 +1,6 @@
 package com.bok.krypto;
 
-import com.bok.integration.AccountBalance;
+import com.bok.integration.BankAccountBalance;
 import com.bok.integration.krypto.PurchaseRequestDTO;
 import com.bok.integration.krypto.dto.HistoricalDataDTO;
 import com.bok.integration.krypto.dto.HistoricalDataRequestDTO;
@@ -79,7 +79,7 @@ public class MarketServiceTest {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
         Wallet wallet = modelTestUtils.createWallet(account, krypto, new BigDecimal("0.9"));
-        when(bankService.getAccountBalance(any())).thenReturn(new AccountBalance(account.getId(), new BigDecimal("10000")));
+        when(bankService.getAccountBalance(any())).thenReturn(new BankAccountBalance(account.getId(), new BigDecimal("100000")));
         PurchaseRequestDTO purchaseRequestDTO = new PurchaseRequestDTO();
         purchaseRequestDTO.symbol = BTC;
         purchaseRequestDTO.amount = new BigDecimal("0.8989827");
@@ -173,7 +173,7 @@ public class MarketServiceTest {
     public void deniedPurchaseTest_insufficientBalance() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.getAccountBalance(any())).thenReturn(new AccountBalance(account.getId(), new BigDecimal("0")));
+        when(bankService.getAccountBalance(any())).thenReturn(new BankAccountBalance(account.getId(), new BigDecimal("0")));
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
@@ -186,7 +186,7 @@ public class MarketServiceTest {
     public void purchaseTest_permitted() {
         Account account = modelTestUtils.createAccount();
         Krypto modelTestUtilsKrypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.getAccountBalance(anyLong())).thenReturn(new AccountBalance(account.getId(), new BigDecimal("10000")));
+        when(bankService.getAccountBalance(anyLong())).thenReturn(new BankAccountBalance(account.getId(), new BigDecimal("10000")));
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
