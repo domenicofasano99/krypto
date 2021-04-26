@@ -2,7 +2,7 @@ package com.bok.krypto.service.bank;
 
 import com.bok.integration.DepositRequest;
 import com.bok.integration.DepositResponse;
-import com.bok.integration.UserBalance;
+import com.bok.integration.AccountBalance;
 import com.bok.integration.WithdrawalRequest;
 import com.bok.integration.WithdrawalResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ public class BankService {
     @Autowired
     BankClient bankClient;
 
-    public UserBalance getUserBalance(Long userId) {
+    public AccountBalance getAccountBalance(Long userId) {
         return bankClient.getBalance(userId);
     }
 

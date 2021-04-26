@@ -52,7 +52,7 @@ public class MarketHelper {
         Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequestDTO.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
-        Preconditions.checkArgument(bankService.getUserBalance(accountId).balance.compareTo(BigDecimal.ZERO) > 0);
+        Preconditions.checkArgument(bankService.getAccountBalance(accountId).balance.compareTo(BigDecimal.ZERO) > 0);
         Account account = accountHelper.findById(accountId);
 
         Transaction transaction = new Transaction(Transaction.Type.BUY);
@@ -77,7 +77,7 @@ public class MarketHelper {
         transaction.setAccount(account);
 
         try {
-            walletHelper.deposit(destination, purchaseMessage.amount);
+            walletHelper.deposit(account, destination, purchaseMessage.amount);
         } catch (InsufficientBalanceException ex) {
             EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";

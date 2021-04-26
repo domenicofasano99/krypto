@@ -1,5 +1,6 @@
 package com.bok.krypto.helper;
 
+import com.bok.integration.AccountBalance;
 import com.bok.integration.EmailMessage;
 import com.bok.integration.krypto.WalletDeleteRequestDTO;
 import com.bok.integration.krypto.WalletDeleteResponseDTO;
@@ -16,6 +17,7 @@ import com.bok.krypto.exception.WalletNotFoundException;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.WalletRepository;
+import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,9 @@ public class WalletHelper {
     @Autowired
     MarketHelper marketHelper;
 
+    @Autowired
+    BankService bankService;
+
 
     public Wallet findByPublicId(String publicId) {
         return walletRepository.findByPublicId(publicId).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
@@ -65,7 +70,7 @@ public class WalletHelper {
     }
 
     @Transactional
-    public synchronized BigDecimal withdraw(Wallet wallet, BigDecimal amount) {
+    public BigDecimal withdraw(Wallet wallet, BigDecimal amount) {
         if (wallet.getAvailableAmount().compareTo(amount) < 0) {
             throw new InsufficientBalanceException("not enough funds to perform the withdrawal");
         }
@@ -77,13 +82,22 @@ public class WalletHelper {
         return amount;
     }
 
+    public BigDecimal deposit(Account account, Wallet wallet, BigDecimal amount) {
+        AccountBalance accountBalance = bankService.getAccountBalance(account.getId());
+        BigDecimal value = marketHelper.convertIntoUSD(wallet.getKrypto(), amount);
+        if (accountBalance.balance.compareTo(value) < 0) {
+            throw new InsufficientBalanceException("Account has insufficient balance");
+        }
+        return deposit(wallet, amount);
+    }
+
     @Transactional
-    public synchronized BigDecimal deposit(Wallet wallet, BigDecimal amount) {
+    public BigDecimal deposit(Wallet wallet, BigDecimal amount) {
         Wallet w = findByPublicId(wallet.getPublicId());
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidRequestException("cannot deposit negative amounts");
+            throw new InvalidRequestException("Cannot deposit negative amounts");
         }
-        log.info("depositing {} {} from wallet {}", amount, w.getKrypto().getSymbol(), wallet.getPublicId());
+        log.info("depositing {} {} to wallet {}", amount, w.getKrypto().getSymbol(), wallet.getPublicId());
         BigDecimal newBalance = w.getAvailableAmount().add(amount);
         w.setAvailableAmount(newBalance);
         walletRepository.saveAndFlush(w);

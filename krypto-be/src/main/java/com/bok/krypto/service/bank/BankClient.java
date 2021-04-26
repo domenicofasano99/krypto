@@ -2,7 +2,7 @@ package com.bok.krypto.service.bank;
 
 import com.bok.integration.DepositRequest;
 import com.bok.integration.DepositResponse;
-import com.bok.integration.UserBalance;
+import com.bok.integration.AccountBalance;
 import com.bok.integration.WithdrawalRequest;
 import com.bok.integration.WithdrawalResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface BankClient {
 
     @GetMapping(value = "/{userId}/balance", consumes = MediaType.APPLICATION_JSON_VALUE)
-    UserBalance getBalance(@PathVariable("userId") Long userId);
+    AccountBalance getBalance(@PathVariable("userId") Long userId);
 
     @PostMapping(value = "/{userId}/withdraw")
     WithdrawalResponse withdraw(@PathVariable("userId") Long userId, WithdrawalRequest request);
