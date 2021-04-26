@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     @Query("select t.status from Transaction t where t.id = :transactionId")
@@ -14,6 +16,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("select count(t.id) from Transaction t where t.status='PENDING'")
     Integer countPendingTransactions();
 
+    Optional<Transaction> findByPublicId(String publicId);
 
     public static class Projection {
         public interface Status {

@@ -20,7 +20,7 @@ public class TransferController {
     TransferService transferService;
 
     @GetMapping("/{transferId}")
-    TransferInfoDTO transferInfo(@RequestParam("accountId") Long userId, @PathVariable("transferId") Long transferId) {
+    TransferInfoDTO transferInfo(@RequestParam("accountId") Long userId, @PathVariable("transferId") String transferId) {
         return transferService.transferInfo(userId, transferId);
     }
 

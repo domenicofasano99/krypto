@@ -76,53 +76,53 @@ public class MarketServiceTest {
 
     @Test
     public void purchaseTest() {
-        Account u = modelTestUtils.createAccount();
-        Krypto k = modelTestUtils.getKrypto(BTC);
-        Wallet w = modelTestUtils.createWallet(u, k, new BigDecimal("0"));
-        when(bankService.getUserBalance(any())).thenReturn(new UserBalance(u.getId(), new BigDecimal("10000")));
+        Account account = modelTestUtils.createAccount();
+        Krypto krypto = modelTestUtils.getKrypto(BTC);
+        Wallet wallet = modelTestUtils.createWallet(account, krypto, new BigDecimal("0"));
+        when(bankService.getUserBalance(any())).thenReturn(new UserBalance(account.getId(), new BigDecimal("10000")));
         PurchaseRequestDTO purchaseRequestDTO = new PurchaseRequestDTO();
         purchaseRequestDTO.symbol = BTC;
         purchaseRequestDTO.amount = new BigDecimal("0.8989827");
-        TransactionDTO transactionDTO = marketService.buy(u.getId(), purchaseRequestDTO);
+        TransactionDTO transactionDTO = marketService.buy(account.getId(), purchaseRequestDTO);
         modelTestUtils.await();
-        Transaction t = transactionRepository.findById(transactionDTO.id).get();
-        assertNotNull(t);
-        assertEquals(t.getId(), transactionDTO.id);
-        assertEquals(Transaction.Status.SETTLED, t.getStatus());
+        Transaction transaction = transactionRepository.findByPublicId(transactionDTO.publicId).orElse(null);
+        assertNotNull(transaction);
+        assertEquals(transaction.getPublicId(), transactionDTO.publicId);
+        assertEquals(Transaction.Status.SETTLED, transaction.getStatus());
 
     }
 
     @Test
     public void getKryptoPrice() {
 
-        Account u = modelTestUtils.createAccount();
+        Account account = modelTestUtils.createAccount();
         List<Krypto> list = kryptoRepository.findAll();
 
-        Krypto k = list.get(0);
+        Krypto krypto = list.get(0);
 
-        PriceResponseDTO responseDTO = marketService.getKryptoPrice(k.getSymbol());
+        PriceResponseDTO responseDTO = marketService.getKryptoPrice(krypto.getSymbol());
 
         assertNotNull(responseDTO);
         assertNotNull(responseDTO.price);
-        assertThat(responseDTO.price, is(k.getPrice()));
+        assertThat(responseDTO.price, is(krypto.getPrice()));
 
     }
 
     @Test
     public void getKryptoInfo() {
-        Account u = modelTestUtils.createAccount();
-        Krypto k = modelTestUtils.getRandomKrypto();
-        KryptoInfoDTO responseDTO = marketService.getKryptoInfo(k.getSymbol());
+        Account account = modelTestUtils.createAccount();
+        Krypto krypto = modelTestUtils.getRandomKrypto();
+        KryptoInfoDTO responseDTO = marketService.getKryptoInfo(krypto.getSymbol());
         assertNotNull(responseDTO);
-        assertEquals(responseDTO.price, k.getPrice());
-        assertEquals(responseDTO.name, k.getName());
-        assertEquals(responseDTO.networkFee, k.getNetworkFee());
-        assertEquals(responseDTO.updateTimestamp, k.getUpdateTimestamp());
+        assertEquals(responseDTO.price, krypto.getPrice());
+        assertEquals(responseDTO.name, krypto.getName());
+        assertEquals(responseDTO.networkFee, krypto.getNetworkFee());
+        assertEquals(responseDTO.updateTimestamp, krypto.getUpdateTimestamp());
     }
 
     @Test
     public void getKryptoInfos() {
-        Account u = modelTestUtils.createAccount();
+        Account account = modelTestUtils.createAccount();
         List<Krypto> list = kryptoRepository.findAll();
         KryptoInfosRequestDTO requestDTO = new KryptoInfosRequestDTO();
         requestDTO.symbols = list.stream().map(Krypto::getSymbol).collect(Collectors.toList());
@@ -139,13 +139,13 @@ public class MarketServiceTest {
 
     @Test
     public void getKryptoHistoricalData() {
-        Account u = modelTestUtils.createAccount();
-        Krypto k = modelTestUtils.getRandomKrypto();
+        Account account = modelTestUtils.createAccount();
+        Krypto krypto = modelTestUtils.getRandomKrypto();
 
         HistoricalDataRequestDTO requestDTO = new HistoricalDataRequestDTO();
         requestDTO.start = Instant.parse("2020-12-03T10:15:30.00Z");
         requestDTO.end = Instant.now();
-        requestDTO.symbol = k.getSymbol();
+        requestDTO.symbol = krypto.getSymbol();
         HistoricalDataDTO response = marketService.getKryptoHistoricalData(requestDTO);
         assertNotNull(response.history);
         log.info(String.valueOf(response.history));
@@ -171,29 +171,29 @@ public class MarketServiceTest {
 
     @Test
     public void deniedPurchaseTest_insufficientBalance() {
-        Account u = modelTestUtils.createAccount();
-        Krypto k = modelTestUtils.getKrypto(BTC);
-        when(bankService.getUserBalance(any())).thenReturn(new UserBalance(u.getId(), new BigDecimal("0")));
+        Account account = modelTestUtils.createAccount();
+        Krypto krypto = modelTestUtils.getKrypto(BTC);
+        when(bankService.getUserBalance(any())).thenReturn(new UserBalance(account.getId(), new BigDecimal("0")));
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
         purchaseRequest.symbol = BTC;
 
-        assertThrows(RuntimeException.class, () -> marketService.buy(u.getId(), purchaseRequest));
+        assertThrows(RuntimeException.class, () -> marketService.buy(account.getId(), purchaseRequest));
     }
 
     @Test
     public void purchaseTest_permitted() {
-        Account a = modelTestUtils.createAccount();
-        Krypto k = modelTestUtils.getKrypto(BTC);
-        when(bankService.getUserBalance(anyLong())).thenReturn(new UserBalance(a.getId(), new BigDecimal("10000")));
+        Account account = modelTestUtils.createAccount();
+        Krypto modelTestUtilsKrypto = modelTestUtils.getKrypto(BTC);
+        when(bankService.getUserBalance(anyLong())).thenReturn(new UserBalance(account.getId(), new BigDecimal("10000")));
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
         purchaseRequest.symbol = BTC;
 
-        TransactionDTO response = marketService.buy(a.getId(), purchaseRequest);
-        assertNotNull(response.id);
+        TransactionDTO response = marketService.buy(account.getId(), purchaseRequest);
+        assertNotNull(response.publicId);
     }
 
 }

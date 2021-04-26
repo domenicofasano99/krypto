@@ -9,6 +9,6 @@ public interface TransferService {
 
     TransferResponseDTO transfer(Long accountId, TransferRequestDTO transferRequestDTO);
 
-    TransferInfoDTO transferInfo(Long accountId, Long transferId);
+    TransferInfoDTO transferInfo(Long accountId, String transferId);
 
 }

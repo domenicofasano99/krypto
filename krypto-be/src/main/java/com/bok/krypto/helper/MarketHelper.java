@@ -54,25 +54,27 @@ public class MarketHelper {
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
         Preconditions.checkArgument(bankService.getUserBalance(accountId).balance.compareTo(BigDecimal.ZERO) > 0);
         Account account = accountHelper.findById(accountId);
-        Transaction t = new Transaction(Transaction.Type.BUY);
-        t = transactionHelper.saveOrUpdate(t);
+
+        Transaction transaction = new Transaction(Transaction.Type.BUY);
+        transaction = transactionHelper.saveOrUpdate(transaction);
+
         PurchaseMessage message = new PurchaseMessage();
         message.userId = account.getId();
-        message.transactionId = t.getId();
+        message.transactionId = transaction.getId();
         message.amount = purchaseRequestDTO.amount;
         message.symbol = purchaseRequestDTO.symbol;
-        messageService.send(message);
-        return new TransactionDTO(t.getId(), t.status.name(), t.getType().name(), purchaseRequestDTO.amount);
+        messageService.sendPurchase(message);
+        return new TransactionDTO(transaction.getPublicId(), transaction.status.name(), transaction.getType().name(), purchaseRequestDTO.amount);
     }
 
     public void handle(PurchaseMessage purchaseMessage) {
         log.info("Processing purchase {}", purchaseMessage);
-        Transaction t = transactionHelper.findById(purchaseMessage.transactionId);
+        Transaction transaction = transactionHelper.findById(purchaseMessage.transactionId);
         Wallet destination = walletHelper.findByAccountIdAndSymbol(purchaseMessage.userId, purchaseMessage.symbol);
         Account account = accountHelper.findById(purchaseMessage.userId);
-        t.setWallet(destination);
-        t.setAmount(purchaseMessage.amount);
-        t.setAccount(account);
+        transaction.setWallet(destination);
+        transaction.setAmount(purchaseMessage.amount);
+        transaction.setAccount(account);
 
         try {
             walletHelper.deposit(destination, purchaseMessage.amount);
@@ -81,7 +83,7 @@ public class MarketHelper {
             email.subject = "Insufficient Balance in your account";
             email.to = account.getEmail();
             email.text = "Your PURCHASE transaction of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been DECLINED due to insufficient balance.";
-            t.setStatus(Transaction.Status.REJECTED);
+            transaction.setStatus(Transaction.Status.REJECTED);
             messageService.sendEmail(email);
         }
         log.info("Completed purchase ID:{} for {} of {} {}", purchaseMessage.transactionId, purchaseMessage.userId, purchaseMessage.symbol, purchaseMessage.amount);
@@ -89,8 +91,8 @@ public class MarketHelper {
         email.subject = "Transfer executed";
         email.to = account.getEmail();
         email.text = "Your PURCHASE of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been ACCEPTED.";
-        t.setStatus(Transaction.Status.SETTLED);
-        transactionHelper.saveOrUpdate(t);
+        transaction.setStatus(Transaction.Status.SETTLED);
+        transactionHelper.saveOrUpdate(transaction);
         messageService.sendEmail(email);
     }
 
@@ -104,27 +106,28 @@ public class MarketHelper {
         Preconditions.checkArgument(sellRequestDTO.amount.compareTo(BigDecimal.ZERO) <= 0, "Cannot SELL a negative amount.");
 
 
-        Transaction t = new Transaction(Transaction.Type.SELL);
-        t = transactionHelper.saveOrUpdate(t);
+        Transaction transaction = new Transaction(Transaction.Type.SELL);
+        transaction = transactionHelper.saveOrUpdate(transaction);
         SellMessage message = new SellMessage();
         message.userId = userId;
-        message.transactionId = t.getId();
+        message.transactionId = transaction.getId();
         message.amount = sellRequestDTO.amount;
         message.symbol = sellRequestDTO.symbol;
         messageService.send(message);
-        return new TransactionDTO(t.getId(), t.status.name(), t.getType().name(), sellRequestDTO.amount);
+        return new TransactionDTO(transaction.getPublicId(), transaction.status.name(), transaction.getType().name(), sellRequestDTO.amount);
 
 
     }
 
     public void handle(SellMessage sellMessage) {
         log.info("Processing sell {}", sellMessage);
-        Transaction t = transactionHelper.findById(sellMessage.transactionId);
+        Transaction transaction = transactionHelper.findById(sellMessage.transactionId);
         Wallet source = walletHelper.findByAccountIdAndSymbol(sellMessage.userId, sellMessage.symbol);
         Account account = accountHelper.findById(sellMessage.userId);
-        t.setWallet(source);
-        t.setAmount(sellMessage.amount);
-        t.setAccount(account);
+        transaction.setWallet(source);
+        transaction.setAmount(sellMessage.amount);
+        transaction.setAccount(account);
+
         String subject, to, text;
         try {
             walletHelper.withdraw(source, sellMessage.amount);
@@ -132,14 +135,14 @@ public class MarketHelper {
             subject = "Insufficient Balance in your account";
             to = account.getEmail();
             text = "Your SELL transaction of " + sellMessage.amount + " " + sellMessage.symbol + " has been DECLINED due to insufficient balance.";
-            t.setStatus(Transaction.Status.REJECTED);
+            transaction.setStatus(Transaction.Status.REJECTED);
             sendMarketEmail(subject, to, text);
         }
         subject = "Transfer executed";
         to = account.getEmail();
         text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
-        t.setStatus(Transaction.Status.SETTLED);
-        transactionHelper.saveOrUpdate(t);
+        transaction.setStatus(Transaction.Status.SETTLED);
+        transactionHelper.saveOrUpdate(transaction);
         sendMarketEmail(subject, to, text);
     }
 
@@ -149,7 +152,7 @@ public class MarketHelper {
         Transaction sell = new Transaction();
         sell.setAmount(amountToSell);
         sell.setAccount(account);
-        BigDecimal netWorth = convert(walletToEmpty.getKrypto(), amountToSell);
+        BigDecimal netWorth = convertIntoUSD(walletToEmpty.getKrypto(), amountToSell);
         //send message to bank to credit netWorth USD
 
         transactionHelper.saveOrUpdate(sell);
@@ -165,7 +168,7 @@ public class MarketHelper {
     }
 
 
-    public BigDecimal convert(Krypto k, BigDecimal amount) {
+    public BigDecimal convertIntoUSD(Krypto k, BigDecimal amount) {
         return k.getPrice().multiply(amount);
     }
 

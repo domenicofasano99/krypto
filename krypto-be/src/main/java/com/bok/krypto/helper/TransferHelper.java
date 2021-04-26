@@ -76,16 +76,16 @@ public class TransferHelper {
         messageService.sendTransfer(message);
 
         TransferResponseDTO response = new TransferResponseDTO();
-        response.id = t.getId();
+        response.publicId = t.getPublicId();
         response.status = Constants.PENDING;
         return response;
     }
 
-    public TransferInfoDTO getTransferInfo(Long userId, Long transferId) {
+    public TransferInfoDTO getTransferInfo(Long userId, String transferId) {
         accountHelper.existsById(userId);
-        Transfer t = transferRepository.findById(transferId).orElseThrow(() -> new TransactionNotFoundException("Could not find a transaction with the given ID"));
+        Transfer t = transferRepository.findByPublicId(transferId).orElseThrow(() -> new TransactionNotFoundException("Could not find a transaction with the given ID"));
         TransferInfoDTO response = new TransferInfoDTO();
-        response.id = t.getId();
+        response.publicId = t.getPublicId();
         response.amount = t.getAmount();
         response.source = t.getSourceWallet().getPublicId();
         response.destination = t.getDestinationWallet().getPublicId();

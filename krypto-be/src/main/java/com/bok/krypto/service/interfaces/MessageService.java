@@ -18,7 +18,7 @@ public interface MessageService {
 
     public void sendEmail(EmailMessage emailWalletCreation);
 
-    public void send(PurchaseMessage purchaseMessage);
+    public void sendPurchase(PurchaseMessage purchaseMessage);
 
     public void send(SellMessage sellMessage);
 }

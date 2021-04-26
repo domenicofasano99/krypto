@@ -14,7 +14,7 @@ public class Transaction extends Activity {
     @ManyToOne
     private Wallet wallet;
 
-    @Column
+    @Column(updatable = false)
     @Enumerated(EnumType.STRING)
     private Type type;
 

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface TransferRepository extends JpaRepository<Transfer, Long> {
 
@@ -15,4 +17,6 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
 
     @Query("SELECT COUNT(t.id) from Transfer t where t.status='PENDING'")
     Integer countPendingTransfers();
+
+    Optional<Transfer> findByPublicId(String transferId);
 }

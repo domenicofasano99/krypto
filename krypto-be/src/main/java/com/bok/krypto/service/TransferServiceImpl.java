@@ -20,7 +20,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public TransferInfoDTO transferInfo(Long accountId, Long transferId) {
+    public TransferInfoDTO transferInfo(Long accountId, String transferId) {
         return transferHelper.getTransferInfo(accountId, transferId);
     }
 }

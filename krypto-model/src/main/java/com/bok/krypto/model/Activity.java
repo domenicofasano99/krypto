@@ -21,18 +21,15 @@ import java.util.UUID;
 @DiscriminatorColumn(name = "transaction_type",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class Activity {
-    @Column(updatable = false)
-    @Enumerated(EnumType.STRING)
-    public Transaction.Status status;
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @GeneratedValue
-    private UUID publicId;
+    @Column(length = 36, unique = true, updatable = false)
+    private String publicId;
 
-    @Column
+    @Column(updatable = false)
     @CreationTimestamp
     private Instant creationTimestamp;
 
@@ -49,9 +46,14 @@ public abstract class Activity {
     @Column
     private Double fee;
 
+    @Column(updatable = false)
+    @Enumerated(EnumType.STRING)
+    public Transaction.Status status;
+
     @PrePersist
     public void prePersist() {
         this.status = Status.PENDING;
+        this.publicId = UUID.randomUUID().toString();
     }
 
     public Status getStatus() {
@@ -70,11 +72,11 @@ public abstract class Activity {
         this.id = id;
     }
 
-    public UUID getPublicId() {
+    public String getPublicId() {
         return publicId;
     }
 
-    public void setPublicId(UUID publicId) {
+    public void setPublicId(String publicId) {
         this.publicId = publicId;
     }
 

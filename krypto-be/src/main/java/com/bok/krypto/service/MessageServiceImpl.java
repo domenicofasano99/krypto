@@ -53,7 +53,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void send(PurchaseMessage purchaseMessage) {
+    public void sendPurchase(PurchaseMessage purchaseMessage) {
         marketProducer.send(purchaseMessage);
     }
 

@@ -43,11 +43,9 @@ public class WalletServiceTest {
     WalletRepository walletRepository;
 
     @BeforeEach
-    public void configureTests() {
+    public void initialize() {
         modelTestUtils.clearAll();
-        log.info("DB dropped correctly.");
         modelTestUtils.createBaseKryptos();
-        log.info("DB populated correctly.");
     }
 
     @Test
