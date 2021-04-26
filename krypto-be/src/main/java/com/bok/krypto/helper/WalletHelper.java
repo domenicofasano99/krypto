@@ -108,7 +108,7 @@ public class WalletHelper {
         walletMessage.id = w.getId();
         walletMessage.userId = userId;
         walletMessage.symbol = requestDTO.symbol;
-        messageService.send(walletMessage);
+        messageService.sendWallet(walletMessage);
         return new WalletResponseDTO(WalletResponseDTO.Status.ACCEPTED);
     }
 

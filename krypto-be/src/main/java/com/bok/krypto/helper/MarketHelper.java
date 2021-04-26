@@ -113,7 +113,7 @@ public class MarketHelper {
         message.transactionId = transaction.getId();
         message.amount = sellRequestDTO.amount;
         message.symbol = sellRequestDTO.symbol;
-        messageService.send(message);
+        messageService.sendSell(message);
         return new TransactionDTO(transaction.getPublicId(), transaction.status.name(), transaction.getType().name(), sellRequestDTO.amount);
 
 

@@ -3,12 +3,10 @@ package com.bok.krypto.service;
 import com.bok.integration.EmailMessage;
 import com.bok.krypto.communication.messages.PurchaseMessage;
 import com.bok.krypto.communication.messages.SellMessage;
-import com.bok.krypto.communication.messages.TransactionMessage;
 import com.bok.krypto.communication.messages.TransferMessage;
 import com.bok.krypto.communication.messages.WalletMessage;
 import com.bok.krypto.communication.producer.EmailProducer;
 import com.bok.krypto.communication.producer.MarketProducer;
-import com.bok.krypto.communication.producer.TransactionProducer;
 import com.bok.krypto.communication.producer.TransferProducer;
 import com.bok.krypto.communication.producer.WalletProducer;
 import com.bok.krypto.service.interfaces.MessageService;
@@ -17,11 +15,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MessageServiceImpl implements MessageService {
-    @Autowired
-    WalletProducer walletProducer;
 
     @Autowired
-    TransactionProducer transactionProducer;
+    WalletProducer walletProducer;
 
     @Autowired
     TransferProducer transferProducer;
@@ -33,17 +29,12 @@ public class MessageServiceImpl implements MessageService {
     MarketProducer marketProducer;
 
     @Override
-    public void send(TransactionMessage transactionMessage) {
-        transactionProducer.send(transactionMessage);
-    }
-
-    @Override
     public void sendTransfer(TransferMessage transferMessage) {
         transferProducer.send(transferMessage);
     }
 
     @Override
-    public void send(WalletMessage walletMessage) {
+    public void sendWallet(WalletMessage walletMessage) {
         walletProducer.send(walletMessage);
     }
 
@@ -58,7 +49,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void send(SellMessage sellMessage) {
+    public void sendSell(SellMessage sellMessage) {
         marketProducer.send(sellMessage);
     }
 }
