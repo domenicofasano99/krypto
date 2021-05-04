@@ -74,7 +74,7 @@ public class MarketServiceTest {
         modelTestUtils.createBaseKryptos();
     }
 
-    @Test
+    @Test //if it doesnt pass try running it alone, message timing problems...
     public void purchaseTest() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
@@ -90,6 +90,11 @@ public class MarketServiceTest {
         assertEquals(transaction.getPublicId(), transactionDTO.publicId);
         assertEquals(Transaction.Status.SETTLED, transaction.getStatus());
 
+    }
+
+    @Test
+    public void testPurchaseMessage() {
+        //test purchase by sending a message to the processor
     }
 
     @Test
@@ -156,19 +161,6 @@ public class MarketServiceTest {
         }
     }
 
-
-    @Ignore
-    public void evaluatePerformance() {
-        int kryptos = 1000;
-        int records = 1000;
-        long start = Instant.now().toEpochMilli();
-        modelTestUtils.generateDatabaseRandomNoise(kryptos, records);
-        long end = Instant.now().toEpochMilli();
-        long elapsed = end - start;
-        long opsPorMillis = (long) kryptos * records / elapsed;
-        log.info("Generating {} Historical records for {} Kryptos took {} ms, performing {}ops/ms", kryptos, kryptos, elapsed, opsPorMillis);
-    }
-
     @Test
     public void deniedPurchaseTest_insufficientBalance() {
         Account account = modelTestUtils.createAccount();
@@ -194,6 +186,18 @@ public class MarketServiceTest {
 
         TransactionDTO response = marketService.buy(account.getId(), purchaseRequest);
         assertNotNull(response.publicId);
+    }
+
+    @Ignore
+    public void evaluatePerformance() {
+        int kryptos = 1000;
+        int records = 1000;
+        long start = Instant.now().toEpochMilli();
+        modelTestUtils.generateDatabaseRandomNoise(kryptos, records);
+        long end = Instant.now().toEpochMilli();
+        long elapsed = end - start;
+        long opsPorMillis = (long) kryptos * records / elapsed;
+        log.info("Generating {} Historical records for {} Kryptos took {} ms, performing {}ops/ms", kryptos, kryptos, elapsed, opsPorMillis);
     }
 
 }

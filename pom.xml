@@ -22,7 +22,6 @@
         <module>krypto-be</module>
         <module>krypto-model</module>
         <module>krypto-integration</module>
-        <module>krypto-communication</module>
         <module>krypto-core</module>
     </modules>
 

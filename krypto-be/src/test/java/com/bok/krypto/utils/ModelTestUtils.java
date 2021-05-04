@@ -108,10 +108,6 @@ public class ModelTestUtils {
         return System.nanoTime();
     }
 
-    public Long randomLong() {
-        return random.nextLong();
-    }
-
     public Wallet createWallet(Account account, Krypto krypto, BigDecimal baseAmount) {
         Wallet w = new Wallet();
         w.setPublicId(UUID.randomUUID().toString());

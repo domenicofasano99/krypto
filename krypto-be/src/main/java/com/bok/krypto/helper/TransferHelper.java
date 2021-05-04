@@ -7,11 +7,12 @@ import com.bok.integration.TransfersInfoRequestDTO;
 import com.bok.integration.krypto.dto.TransferInfoDTO;
 import com.bok.integration.krypto.dto.TransferRequestDTO;
 import com.bok.integration.krypto.dto.TransferResponseDTO;
-import com.bok.krypto.communication.messages.TransferMessage;
 import com.bok.krypto.core.Constants;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.TransactionNotFoundException;
+import com.bok.krypto.messaging.internal.messages.TransferMessage;
 import com.bok.krypto.model.Account;
+import com.bok.krypto.model.Activity;
 import com.bok.krypto.model.Transaction;
 import com.bok.krypto.model.Transfer;
 import com.bok.krypto.model.Wallet;
@@ -68,7 +69,7 @@ public class TransferHelper {
 
         TransferMessage message = new TransferMessage();
         message.transferId = t.getId();
-        message.userId = accountId;
+        message.accountId = accountId;
         message.symbol = transferRequestDTO.symbol;
         message.destination = transferRequestDTO.destination;
         message.amount = transferRequestDTO.amount;
@@ -106,9 +107,9 @@ public class TransferHelper {
 
     public void handle(TransferMessage transferMessage) {
         log.info("Processing transfer {}", transferMessage);
-        Account account = accountHelper.findById(transferMessage.userId);
+        Account account = accountHelper.findById(transferMessage.accountId);
         Transfer transfer = transferRepository.findById(transferMessage.transferId).orElseThrow(() -> new RuntimeException("This transfer should have been persisted before"));
-        Wallet source = walletHelper.findByAccountIdAndSymbol(transferMessage.userId, transferMessage.symbol);
+        Wallet source = walletHelper.findByAccountIdAndSymbol(transferMessage.accountId, transferMessage.symbol);
         Wallet destination = walletHelper.findByPublicId(transferMessage.destination);
 
         transfer.setSourceWallet(source);
@@ -123,14 +124,14 @@ public class TransferHelper {
             email.subject = "Insufficient Balance in your account";
             email.to = account.getEmail();
             email.text = "Your transfer of " + transferMessage.amount + " " + transferMessage.symbol + " has been DECLINED due to insufficient balance.";
-            transfer.setStatus(Transaction.Status.REJECTED);
+            transfer.setStatus(Activity.Status.REJECTED);
             messageService.sendEmail(email);
         }
         EmailMessage email = new EmailMessage();
         email.subject = "Transfer executed";
         email.to = account.getEmail();
         email.text = "Your transfer of " + transferMessage.amount + " " + transferMessage.symbol + " has been ACCEPTED.";
-        transfer.setStatus(Transaction.Status.SETTLED);
+        transfer.setStatus(Activity.Status.SETTLED);
         transferRepository.saveAndFlush(transfer);
         messageService.sendEmail(email);
     }

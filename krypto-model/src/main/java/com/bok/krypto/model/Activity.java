@@ -46,9 +46,15 @@ public abstract class Activity {
     @Column
     private Double fee;
 
-    @Column(updatable = false)
+    @Column
     @Enumerated(EnumType.STRING)
-    public Transaction.Status status;
+    public Status status;
+
+    public enum Status {
+        PENDING,
+        SETTLED,
+        REJECTED
+    }
 
     @PrePersist
     public void prePersist() {
@@ -56,13 +62,6 @@ public abstract class Activity {
         this.publicId = UUID.randomUUID().toString();
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
 
     public Long getId() {
         return id;
@@ -120,9 +119,11 @@ public abstract class Activity {
         this.fee = fee;
     }
 
-    public enum Status {
-        PENDING,
-        SETTLED,
-        REJECTED
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

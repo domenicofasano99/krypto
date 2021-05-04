@@ -8,12 +8,12 @@ import com.bok.integration.krypto.WalletInfoDTO;
 import com.bok.integration.krypto.WalletsDTO;
 import com.bok.integration.krypto.dto.WalletRequestDTO;
 import com.bok.integration.krypto.dto.WalletResponseDTO;
-import com.bok.krypto.communication.messages.WalletMessage;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.InvalidRequestException;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
 import com.bok.krypto.exception.WalletNotFoundException;
+import com.bok.krypto.messaging.internal.messages.WalletMessage;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.WalletRepository;
@@ -120,7 +120,7 @@ public class WalletHelper {
         w = walletRepository.save(w);
         WalletMessage walletMessage = new WalletMessage();
         walletMessage.id = w.getId();
-        walletMessage.userId = userId;
+        walletMessage.accountId = userId;
         walletMessage.symbol = requestDTO.symbol;
         messageService.sendWallet(walletMessage);
         return new WalletResponseDTO(WalletResponseDTO.Status.ACCEPTED);
@@ -129,7 +129,7 @@ public class WalletHelper {
     public void handleMessage(WalletMessage walletMessage) {
         Wallet w = walletRepository.findById(walletMessage.id)
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
-        Account u = accountHelper.findById(walletMessage.userId);
+        Account u = accountHelper.findById(walletMessage.accountId);
         w.setUser(u);
         w.setPublicId(UUID.randomUUID().toString());
         w.setKrypto(kryptoHelper.findBySymbol(walletMessage.symbol));

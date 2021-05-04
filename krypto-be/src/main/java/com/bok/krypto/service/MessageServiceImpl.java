@@ -1,14 +1,14 @@
 package com.bok.krypto.service;
 
 import com.bok.integration.EmailMessage;
-import com.bok.krypto.communication.messages.PurchaseMessage;
-import com.bok.krypto.communication.messages.SellMessage;
-import com.bok.krypto.communication.messages.TransferMessage;
-import com.bok.krypto.communication.messages.WalletMessage;
-import com.bok.krypto.communication.producer.EmailProducer;
-import com.bok.krypto.communication.producer.MarketProducer;
-import com.bok.krypto.communication.producer.TransferProducer;
-import com.bok.krypto.communication.producer.WalletProducer;
+import com.bok.krypto.messaging.internal.messages.PurchaseMessage;
+import com.bok.krypto.messaging.internal.messages.SellMessage;
+import com.bok.krypto.messaging.internal.messages.TransferMessage;
+import com.bok.krypto.messaging.internal.messages.WalletMessage;
+import com.bok.krypto.messaging.internal.producer.EmailProducer;
+import com.bok.krypto.messaging.internal.producer.MarketProducer;
+import com.bok.krypto.messaging.internal.producer.TransferProducer;
+import com.bok.krypto.messaging.internal.producer.WalletProducer;
 import com.bok.krypto.service.interfaces.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,9 @@
 package com.bok.krypto.service.bank;
 
+import com.bok.integration.BankAccountBalance;
 import com.bok.integration.BankAccountDetails;
 import com.bok.integration.DepositRequest;
 import com.bok.integration.DepositResponse;
-import com.bok.integration.BankAccountBalance;
 import com.bok.integration.WithdrawalRequest;
 import com.bok.integration.WithdrawalResponse;
 import org.springframework.cloud.openfeign.FeignClient;

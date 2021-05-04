@@ -14,9 +14,15 @@ public class Transaction extends Activity {
     @ManyToOne
     private Wallet wallet;
 
-    @Column(updatable = false)
+    @Column
     @Enumerated(EnumType.STRING)
-    private Type type;
+    public Type type;
+
+
+    public enum Type {
+        PURCHASE,
+        SELL
+    }
 
     public Transaction() {
         //hibernate
@@ -41,10 +47,5 @@ public class Transaction extends Activity {
 
     public void setType(Type type) {
         this.type = type;
-    }
-
-    public enum Type {
-        BUY,
-        SELL
     }
 }
