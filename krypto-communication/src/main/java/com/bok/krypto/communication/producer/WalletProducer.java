@@ -13,7 +13,7 @@ public class WalletProducer {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${active-mq.wallets-queue}")
+    @Value("${active-mq.wallets}")
     private String walletsQueue;
 
 

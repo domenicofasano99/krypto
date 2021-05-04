@@ -13,7 +13,7 @@ public class WalletConsumer {
     @Autowired
     WalletHelper walletHelper;
 
-    @JmsListener(destination = "${active-mq.wallets-queue}")
+    @JmsListener(destination = "${active-mq.wallets}")
     public void walletListener(WalletMessage message) {
         log.info("processing : " + message.toString());
         walletHelper.handleMessage(message);

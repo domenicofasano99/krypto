@@ -14,7 +14,7 @@ public class TransferProducer {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${active-mq.transfers-queue}")
+    @Value("${active-mq.transfers}")
     private String transfersTopic;
 
     public void send(TransferMessage transferMessage) {

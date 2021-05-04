@@ -14,7 +14,7 @@ public class EmailProducer {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${active-mq.emails-queue}")
+    @Value("${active-mq.emails}")
     private String emailQueue;
 
 

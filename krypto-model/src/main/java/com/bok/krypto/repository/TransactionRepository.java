@@ -13,7 +13,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Transaction.Status findStatusById(@Param("transactionId") Long transactionId);
 
 
-    @Query("select count(t.id) from Transaction t where t.status='PENDING'")
+    @Query("select count(t.id) from Transaction t where t.status like 'PENDING'")
     Integer countPendingTransactions();
 
     Optional<Transaction> findByPublicId(String publicId);

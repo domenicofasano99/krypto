@@ -19,7 +19,7 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
     Boolean existsByAccount_IdAndKrypto_Symbol(Long accountId, String symbol);
 
-    @Query("select count(w.id) from Wallet w where w.status = 'PENDING' ")
+    @Query("select count(w.id) from Wallet w where w.status like 'PENDING' ")
     Integer countPendingWallets();
 
     List<Wallet> findByAccount_Id(Long accountId);

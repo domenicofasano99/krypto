@@ -132,7 +132,6 @@ public class WalletServiceTest {
         WalletsDTO response = walletService.wallets(u.getId());
         assertNotNull(response);
         assertEquals(response.wallets.size(), 2);
-
     }
 
 

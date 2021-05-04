@@ -15,7 +15,7 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
     @Query("SELECT status from Transfer where id =: transferId")
     Activity.Status findStatusById(@Param("transferId") Long transferId);
 
-    @Query("SELECT COUNT(t.id) from Transfer t where t.status='PENDING'")
+    @Query("SELECT COUNT(t.id) from Transfer t where t.status like 'PENDING'")
     Integer countPendingTransfers();
 
     Optional<Transfer> findByPublicId(String transferId);
