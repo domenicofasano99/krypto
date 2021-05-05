@@ -1,7 +1,7 @@
 package com.bok.krypto.aspect.audit;
 
 import com.bok.krypto.helper.AuditHelper;
-import com.bok.parent.dto.AccountLoginDTO;
+import com.bok.integration.parent.dto.AccountLoginDTO;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
