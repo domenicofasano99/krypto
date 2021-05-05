@@ -16,7 +16,7 @@ public class AccountConsumer {
 
     @JmsListener(destination = "${active-mq.krypto-users}")
     public void userListener(AccountCreationMessage message) {
-        log.info("Received Message: " + message.toString());
+        log.info("Received message from parent: " + message.toString());
         accountHelper.handle(message);
     }
 

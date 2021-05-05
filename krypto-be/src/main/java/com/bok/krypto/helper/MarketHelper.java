@@ -47,10 +47,6 @@ public class MarketHelper {
 
 
     public TransactionDTO buy(Long accountId, PurchaseRequestDTO purchaseRequestDTO) {
-        Preconditions.checkNotNull(purchaseRequestDTO);
-        Preconditions.checkNotNull(purchaseRequestDTO.symbol);
-        Preconditions.checkNotNull(purchaseRequestDTO.amount);
-        Preconditions.checkNotNull(purchaseRequestDTO.amount);
         Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequestDTO.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
@@ -101,10 +97,6 @@ public class MarketHelper {
 
     @Transactional
     public TransactionDTO sell(Long userId, SellRequestDTO sellRequestDTO) {
-        Preconditions.checkNotNull(sellRequestDTO);
-        Preconditions.checkNotNull(sellRequestDTO.userId);
-        Preconditions.checkNotNull(sellRequestDTO.symbol);
-        Preconditions.checkNotNull(sellRequestDTO.amount);
         Preconditions.checkArgument(accountHelper.existsById(userId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(sellRequestDTO.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(sellRequestDTO.amount.compareTo(BigDecimal.ZERO) <= 0, "Cannot SELL a negative amount.");

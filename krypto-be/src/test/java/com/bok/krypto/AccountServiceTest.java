@@ -6,6 +6,7 @@ import com.bok.krypto.model.Account;
 import com.bok.krypto.repository.AccountRepository;
 import com.bok.krypto.utils.ModelTestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,6 +39,6 @@ public class AccountServiceTest {
         accountHelper.handle(accountCreationMessage);
 
         Account account = accountRepository.findById(accountCreationMessage.accountId).orElseThrow(RuntimeException::new);
-        assertNotNull(account);
+        Assertions.assertNotNull(account);
     }
 }

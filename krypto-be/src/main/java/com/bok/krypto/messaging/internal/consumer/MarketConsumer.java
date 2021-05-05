@@ -17,13 +17,13 @@ public class MarketConsumer {
 
     @JmsListener(destination = "${active-mq.market-sell}")
     public void marketListener(SellMessage message) {
-        log.info("Received Message: " + message.toString());
+        log.info("Received market sell essage: " + message.toString());
         marketHelper.handle(message);
     }
 
     @JmsListener(destination = "${active-mq.market-purchase}")
     public void marketListener(PurchaseMessage message) {
-        log.info("Received Message: " + message.toString());
+        log.info("Received market purchase message: " + message.toString());
         marketHelper.handle(message);
     }
 }

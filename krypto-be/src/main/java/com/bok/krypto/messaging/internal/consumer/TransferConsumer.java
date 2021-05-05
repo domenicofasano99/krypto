@@ -16,7 +16,7 @@ public class TransferConsumer {
 
     @JmsListener(destination = "${active-mq.transfers}")
     public void transferListener(TransferMessage transferMessage) {
-        log.info("Received Message: " + transferMessage.toString());
+        log.info("Received transfer message: " + transferMessage.toString());
         transferHelper.handle(transferMessage);
     }
 }

@@ -47,12 +47,6 @@ public class TransferHelper {
     MessageService messageService;
 
     public TransferResponseDTO transfer(Long accountId, TransferRequestDTO transferRequestDTO) {
-        Preconditions.checkNotNull(accountId);
-        Preconditions.checkNotNull(transferRequestDTO);
-        Preconditions.checkNotNull(transferRequestDTO.symbol);
-        Preconditions.checkNotNull(transferRequestDTO.source);
-        Preconditions.checkNotNull(transferRequestDTO.destination);
-        Preconditions.checkNotNull(transferRequestDTO.amount);
 
         Account a = accountHelper.findById(accountId);
         Wallet source = walletHelper.findByPublicId(transferRequestDTO.source);

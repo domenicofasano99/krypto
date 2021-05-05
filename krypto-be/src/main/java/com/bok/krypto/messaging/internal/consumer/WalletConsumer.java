@@ -15,8 +15,7 @@ public class WalletConsumer {
 
     @JmsListener(destination = "${active-mq.wallets}")
     public void walletListener(WalletMessage message) {
-        log.info("processing : " + message.toString());
+        log.info("Received wallet message : " + message.toString());
         walletHelper.handleMessage(message);
-
     }
 }
