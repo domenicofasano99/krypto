@@ -73,12 +73,6 @@
         </dependency>
         <dependency>
             <groupId>com.bok</groupId>
-            <artifactId>krypto-communication</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.bok</groupId>
             <artifactId>krypto-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
