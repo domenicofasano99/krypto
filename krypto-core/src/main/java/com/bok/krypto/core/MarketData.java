@@ -54,6 +54,7 @@ public class MarketData {
             HistoricalData dataRecord = new HistoricalData();
             dataRecord.setPrice(krypto.getPrice().doubleValue());
             dataRecord.setCirculatingSupply(datum.circulatingSupply);
+            dataRecord.setKrypto(krypto);
             krypto.addHistoricalData(dataRecord);
             updatedKryptos.add(krypto);
         }
