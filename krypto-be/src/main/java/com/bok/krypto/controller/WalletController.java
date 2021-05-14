@@ -1,10 +1,10 @@
 package com.bok.krypto.controller;
 
-import com.bok.integration.krypto.WalletDeleteRequestDTO;
-import com.bok.integration.krypto.WalletDeleteResponseDTO;
-import com.bok.integration.krypto.WalletsDTO;
-import com.bok.integration.krypto.dto.WalletRequestDTO;
-import com.bok.integration.krypto.dto.WalletResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletsDTO;
+import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 import com.bok.krypto.service.interfaces.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

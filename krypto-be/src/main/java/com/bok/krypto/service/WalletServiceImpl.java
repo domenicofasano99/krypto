@@ -1,11 +1,11 @@
 package com.bok.krypto.service;
 
-import com.bok.integration.krypto.WalletDeleteRequestDTO;
-import com.bok.integration.krypto.WalletDeleteResponseDTO;
-import com.bok.integration.krypto.WalletInfoDTO;
-import com.bok.integration.krypto.WalletsDTO;
-import com.bok.integration.krypto.dto.WalletRequestDTO;
-import com.bok.integration.krypto.dto.WalletResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
+import com.bok.krypto.integration.internal.dto.WalletsDTO;
+import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 import com.bok.krypto.helper.WalletHelper;
 import com.bok.krypto.service.interfaces.WalletService;
 import com.google.common.base.Preconditions;

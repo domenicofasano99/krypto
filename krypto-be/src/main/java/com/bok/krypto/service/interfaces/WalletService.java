@@ -1,11 +1,11 @@
 package com.bok.krypto.service.interfaces;
 
-import com.bok.integration.krypto.WalletDeleteRequestDTO;
-import com.bok.integration.krypto.WalletDeleteResponseDTO;
-import com.bok.integration.krypto.WalletInfoDTO;
-import com.bok.integration.krypto.WalletsDTO;
-import com.bok.integration.krypto.dto.WalletRequestDTO;
-import com.bok.integration.krypto.dto.WalletResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
+import com.bok.krypto.integration.internal.dto.WalletsDTO;
+import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 
 public interface WalletService {
 

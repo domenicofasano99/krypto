@@ -1,9 +1,9 @@
 package com.bok.krypto;
 
-import com.bok.integration.krypto.dto.TransferInfoDTO;
-import com.bok.integration.krypto.dto.TransferInfoRequestDTO;
-import com.bok.integration.krypto.dto.TransferRequestDTO;
-import com.bok.integration.krypto.dto.TransferResponseDTO;
+import com.bok.krypto.integration.internal.dto.TransferInfoDTO;
+import com.bok.krypto.integration.internal.dto.TransferInfoRequestDTO;
+import com.bok.krypto.integration.internal.dto.TransferRequestDTO;
+import com.bok.krypto.integration.internal.dto.TransferResponseDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.helper.TransferHelper;
 import com.bok.krypto.model.Account;

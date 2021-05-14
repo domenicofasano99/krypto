@@ -1,6 +1,6 @@
 package com.bok.krypto.helper;
 
-import com.bok.integration.AccountCreationMessage;
+import com.bok.parent.integration.message.AccountCreationMessage;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.AccountRepository;

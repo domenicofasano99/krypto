@@ -1,9 +1,9 @@
 package com.bok.krypto.helper;
 
-import com.bok.integration.EmailMessage;
-import com.bok.integration.krypto.PurchaseRequestDTO;
-import com.bok.integration.krypto.dto.SellRequestDTO;
-import com.bok.integration.krypto.dto.TransactionDTO;
+import com.bok.parent.integration.message.EmailMessage;
+import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
+import com.bok.krypto.integration.internal.dto.SellRequestDTO;
+import com.bok.krypto.integration.internal.dto.TransactionDTO;
 import com.bok.krypto.exception.ErrorCodes;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.messaging.internal.messages.PurchaseMessage;

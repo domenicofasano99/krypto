@@ -1,13 +1,13 @@
 package com.bok.krypto.helper;
 
-import com.bok.integration.BankAccountBalance;
-import com.bok.integration.EmailMessage;
-import com.bok.integration.krypto.WalletDeleteRequestDTO;
-import com.bok.integration.krypto.WalletDeleteResponseDTO;
-import com.bok.integration.krypto.WalletInfoDTO;
-import com.bok.integration.krypto.WalletsDTO;
-import com.bok.integration.krypto.dto.WalletRequestDTO;
-import com.bok.integration.krypto.dto.WalletResponseDTO;
+import com.bok.krypto.integration.internal.dto.BankAccountBalance;
+import com.bok.parent.integration.message.EmailMessage;
+import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
+import com.bok.krypto.integration.internal.dto.WalletsDTO;
+import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.InvalidRequestException;
 import com.bok.krypto.exception.KryptoNotFoundException;

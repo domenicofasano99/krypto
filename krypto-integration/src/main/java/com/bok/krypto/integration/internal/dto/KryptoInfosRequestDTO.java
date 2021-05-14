@@ -1,4 +1,4 @@
-package com.bok.integration.krypto.dto;
+package com.bok.krypto.integration.internal.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PricesResponseDTO {
+public class KryptoInfosRequestDTO {
 
-    public List<PriceResponseDTO> prices;
+    public List<String> symbols;
 }

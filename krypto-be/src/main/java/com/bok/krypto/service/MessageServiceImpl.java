@@ -1,6 +1,6 @@
 package com.bok.krypto.service;
 
-import com.bok.integration.EmailMessage;
+import com.bok.parent.integration.message.EmailMessage;
 import com.bok.krypto.messaging.internal.messages.PurchaseMessage;
 import com.bok.krypto.messaging.internal.messages.SellMessage;
 import com.bok.krypto.messaging.internal.messages.TransferMessage;

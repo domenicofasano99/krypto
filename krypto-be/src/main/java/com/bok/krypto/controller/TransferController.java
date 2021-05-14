@@ -1,8 +1,8 @@
 package com.bok.krypto.controller;
 
-import com.bok.integration.krypto.dto.TransferInfoDTO;
-import com.bok.integration.krypto.dto.TransferRequestDTO;
-import com.bok.integration.krypto.dto.TransferResponseDTO;
+import com.bok.krypto.integration.internal.dto.TransferInfoDTO;
+import com.bok.krypto.integration.internal.dto.TransferRequestDTO;
+import com.bok.krypto.integration.internal.dto.TransferResponseDTO;
 import com.bok.krypto.service.interfaces.TransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

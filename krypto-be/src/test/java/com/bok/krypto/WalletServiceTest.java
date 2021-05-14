@@ -1,10 +1,10 @@
 package com.bok.krypto;
 
-import com.bok.integration.krypto.WalletDeleteRequestDTO;
-import com.bok.integration.krypto.WalletDeleteResponseDTO;
-import com.bok.integration.krypto.WalletsDTO;
-import com.bok.integration.krypto.dto.WalletRequestDTO;
-import com.bok.integration.krypto.dto.WalletResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletsDTO;
+import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
 import com.bok.krypto.model.Account;

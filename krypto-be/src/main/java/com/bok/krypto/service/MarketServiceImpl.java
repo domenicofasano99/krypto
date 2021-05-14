@@ -1,16 +1,16 @@
 package com.bok.krypto.service;
 
-import com.bok.integration.krypto.PurchaseRequestDTO;
-import com.bok.integration.krypto.dto.HistoricalDataDTO;
-import com.bok.integration.krypto.dto.HistoricalDataRequestDTO;
-import com.bok.integration.krypto.dto.KryptoInfoDTO;
-import com.bok.integration.krypto.dto.KryptoInfosDTO;
-import com.bok.integration.krypto.dto.KryptoInfosRequestDTO;
-import com.bok.integration.krypto.dto.PriceResponseDTO;
-import com.bok.integration.krypto.dto.PricesRequestDTO;
-import com.bok.integration.krypto.dto.PricesResponseDTO;
-import com.bok.integration.krypto.dto.SellRequestDTO;
-import com.bok.integration.krypto.dto.TransactionDTO;
+import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
+import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
+import com.bok.krypto.integration.internal.dto.HistoricalDataRequestDTO;
+import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
+import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
+import com.bok.krypto.integration.internal.dto.KryptoInfosRequestDTO;
+import com.bok.krypto.integration.internal.dto.PriceResponseDTO;
+import com.bok.krypto.integration.internal.dto.PricesRequestDTO;
+import com.bok.krypto.integration.internal.dto.PricesResponseDTO;
+import com.bok.krypto.integration.internal.dto.SellRequestDTO;
+import com.bok.krypto.integration.internal.dto.TransactionDTO;
 import com.bok.krypto.helper.AccountHelper;
 import com.bok.krypto.helper.HistoricalDataHelper;
 import com.bok.krypto.helper.KryptoHelper;

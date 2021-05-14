@@ -1,4 +1,4 @@
-package com.bok.integration.krypto.dto;
+package com.bok.krypto.integration.internal.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

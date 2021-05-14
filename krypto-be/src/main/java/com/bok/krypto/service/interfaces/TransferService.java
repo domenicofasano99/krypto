@@ -1,9 +1,9 @@
 package com.bok.krypto.service.interfaces;
 
 
-import com.bok.integration.krypto.dto.TransferInfoDTO;
-import com.bok.integration.krypto.dto.TransferRequestDTO;
-import com.bok.integration.krypto.dto.TransferResponseDTO;
+import com.bok.krypto.integration.internal.dto.TransferInfoDTO;
+import com.bok.krypto.integration.internal.dto.TransferRequestDTO;
+import com.bok.krypto.integration.internal.dto.TransferResponseDTO;
 
 public interface TransferService {
 

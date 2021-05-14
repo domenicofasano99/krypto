@@ -1,11 +1,11 @@
 package com.bok.krypto.service.bank;
 
-import com.bok.integration.BankAccountBalance;
-import com.bok.integration.BankAccountDetails;
-import com.bok.integration.DepositRequest;
-import com.bok.integration.DepositResponse;
-import com.bok.integration.WithdrawalRequest;
-import com.bok.integration.WithdrawalResponse;
+import com.bok.krypto.integration.internal.dto.BankAccountBalance;
+import com.bok.krypto.integration.internal.dto.BankAccountDetails;
+import com.bok.krypto.integration.internal.dto.DepositRequest;
+import com.bok.krypto.integration.internal.dto.DepositResponse;
+import com.bok.krypto.integration.internal.dto.WithdrawalRequest;
+import com.bok.krypto.integration.internal.dto.WithdrawalResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

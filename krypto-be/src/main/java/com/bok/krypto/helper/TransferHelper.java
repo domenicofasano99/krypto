@@ -1,12 +1,12 @@
 package com.bok.krypto.helper;
 
-import com.bok.integration.EmailMessage;
-import com.bok.integration.StatusDTO;
-import com.bok.integration.TransfersInfoDTO;
-import com.bok.integration.TransfersInfoRequestDTO;
-import com.bok.integration.krypto.dto.TransferInfoDTO;
-import com.bok.integration.krypto.dto.TransferRequestDTO;
-import com.bok.integration.krypto.dto.TransferResponseDTO;
+import com.bok.parent.integration.message.EmailMessage;
+import com.bok.krypto.integration.internal.dto.StatusDTO;
+import com.bok.krypto.integration.internal.dto.TransfersInfoDTO;
+import com.bok.krypto.integration.internal.dto.TransfersInfoRequestDTO;
+import com.bok.krypto.integration.internal.dto.TransferInfoDTO;
+import com.bok.krypto.integration.internal.dto.TransferRequestDTO;
+import com.bok.krypto.integration.internal.dto.TransferResponseDTO;
 import com.bok.krypto.core.Constants;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.TransactionNotFoundException;

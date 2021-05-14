@@ -1,20 +1,22 @@
-package com.bok.integration.krypto.dto;
+package com.bok.krypto.integration.internal.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import java.math.BigDecimal;
+import java.time.Instant;
 
-@Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PriceResponseDTO {
+public class RecordDTO {
 
-    public String symbol;
-    public BigDecimal price;
+    public Double price;
+    public Instant instant;
+    public Double marketCap;
+    public Long id;
 }

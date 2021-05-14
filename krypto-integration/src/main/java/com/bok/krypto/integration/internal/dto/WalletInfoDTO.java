@@ -1,4 +1,4 @@
-package com.bok.integration.krypto;
+package com.bok.krypto.integration.internal.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
