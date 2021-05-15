@@ -85,7 +85,7 @@ public class MarketHelper {
             walletHelper.deposit(account, destination, purchaseMessage.amount);
 
             BigDecimal amountToWithdraw = convertIntoUSD(destination.getKrypto(), purchaseMessage.amount);
-            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, "USD", purchaseMessage.accountId);
+            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, "USD", purchaseMessage.accountId, destination.getKrypto().getSymbol());
             messageService.sendBankWithdrawal(bankWithdrawalMessage);
 
         } catch (InsufficientBalanceException ex) {
@@ -142,7 +142,7 @@ public class MarketHelper {
             walletHelper.withdraw(source, sellMessage.amount);
 
             BigDecimal amountToDeposit = convertIntoUSD(source.getKrypto(), sellMessage.amount);
-            BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, "USD", sellMessage.accountId);
+            BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, "USD", sellMessage.accountId, source.getKrypto().getSymbol());
             messageService.sendBankDeposit(bankDepositMessage);
 
         } catch (InsufficientBalanceException ex) {
