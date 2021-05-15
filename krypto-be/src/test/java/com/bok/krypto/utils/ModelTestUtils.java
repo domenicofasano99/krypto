@@ -79,7 +79,6 @@ public class ModelTestUtils {
         walletRepository.deleteAll();
         kryptoRepository.deleteAll();
         accountRepository.deleteAll();
-
     }
 
     public void generateHistoricalDataForeachKrypto() {
