@@ -1,8 +1,8 @@
 package com.bok.krypto.helper;
 
+import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
 import com.bok.krypto.integration.internal.dto.RecordDTO;
-import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.repository.HistoricalDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

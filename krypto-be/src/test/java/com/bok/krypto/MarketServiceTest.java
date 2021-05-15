@@ -1,13 +1,13 @@
 package com.bok.krypto;
 
 import com.bok.krypto.integration.internal.dto.BankAccountBalance;
-import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
 import com.bok.krypto.integration.internal.dto.HistoricalDataRequestDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosRequestDTO;
 import com.bok.krypto.integration.internal.dto.PriceResponseDTO;
+import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.RecordDTO;
 import com.bok.krypto.integration.internal.dto.TransactionDTO;
 import com.bok.krypto.model.Account;

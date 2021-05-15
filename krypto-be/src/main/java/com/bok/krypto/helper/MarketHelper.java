@@ -2,12 +2,11 @@ package com.bok.krypto.helper;
 
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
-import com.bok.parent.integration.message.EmailMessage;
+import com.bok.krypto.exception.ErrorCodes;
+import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
 import com.bok.krypto.integration.internal.dto.TransactionDTO;
-import com.bok.krypto.exception.ErrorCodes;
-import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.messaging.internal.messages.PurchaseMessage;
 import com.bok.krypto.messaging.internal.messages.SellMessage;
 import com.bok.krypto.model.Account;
@@ -17,6 +16,7 @@ import com.bok.krypto.model.Transaction;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MessageService;
+import com.bok.parent.integration.message.EmailMessage;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class MarketHelper {
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
 
         BigDecimal usdAmount = convertIntoUSD(purchaseRequestDTO.symbol, purchaseRequestDTO.amount);
-        if(bankService.getAccountBalance(accountId).balance.compareTo(usdAmount) < 0){
+        if (bankService.getAccountBalance(accountId).balance.compareTo(usdAmount) < 0) {
             throw new InsufficientBalanceException();
         }
 

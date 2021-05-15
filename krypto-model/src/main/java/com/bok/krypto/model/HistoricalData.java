@@ -1,6 +1,9 @@
 package com.bok.krypto.model;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
@@ -10,6 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.time.Instant;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class HistoricalData {
     @Id
@@ -55,144 +62,9 @@ public class HistoricalData {
     @Column
     private Double marketCap;
 
-    public HistoricalData() {
-        //hibernate
-    }
 
     public HistoricalData(Krypto krypto, Double price) {
         this.krypto = krypto;
         this.price = price;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Krypto getKrypto() {
-        return krypto;
-    }
-
-    public void setKrypto(Krypto krypto) {
-        this.krypto = krypto;
-    }
-
-    public Double getCirculatingSupply() {
-        return circulatingSupply;
-    }
-
-    public void setCirculatingSupply(Double circulatingSupply) {
-        this.circulatingSupply = circulatingSupply;
-    }
-
-    public Double getTotalSupply() {
-        return totalSupply;
-    }
-
-    public void setTotalSupply(Double totalSupply) {
-        this.totalSupply = totalSupply;
-    }
-
-    public Integer getCmcRank() {
-        return cmcRank;
-    }
-
-    public void setCmcRank(Integer cmcRank) {
-        this.cmcRank = cmcRank;
-    }
-
-    public String getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(String lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Double getVolume24h() {
-        return volume24h;
-    }
-
-    public void setVolume24h(Double volume24h) {
-        this.volume24h = volume24h;
-    }
-
-    public Double getPercentChange1h() {
-        return percentChange1h;
-    }
-
-    public void setPercentChange1h(Double percentChange1h) {
-        this.percentChange1h = percentChange1h;
-    }
-
-    public Double getPercentChange24h() {
-        return percentChange24h;
-    }
-
-    public void setPercentChange24h(Double percentChange24h) {
-        this.percentChange24h = percentChange24h;
-    }
-
-    public Double getPercentChange7d() {
-        return percentChange7d;
-    }
-
-    public void setPercentChange7d(Double percentChange7d) {
-        this.percentChange7d = percentChange7d;
-    }
-
-    public Double getPercentChange30d() {
-        return percentChange30d;
-    }
-
-    public void setPercentChange30d(Double percentChange30d) {
-        this.percentChange30d = percentChange30d;
-    }
-
-    public Double getMarketCap() {
-        return marketCap;
-    }
-
-    public void setMarketCap(Double marketCap) {
-        this.marketCap = marketCap;
-    }
-
-    public Instant getRecordTimestamp() {
-        return recordTimestamp;
-    }
-
-    public void setRecordTimestamp(Instant recordTimestamp) {
-        this.recordTimestamp = recordTimestamp;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("krypto", krypto)
-                .append("circulatingSupply", circulatingSupply)
-                .append("totalSupply", totalSupply)
-                .append("cmcRank", cmcRank)
-                .append("lastUpdated", lastUpdated)
-                .append("recordTimestamp", recordTimestamp)
-                .append("price", price)
-                .append("volume24h", volume24h)
-                .append("percentChange1h", percentChange1h)
-                .append("percentChange24h", percentChange24h)
-                .append("percentChange7d", percentChange7d)
-                .append("percentChange30d", percentChange30d)
-                .append("marketCap", marketCap)
-                .toString();
     }
 }

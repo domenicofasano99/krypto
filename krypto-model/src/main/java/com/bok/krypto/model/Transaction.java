@@ -1,5 +1,10 @@
 package com.bok.krypto.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -7,6 +12,10 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @DiscriminatorValue("transaction")
 public class Transaction extends Activity {
@@ -24,28 +33,8 @@ public class Transaction extends Activity {
         SELL
     }
 
-    public Transaction() {
-        //hibernate
-    }
-
     public Transaction(Type type) {
         super();
-        this.type = type;
-    }
-
-    public Wallet getWallet() {
-        return wallet;
-    }
-
-    public void setWallet(Wallet wallet) {
-        this.wallet = wallet;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
         this.type = type;
     }
 }

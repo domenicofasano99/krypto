@@ -3,7 +3,6 @@ package com.bok.krypto.service;
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.krypto.messaging.external.BankProducer;
-import com.bok.parent.integration.message.EmailMessage;
 import com.bok.krypto.messaging.internal.messages.PurchaseMessage;
 import com.bok.krypto.messaging.internal.messages.SellMessage;
 import com.bok.krypto.messaging.internal.messages.TransferMessage;
@@ -13,6 +12,7 @@ import com.bok.krypto.messaging.internal.producer.MarketProducer;
 import com.bok.krypto.messaging.internal.producer.TransferProducer;
 import com.bok.krypto.messaging.internal.producer.WalletProducer;
 import com.bok.krypto.service.interfaces.MessageService;
+import com.bok.parent.integration.message.EmailMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

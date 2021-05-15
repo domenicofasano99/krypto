@@ -1,24 +1,24 @@
 package com.bok.krypto.helper;
 
-import com.bok.krypto.integration.internal.dto.BankAccountBalance;
-import com.bok.parent.integration.message.EmailMessage;
-import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
-import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
-import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
-import com.bok.krypto.integration.internal.dto.WalletsDTO;
-import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
-import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 import com.bok.krypto.exception.InsufficientBalanceException;
 import com.bok.krypto.exception.InvalidRequestException;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
 import com.bok.krypto.exception.WalletNotFoundException;
+import com.bok.krypto.integration.internal.dto.BankAccountBalance;
+import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
+import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletsDTO;
 import com.bok.krypto.messaging.internal.messages.WalletMessage;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MessageService;
+import com.bok.parent.integration.message.EmailMessage;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,12 +129,12 @@ public class WalletHelper {
     public void handleMessage(WalletMessage walletMessage) {
         Wallet w = walletRepository.findById(walletMessage.id)
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
-        Account u = accountHelper.findById(walletMessage.accountId);
-        w.setUser(u);
+        Account account = accountHelper.findById(walletMessage.accountId);
+        w.setAccount(account);
         w.setPublicId(UUID.randomUUID().toString());
         w.setKrypto(kryptoHelper.findBySymbol(walletMessage.symbol));
         walletRepository.save(w);
-        messageService.sendEmail(emailWalletCreation(w, u));
+        messageService.sendEmail(emailWalletCreation(w, account));
     }
 
     private EmailMessage emailWalletCreation(Wallet w, Account u) {

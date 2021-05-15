@@ -1,9 +1,10 @@
 package com.bok.krypto.helper;
 
-import com.bok.parent.integration.message.AccountCreationMessage;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.AccountRepository;
+import com.bok.parent.integration.message.AccountCreationMessage;
+import com.bok.parent.integration.message.AccountDeletionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,5 +39,10 @@ public class AccountHelper {
 
     public Boolean checkRightsOnResource(Account account, Wallet wallet) {
         return wallet.getAccount().equals(account);
+    }
+
+    public void handle(AccountDeletionMessage message) {
+        Account a = findById(message.accountId);
+        accountRepository.delete(a);
     }
 }

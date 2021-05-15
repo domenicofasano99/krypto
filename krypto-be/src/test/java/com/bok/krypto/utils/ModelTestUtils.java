@@ -112,7 +112,7 @@ public class ModelTestUtils {
         Wallet w = new Wallet();
         w.setPublicId(UUID.randomUUID().toString());
         w.setKrypto(krypto);
-        w.setUser(account);
+        w.setAccount(account);
         w.setAvailableAmount(baseAmount);
         w = walletRepository.saveAndFlush(w);
         w.setStatus(Wallet.Status.CREATED);
