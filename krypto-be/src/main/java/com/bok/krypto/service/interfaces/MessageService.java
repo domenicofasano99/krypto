@@ -1,5 +1,7 @@
 package com.bok.krypto.service.interfaces;
 
+import com.bok.bank.integration.message.BankDepositMessage;
+import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.parent.integration.message.EmailMessage;
 import com.bok.krypto.messaging.internal.messages.PurchaseMessage;
 import com.bok.krypto.messaging.internal.messages.SellMessage;
@@ -18,4 +20,8 @@ public interface MessageService {
     public void sendPurchase(PurchaseMessage purchaseMessage);
 
     public void sendSell(SellMessage sellMessage);
+
+    public void sendBankDeposit(BankDepositMessage bankDepositMessage);
+
+    public void sendBankWithdrawal(BankWithdrawalMessage bankWithdrawalMessage);
 }

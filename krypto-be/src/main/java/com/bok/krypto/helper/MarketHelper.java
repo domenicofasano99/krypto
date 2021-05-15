@@ -1,5 +1,7 @@
 package com.bok.krypto.helper;
 
+import com.bok.bank.integration.message.BankDepositMessage;
+import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.parent.integration.message.EmailMessage;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
@@ -50,7 +52,12 @@ public class MarketHelper {
         Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequestDTO.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
-        Preconditions.checkArgument(bankService.getAccountBalance(accountId).balance.compareTo(convertIntoUSD(purchaseRequestDTO.symbol, purchaseRequestDTO.amount)) >= 0, "Insufficient balance");
+
+        BigDecimal usdAmount = convertIntoUSD(purchaseRequestDTO.symbol, purchaseRequestDTO.amount);
+        if(bankService.getAccountBalance(accountId).balance.compareTo(usdAmount) < 0){
+            throw new InsufficientBalanceException();
+        }
+
         Account account = accountHelper.findById(accountId);
 
         Transaction transaction = new Transaction(Transaction.Type.PURCHASE);
@@ -76,6 +83,11 @@ public class MarketHelper {
 
         try {
             walletHelper.deposit(account, destination, purchaseMessage.amount);
+
+            BigDecimal amountToWithdraw = convertIntoUSD(destination.getKrypto(), purchaseMessage.amount);
+            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, "USD", purchaseMessage.accountId);
+            messageService.sendBankWithdrawal(bankWithdrawalMessage);
+
         } catch (InsufficientBalanceException ex) {
             log.info("Purchase {} error, insufficient balance", purchaseMessage);
             EmailMessage email = new EmailMessage();
@@ -128,6 +140,11 @@ public class MarketHelper {
         String subject, to, text;
         try {
             walletHelper.withdraw(source, sellMessage.amount);
+
+            BigDecimal amountToDeposit = convertIntoUSD(source.getKrypto(), sellMessage.amount);
+            BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, "USD", sellMessage.accountId);
+            messageService.sendBankDeposit(bankDepositMessage);
+
         } catch (InsufficientBalanceException ex) {
             subject = "Insufficient Balance in your account";
             to = account.getEmail();
@@ -135,7 +152,7 @@ public class MarketHelper {
             transaction.setStatus(Activity.Status.REJECTED);
             sendMarketEmail(subject, to, text);
         }
-        subject = "Transfer executed";
+        subject = "Sell executed";
         to = account.getEmail();
         text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
         transaction.setStatus(Activity.Status.SETTLED);

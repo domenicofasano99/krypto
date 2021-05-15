@@ -12,6 +12,8 @@ active-mq:
   wallets: wallets
   emails: emails
   broker-url: tcp://dev.faraone.ovh:61616
+  bank-deposit: bank-deposit
+  bank-withdrawal: bank-withdrawal
 
 spring:
   application:

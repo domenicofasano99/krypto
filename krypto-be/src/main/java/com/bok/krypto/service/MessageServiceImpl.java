@@ -1,5 +1,8 @@
 package com.bok.krypto.service;
 
+import com.bok.bank.integration.message.BankDepositMessage;
+import com.bok.bank.integration.message.BankWithdrawalMessage;
+import com.bok.krypto.messaging.external.BankProducer;
 import com.bok.parent.integration.message.EmailMessage;
 import com.bok.krypto.messaging.internal.messages.PurchaseMessage;
 import com.bok.krypto.messaging.internal.messages.SellMessage;
@@ -28,6 +31,9 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     MarketProducer marketProducer;
 
+    @Autowired
+    BankProducer bankProducer;
+
     @Override
     public void sendTransfer(TransferMessage transferMessage) {
         transferProducer.send(transferMessage);
@@ -51,5 +57,15 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void sendSell(SellMessage sellMessage) {
         marketProducer.send(sellMessage);
+    }
+
+    @Override
+    public void sendBankDeposit(BankDepositMessage bankDepositMessage) {
+        bankProducer.send(bankDepositMessage);
+    }
+
+    @Override
+    public void sendBankWithdrawal(BankWithdrawalMessage bankWithdrawalMessage) {
+        bankProducer.send(bankWithdrawalMessage);
     }
 }
