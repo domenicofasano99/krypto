@@ -17,7 +17,9 @@ spring:
   activemq:
     packages:
       trusted:
-        - com.bok.integration
+        - com.bok.parent.integration
+        - com.bok.krypto.integration
+        - com.bok.bank.integration
         - com.bok.krypto.messaging
         - java.math
         - java.util
