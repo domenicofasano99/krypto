@@ -31,13 +31,13 @@ public class Account {
     @Unique
     private String email;
 
-    @OneToMany(cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany
     private Set<Wallet> wallets;
 
-    @OneToMany(cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany
     private Set<Transaction> transactions;
 
-    @OneToMany(cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany
     private Set<Transfer> transfers;
 
     @CreationTimestamp

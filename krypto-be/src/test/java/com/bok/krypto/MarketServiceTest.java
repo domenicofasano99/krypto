@@ -1,6 +1,5 @@
 package com.bok.krypto;
 
-import com.bok.krypto.integration.internal.dto.BankAccountBalance;
 import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
 import com.bok.krypto.integration.internal.dto.HistoricalDataRequestDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
@@ -42,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -79,7 +77,7 @@ public class MarketServiceTest {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
         Wallet wallet = modelTestUtils.createWallet(account, krypto, new BigDecimal("0.9"));
-        when(bankService.getAccountBalance(any())).thenReturn(new BankAccountBalance(account.getId(), new BigDecimal("100000")));
+        when(bankService.preauthorize(any(), any(), any())).thenReturn(true);
         PurchaseRequestDTO purchaseRequestDTO = new PurchaseRequestDTO();
         purchaseRequestDTO.symbol = BTC;
         purchaseRequestDTO.amount = new BigDecimal("0.8989827");
@@ -165,7 +163,7 @@ public class MarketServiceTest {
     public void deniedPurchaseTest_insufficientBalance() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.getAccountBalance(any())).thenReturn(new BankAccountBalance(account.getId(), new BigDecimal("0")));
+        when(bankService.preauthorize(any(), any(), any())).thenReturn(false);
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
@@ -178,7 +176,7 @@ public class MarketServiceTest {
     public void purchaseTest_permitted() {
         Account account = modelTestUtils.createAccount();
         Krypto modelTestUtilsKrypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.getAccountBalance(anyLong())).thenReturn(new BankAccountBalance(account.getId(), new BigDecimal("10000")));
+        when(bankService.preauthorize(any(), any(), any())).thenReturn(true);
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");

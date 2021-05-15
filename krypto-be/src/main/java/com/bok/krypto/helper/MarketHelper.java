@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.Currency;
 
 @Component
 @Slf4j
@@ -54,7 +55,9 @@ public class MarketHelper {
         Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
 
         BigDecimal usdAmount = convertIntoUSD(purchaseRequestDTO.symbol, purchaseRequestDTO.amount);
-        if (bankService.getAccountBalance(accountId).balance.compareTo(usdAmount) < 0) {
+        Boolean authorized = bankService.preauthorize(accountId, Currency.getInstance("USD"), usdAmount);
+
+        if (!authorized) {
             throw new InsufficientBalanceException();
         }
 
@@ -82,7 +85,7 @@ public class MarketHelper {
         transaction.setAccount(account);
 
         try {
-            walletHelper.deposit(account, destination, purchaseMessage.amount);
+            walletHelper.deposit(destination, purchaseMessage.amount);
 
             BigDecimal amountToWithdraw = convertIntoUSD(destination.getKrypto(), purchaseMessage.amount);
             BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, "USD", purchaseMessage.accountId, destination.getKrypto().getSymbol());

@@ -1,9 +1,11 @@
 package com.bok.krypto.model;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +16,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Krypto {
     @Id
@@ -36,15 +42,12 @@ public class Krypto {
     @UpdateTimestamp
     private Instant updateTimestamp;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany
     private List<HistoricalData> historicalData = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany
     private List<Wallet> wallets = new ArrayList<>();
 
-    public Krypto() {
-        //hibernate
-    }
 
     public Krypto(String name, String symbol, BigDecimal price) {
         this.name = name;
@@ -55,82 +58,5 @@ public class Krypto {
     public Krypto(String name, String symbol) {
         this.name = name;
         this.symbol = symbol;
-    }
-
-    public List<HistoricalData> getHistoricalData() {
-        return historicalData;
-    }
-
-    public void setHistoricalData(List<HistoricalData> historicalDataSet) {
-        this.historicalData = historicalDataSet;
-    }
-
-    public void addHistoricalData(HistoricalData historicalData) {
-        this.historicalData.add(historicalData);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Double getNetworkFee() {
-        return networkFee;
-    }
-
-    public void setNetworkFee(Double networkFee) {
-        this.networkFee = networkFee;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String code) {
-        this.symbol = code;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Instant getUpdateTimestamp() {
-        return updateTimestamp;
-    }
-
-    public void setUpdateTimestamp(Instant updateTimestamp) {
-        this.updateTimestamp = updateTimestamp;
-    }
-
-    public List<Wallet> getWallets() {
-        return wallets;
-    }
-
-    public void setWallets(List<Wallet> wallets) {
-        this.wallets = wallets;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("name", name)
-                .append("networkFee", networkFee)
-                .toString();
     }
 }

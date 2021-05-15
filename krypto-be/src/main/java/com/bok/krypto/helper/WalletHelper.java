@@ -82,15 +82,6 @@ public class WalletHelper {
         return amount;
     }
 
-    public BigDecimal deposit(Account account, Wallet wallet, BigDecimal amount) {
-        BankAccountBalance bankAccountBalance = bankService.getAccountBalance(account.getId());
-        BigDecimal value = marketHelper.convertIntoUSD(wallet.getKrypto(), amount);
-        if (bankAccountBalance.balance.compareTo(value) < 0) {
-            throw new InsufficientBalanceException("Account has insufficient balance");
-        }
-        return deposit(wallet, amount);
-    }
-
     @Transactional
     public BigDecimal deposit(Wallet wallet, BigDecimal amount) {
         Wallet w = findByPublicId(wallet.getPublicId());
