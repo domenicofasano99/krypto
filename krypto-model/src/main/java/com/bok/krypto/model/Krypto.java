@@ -59,4 +59,8 @@ public class Krypto {
         this.name = name;
         this.symbol = symbol;
     }
+
+    public void addHistoricalData(HistoricalData dataRecord) {
+        this.historicalData.add(dataRecord);
+    }
 }
