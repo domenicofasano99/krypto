@@ -2,7 +2,6 @@ package com.bok.krypto.service.bank;
 
 import com.bok.bank.integration.dto.CheckPaymentAmountRequestDTO;
 import com.bok.bank.integration.dto.CheckPaymentAmountResponseDTO;
-import com.bok.krypto.integration.internal.dto.BankAccountBalance;
 import com.bok.krypto.integration.internal.dto.BankAccountDetails;
 import com.bok.krypto.integration.internal.dto.DepositRequest;
 import com.bok.krypto.integration.internal.dto.DepositResponse;

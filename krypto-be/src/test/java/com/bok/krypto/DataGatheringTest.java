@@ -1,7 +1,7 @@
 package com.bok.krypto;
 
+import com.bok.krypto.core.CoinMarketAPI;
 import com.bok.krypto.core.MarketData;
-import com.bok.krypto.integration.external.CoinMarketAPI;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.repository.KryptoRepository;
 import com.bok.krypto.utils.ModelTestUtils;

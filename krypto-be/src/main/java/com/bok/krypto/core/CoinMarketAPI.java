@@ -1,5 +1,6 @@
-package com.bok.krypto.integration.external;
+package com.bok.krypto.core;
 
+import com.bok.krypto.integration.external.CoinMarketDTO;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;

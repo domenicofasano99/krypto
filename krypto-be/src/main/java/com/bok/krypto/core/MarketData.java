@@ -1,6 +1,5 @@
 package com.bok.krypto.core;
 
-import com.bok.krypto.integration.external.CoinMarketAPI;
 import com.bok.krypto.integration.external.CoinMarketDTO;
 import com.bok.krypto.integration.external.Datum;
 import com.bok.krypto.model.HistoricalData;
