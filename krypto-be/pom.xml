@@ -72,13 +72,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.bok</groupId>
-            <artifactId>krypto-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <version>3.0.1</version>
@@ -152,12 +145,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.bok</groupId>
-            <artifactId>integration</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
             <version>2.2</version>
@@ -193,6 +180,12 @@
             <artifactId>assertj-core</artifactId>
             <version>3.19.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.bok.krypto</groupId>
+            <artifactId>krypto-integration</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

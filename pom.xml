@@ -22,9 +22,9 @@
     </properties>
 
     <modules>
-        <module>krypto-be</module>
         <module>krypto-model</module>
         <module>krypto-integration</module>
+        <module>krypto-be</module>
     </modules>
 
     <dependencies>
