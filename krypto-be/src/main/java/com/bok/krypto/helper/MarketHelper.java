@@ -1,9 +1,12 @@
 package com.bok.krypto.helper;
 
+import com.bok.bank.integration.AuthorizationException;
+import com.bok.bank.integration.Money;
+import com.bok.bank.integration.dto.AuthorizationResponseDTO;
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.krypto.exception.ErrorCodes;
-import com.bok.krypto.exception.InsufficientBalanceException;
+import com.bok.krypto.exception.TransactionException;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
 import com.bok.krypto.integration.internal.dto.TransactionDTO;
@@ -49,30 +52,51 @@ public class MarketHelper {
     BankService bankService;
 
 
-    public TransactionDTO buy(Long accountId, PurchaseRequestDTO purchaseRequestDTO) {
+    public TransactionDTO buy(Long accountId, PurchaseRequestDTO purchaseRequest) {
         Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
-        Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequestDTO.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
-        Preconditions.checkArgument(purchaseRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
+        Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequest.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
+        Preconditions.checkArgument(purchaseRequest.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
 
-        BigDecimal usdAmount = convertIntoUSD(purchaseRequestDTO.symbol, purchaseRequestDTO.amount);
-        Boolean authorized = bankService.preauthorize(accountId, Currency.getInstance("USD"), usdAmount);
-
-        if (!authorized) {
-            throw new InsufficientBalanceException();
-        }
-
-        Account account = accountHelper.findById(accountId);
+        Krypto k = kryptoHelper.findBySymbol(purchaseRequest.symbol);
+        Money money = convertIntoMoney(k, purchaseRequest.amount);
 
         Transaction transaction = new Transaction(Transaction.Type.PURCHASE);
         transaction = transactionHelper.saveOrUpdate(transaction);
 
-        PurchaseMessage message = new PurchaseMessage();
-        message.accountId = account.getId();
-        message.transactionId = transaction.getId();
-        message.amount = purchaseRequestDTO.amount;
-        message.symbol = purchaseRequestDTO.symbol;
-        messageService.sendPurchase(message);
-        return new TransactionDTO(transaction.getPublicId(), transaction.status.name(), transaction.getType().name(), purchaseRequestDTO.amount);
+        AuthorizationResponseDTO authorizationResponse = null;
+        try {
+            authorizationResponse = bankService.preauthorize(accountId, money);
+            transaction.status = Activity.Status.AUTHORIZED;
+        } catch (AuthorizationException ae) {
+            transaction.status = Activity.Status.REJECTED;
+            log.error("Error while authorizing transaction {}", transaction);
+        } catch (Exception e) {
+            log.error("An unknown error occurred, {}", e.getMessage());
+            authorizationResponse = new AuthorizationResponseDTO();
+            authorizationResponse.authorizationId = -1L;
+        } finally {
+            transaction.setBankAuthorizationId(authorizationResponse.authorizationId);
+            transactionHelper.saveOrUpdate(transaction);
+        }
+
+        if (authorizationResponse.authorized) {
+            sendPurchase(accountId, transaction.getId(), purchaseRequest.amount, purchaseRequest.symbol);
+        }
+        return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), purchaseRequest.amount, transaction.status.name(), authorizationResponse.authorizationId);
+    }
+
+    @Transactional
+    public TransactionDTO sell(Long accountId, SellRequestDTO sellRequest) {
+        Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
+        Preconditions.checkArgument(kryptoHelper.existsBySymbol(sellRequest.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
+        Preconditions.checkArgument(sellRequest.amount.compareTo(BigDecimal.ZERO) <= 0, "Cannot SELL a negative amount.");
+
+
+        Transaction transaction = new Transaction(Transaction.Type.PURCHASE);
+        transaction = transactionHelper.saveOrUpdate(transaction);
+
+        sendSell(accountId, transaction.getId(), sellRequest.amount, sellRequest.symbol);
+        return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), sellRequest.amount, transaction.status.name(), null);
     }
 
     public void handle(PurchaseMessage purchaseMessage) {
@@ -87,11 +111,11 @@ public class MarketHelper {
         try {
             walletHelper.deposit(destination, purchaseMessage.amount);
 
-            BigDecimal amountToWithdraw = convertIntoUSD(destination.getKrypto(), purchaseMessage.amount);
-            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, "USD", purchaseMessage.accountId, destination.getKrypto().getSymbol());
-            messageService.sendBankWithdrawal(bankWithdrawalMessage);
+            Money amountToWithdraw = convertIntoMoney(destination.getKrypto(), purchaseMessage.amount);
+            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, purchaseMessage.accountId, destination.getKrypto().getSymbol());
+            bankService.sendBankWithdrawal(bankWithdrawalMessage);
 
-        } catch (InsufficientBalanceException ex) {
+        } catch (TransactionException ex) {
             log.info("Purchase {} error, insufficient balance", purchaseMessage);
             EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";
@@ -111,26 +135,6 @@ public class MarketHelper {
     }
 
     @Transactional
-    public TransactionDTO sell(Long userId, SellRequestDTO sellRequestDTO) {
-        Preconditions.checkArgument(accountHelper.existsById(userId), ErrorCodes.USER_DOES_NOT_EXIST);
-        Preconditions.checkArgument(kryptoHelper.existsBySymbol(sellRequestDTO.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
-        Preconditions.checkArgument(sellRequestDTO.amount.compareTo(BigDecimal.ZERO) <= 0, "Cannot SELL a negative amount.");
-
-
-        Transaction transaction = new Transaction(Transaction.Type.PURCHASE);
-        transaction = transactionHelper.saveOrUpdate(transaction);
-        SellMessage message = new SellMessage();
-        message.accountId = userId;
-        message.transactionId = transaction.getId();
-        message.amount = sellRequestDTO.amount;
-        message.symbol = sellRequestDTO.symbol;
-        messageService.sendSell(message);
-        return new TransactionDTO(transaction.getPublicId(), transaction.status.name(), transaction.getType().name(), sellRequestDTO.amount);
-
-
-    }
-
-    @Transactional
     public void handle(SellMessage sellMessage) {
         log.info("Processing sell {}", sellMessage);
         Transaction transaction = transactionHelper.findById(sellMessage.transactionId);
@@ -144,11 +148,11 @@ public class MarketHelper {
         try {
             walletHelper.withdraw(source, sellMessage.amount);
 
-            BigDecimal amountToDeposit = convertIntoUSD(source.getKrypto(), sellMessage.amount);
-            BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, "USD", sellMessage.accountId, source.getKrypto().getSymbol());
-            messageService.sendBankDeposit(bankDepositMessage);
+            Money amountToDeposit = convertIntoMoney(source.getKrypto(), sellMessage.amount);
+            BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, sellMessage.accountId, source.getKrypto().getSymbol());
+            bankService.sendBankDeposit(bankDepositMessage);
 
-        } catch (InsufficientBalanceException ex) {
+        } catch (TransactionException ex) {
             subject = "Insufficient Balance in your account";
             to = account.getEmail();
             text = "Your SELL transaction of " + sellMessage.amount + " " + sellMessage.symbol + " has been DECLINED due to insufficient balance.";
@@ -170,9 +174,9 @@ public class MarketHelper {
         Transaction sell = new Transaction();
         sell.setAmount(amountToSell);
         sell.setAccount(account);
-        BigDecimal netWorth = convertIntoUSD(walletToEmpty.getKrypto(), amountToSell);
-        //send message to bank to credit netWorth USD
-
+        Money money = convertIntoMoney(walletToEmpty.getKrypto(), amountToSell);
+        //send message to bank to credit money USD
+        bankService.sendBankDeposit(new BankDepositMessage(money, account.getId(), walletToEmpty.getKrypto().getSymbol()));
         transactionHelper.saveOrUpdate(sell);
 
         String subject, to, text;
@@ -185,13 +189,8 @@ public class MarketHelper {
 
     }
 
-    public BigDecimal convertIntoUSD(String symbol, BigDecimal amount) {
-        return convertIntoUSD(kryptoHelper.findBySymbol(symbol), amount);
-    }
-
-
-    public BigDecimal convertIntoUSD(Krypto k, BigDecimal amount) {
-        return k.getPrice().multiply(amount);
+    public Money convertIntoMoney(Krypto k, BigDecimal amount) {
+        return new Money(Currency.getInstance("USD"), k.getPrice().multiply(amount));
     }
 
     public void sendMarketEmail(String subject, String email, String text) {
@@ -200,5 +199,23 @@ public class MarketHelper {
         emailMessage.to = email;
         emailMessage.text = text;
         messageService.sendEmail(emailMessage);
+    }
+
+    private void sendPurchase(Long accountId, Long transactionId, BigDecimal amount, String symbol) {
+        PurchaseMessage message = new PurchaseMessage();
+        message.accountId = accountId;
+        message.transactionId = transactionId;
+        message.amount = amount;
+        message.symbol = symbol;
+        messageService.sendPurchase(message);
+    }
+
+    private void sendSell(Long accountId, Long transactionId, BigDecimal amount, String symbol) {
+        SellMessage message = new SellMessage();
+        message.accountId = accountId;
+        message.transactionId = transactionId;
+        message.amount = amount;
+        message.symbol = symbol;
+        messageService.sendSell(message);
     }
 }

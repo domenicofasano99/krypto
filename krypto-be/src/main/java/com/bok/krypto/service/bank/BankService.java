@@ -1,17 +1,14 @@
 package com.bok.krypto.service.bank;
 
-import com.bok.bank.integration.dto.CheckPaymentAmountRequestDTO;
-import com.bok.bank.integration.dto.CheckPaymentAmountResponseDTO;
-import com.bok.krypto.integration.internal.dto.BankAccountDetails;
-import com.bok.krypto.integration.internal.dto.DepositRequest;
-import com.bok.krypto.integration.internal.dto.DepositResponse;
-import com.bok.krypto.integration.internal.dto.WithdrawalRequest;
-import com.bok.krypto.integration.internal.dto.WithdrawalResponse;
+import com.bok.bank.integration.Money;
+import com.bok.bank.integration.dto.AuthorizationRequestDTO;
+import com.bok.bank.integration.dto.AuthorizationResponseDTO;
+import com.bok.bank.integration.dto.BankAccountInfoDTO;
+import com.bok.bank.integration.message.BankDepositMessage;
+import com.bok.bank.integration.message.BankWithdrawalMessage;
+import com.bok.krypto.service.interfaces.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.Currency;
 
 @Service
 public class BankService {
@@ -19,21 +16,23 @@ public class BankService {
     @Autowired
     BankClient bankClient;
 
-    public Boolean preauthorize(Long accountId, Currency currency, BigDecimal amount) {
-        CheckPaymentAmountRequestDTO paymentAmountRequestDTO = new CheckPaymentAmountRequestDTO(Currency.getInstance("USD"), amount);
-        CheckPaymentAmountResponseDTO response = bankClient.checkPaymentAmount(accountId, paymentAmountRequestDTO);
-        return response.available;
+    @Autowired
+    MessageService messageService;
+
+    public AuthorizationResponseDTO preauthorize(Long accountId, Money money) {
+        AuthorizationRequestDTO paymentAmountRequestDTO = new AuthorizationRequestDTO(accountId, money);
+        return bankClient.authorize(accountId, paymentAmountRequestDTO);
     }
 
-    public WithdrawalResponse withdraw(Long accountId, WithdrawalRequest request) {
-        return bankClient.withdraw(accountId, request);
+    public BankAccountInfoDTO getAccountDetails(Long accountId) {
+        return bankClient.bankAccountInfo(accountId);
     }
 
-    public DepositResponse deposit(Long accountId, DepositRequest request) {
-        return bankClient.deposit(accountId, request);
+    public void sendBankWithdrawal(BankWithdrawalMessage bankWithdrawalMessage) {
+        messageService.sendBankWithdrawal(bankWithdrawalMessage);
     }
 
-    public BankAccountDetails getAccountDetails(Long accountId) {
-        return bankClient.getAccountDetails(accountId);
+    public void sendBankDeposit(BankDepositMessage bankDepositMessage) {
+        messageService.sendBankDeposit(bankDepositMessage);
     }
 }

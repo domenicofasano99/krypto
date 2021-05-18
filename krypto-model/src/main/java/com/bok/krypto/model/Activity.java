@@ -58,6 +58,7 @@ public abstract class Activity {
     public Status status;
 
     public enum Status {
+        AUTHORIZED,
         PENDING,
         SETTLED,
         REJECTED

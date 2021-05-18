@@ -1,6 +1,6 @@
 package com.bok.krypto;
 
-import com.bok.krypto.exception.InsufficientBalanceException;
+import com.bok.krypto.exception.TransactionException;
 import com.bok.krypto.helper.TransferHelper;
 import com.bok.krypto.integration.internal.dto.TransferInfoDTO;
 import com.bok.krypto.integration.internal.dto.TransferInfoRequestDTO;
@@ -96,7 +96,7 @@ public class TransferServiceTest {
         transferRequestDTO.destination = wb.getPublicId();
         transferRequestDTO.symbol = BTC;
         transferRequestDTO.amount = BigDecimal.valueOf(5);
-        assertThrows(InsufficientBalanceException.class, () -> transferService.transfer(a.getId(), transferRequestDTO));
+        assertThrows(TransactionException.class, () -> transferService.transfer(a.getId(), transferRequestDTO));
 
     }
 

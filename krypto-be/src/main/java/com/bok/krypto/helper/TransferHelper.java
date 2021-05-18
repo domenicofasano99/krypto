@@ -1,7 +1,7 @@
 package com.bok.krypto.helper;
 
 import com.bok.krypto.core.Constants;
-import com.bok.krypto.exception.InsufficientBalanceException;
+import com.bok.krypto.exception.TransactionException;
 import com.bok.krypto.exception.TransactionNotFoundException;
 import com.bok.krypto.integration.internal.dto.StatusDTO;
 import com.bok.krypto.integration.internal.dto.TransferInfoDTO;
@@ -56,7 +56,7 @@ public class TransferHelper {
         Preconditions.checkArgument(transferRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0);
         Preconditions.checkArgument(walletHelper.existsByUserIdAndSymbol(accountId, transferRequestDTO.symbol));
         if (!walletHelper.hasSufficientBalance(accountId, transferRequestDTO.symbol, transferRequestDTO.amount)) {
-            throw new InsufficientBalanceException("Insufficient balance");
+            throw new TransactionException("Insufficient balance");
         }
         Transfer t = new Transfer();
         t = transferRepository.saveAndFlush(t);
@@ -113,7 +113,7 @@ public class TransferHelper {
 
         try {
             transfer(source, destination, transferMessage.amount);
-        } catch (InsufficientBalanceException ex) {
+        } catch (TransactionException ex) {
             EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";
             email.to = account.getEmail();

@@ -1,6 +1,6 @@
 package com.bok.krypto.helper;
 
-import com.bok.krypto.exception.InsufficientBalanceException;
+import com.bok.krypto.exception.TransactionException;
 import com.bok.krypto.exception.InvalidRequestException;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
@@ -71,7 +71,7 @@ public class WalletHelper {
     @Transactional
     public BigDecimal withdraw(Wallet wallet, BigDecimal amount) {
         if (wallet.getAvailableAmount().compareTo(amount) < 0) {
-            throw new InsufficientBalanceException("not enough funds to perform the withdrawal");
+            throw new TransactionException("not enough funds to perform the withdrawal");
         }
         log.info("withdrawing {} from wallet {}", amount, wallet.getPublicId());
         BigDecimal newBalance = wallet.getAvailableAmount().subtract(amount);

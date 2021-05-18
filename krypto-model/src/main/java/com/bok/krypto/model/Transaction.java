@@ -27,6 +27,9 @@ public class Transaction extends Activity {
     @Enumerated(EnumType.STRING)
     public Type type;
 
+    @Column
+    private Long bankAuthorizationId;
+
 
     public enum Type {
         PURCHASE,
@@ -36,5 +39,11 @@ public class Transaction extends Activity {
     public Transaction(Type type) {
         super();
         this.type = type;
+    }
+
+    public Transaction(Type type, Long bankAuthorizationId) {
+        super();
+        this.type = type;
+        this.bankAuthorizationId = bankAuthorizationId;
     }
 }
