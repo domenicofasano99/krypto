@@ -26,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -76,7 +77,7 @@ public class TransferHelper {
         return response;
     }
 
-    public TransferInfoDTO getTransferInfo(Long userId, String transferId) {
+    public TransferInfoDTO getTransferInfo(Long userId, UUID transferId) {
         accountHelper.existsById(userId);
         Transfer t = transferRepository.findByPublicId(transferId).orElseThrow(() -> new TransactionNotFoundException("Could not find a transaction with the given ID"));
         TransferInfoDTO response = new TransferInfoDTO();
@@ -118,7 +119,7 @@ public class TransferHelper {
             email.subject = "Insufficient Balance in your account";
             email.to = account.getEmail();
             email.text = "Your transfer of " + transferMessage.amount + " " + transferMessage.symbol + " has been DECLINED due to insufficient balance.";
-            transfer.setStatus(Activity.Status.REJECTED);
+            transfer.setStatus(Activity.Status.DECLINED);
             messageService.sendEmail(email);
         }
         EmailMessage email = new EmailMessage();

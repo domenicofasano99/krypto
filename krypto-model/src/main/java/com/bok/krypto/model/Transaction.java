@@ -40,10 +40,4 @@ public class Transaction extends Activity {
         super();
         this.type = type;
     }
-
-    public Transaction(Type type, Long transactionId) {
-        super();
-        this.type = type;
-        this.transactionId = transactionId;
-    }
 }

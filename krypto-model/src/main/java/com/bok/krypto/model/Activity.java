@@ -34,8 +34,9 @@ public abstract class Activity {
     @GeneratedValue
     private Long id;
 
-    @Column(length = 36, unique = true, updatable = false)
-    private String publicId;
+    @Column
+    @GeneratedValue
+    private UUID publicId;
 
     @Column(updatable = false)
     @CreationTimestamp
@@ -59,15 +60,15 @@ public abstract class Activity {
     public Status status;
 
     public enum Status {
-        AUTHORIZED,
-        PENDING,
+        AUTHORIZED, //if bank has approved
+        PENDING, //at creation
         SETTLED,
-        REJECTED
+        DECLINED
     }
 
     @PrePersist
     public void prePersist() {
         this.status = Status.PENDING;
-        this.publicId = UUID.randomUUID().toString();
+        this.publicId = UUID.randomUUID();
     }
 }

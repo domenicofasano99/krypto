@@ -33,7 +33,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.bok.krypto.utils.Constants.BTC;
@@ -41,7 +40,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -171,7 +169,7 @@ public class MarketServiceTest {
         purchaseRequest.amount = new BigDecimal("0.012001023");
         purchaseRequest.symbol = BTC;
 
-        assertThrows(RuntimeException.class, () -> marketService.buy(account.getId(), purchaseRequest));
+        TransactionDTO response = marketService.buy(account.getId(), purchaseRequest);
     }
 
     @Test

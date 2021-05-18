@@ -10,7 +10,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TransferResponseDTO {
     public String status;
-    public String publicId;
+    public UUID publicId;
     public BigDecimal amount;
     public UUID source;
     public UUID destination;

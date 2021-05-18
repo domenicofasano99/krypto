@@ -5,6 +5,8 @@ import com.bok.krypto.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class TransactionHelper {
 
@@ -15,7 +17,7 @@ public class TransactionHelper {
         return transactionRepository.save(transaction);
     }
 
-    public Transaction findByPublicId(String transactionId) {
+    public Transaction findByPublicId(UUID transactionId) {
         return transactionRepository.findByPublicId(transactionId).orElseThrow(() -> new RuntimeException("Transaction not found"));
     }
 

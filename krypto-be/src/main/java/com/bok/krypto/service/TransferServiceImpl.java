@@ -9,6 +9,8 @@ import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class TransferServiceImpl implements TransferService {
 
@@ -27,7 +29,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public TransferInfoDTO transferInfo(Long accountId, String transferId) {
+    public TransferInfoDTO transferInfo(Long accountId, UUID transferId) {
         return transferHelper.getTransferInfo(accountId, transferId);
     }
 }

@@ -1,10 +1,9 @@
 package com.bok.krypto.helper;
 
-import com.bok.bank.integration.util.AuthorizationException;
-import com.bok.bank.integration.util.Money;
 import com.bok.bank.integration.dto.AuthorizationResponseDTO;
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
+import com.bok.bank.integration.util.Money;
 import com.bok.krypto.exception.ErrorCodes;
 import com.bok.krypto.exception.TransactionException;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
@@ -66,14 +65,11 @@ public class MarketHelper {
         AuthorizationResponseDTO authorizationResponse = null;
         try {
             authorizationResponse = bankService.preauthorize(accountId, money, k.getSymbol());
-            transaction.status = Activity.Status.AUTHORIZED;
-        } catch (AuthorizationException ae) {
-            transaction.status = Activity.Status.REJECTED;
-            log.error("Error while authorizing transaction {}", transaction);
+            transaction.status = authorizationResponse.authorized ? Activity.Status.AUTHORIZED : Activity.Status.DECLINED;
+            log.info("Received {} from Bank for transaction {}", transaction.status.name(), transaction.getId());
         } catch (Exception e) {
             log.error("An unknown error occurred, {}", e.getMessage());
             authorizationResponse = new AuthorizationResponseDTO();
-            authorizationResponse.transactionId = -1L;
         } finally {
             transaction.setTransactionId(authorizationResponse.transactionId);
             transactionHelper.saveOrUpdate(transaction);
@@ -112,7 +108,7 @@ public class MarketHelper {
             walletHelper.deposit(destination, purchaseMessage.amount);
 
             Money amountToWithdraw = convertIntoMoney(destination.getKrypto(), purchaseMessage.amount);
-            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, purchaseMessage.accountId, destination.getKrypto().getSymbol(), purchaseMessage.transactionId);
+            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, purchaseMessage.accountId, destination.getKrypto().getSymbol(), transaction.getPublicId());
             bankService.sendBankWithdrawal(bankWithdrawalMessage);
 
         } catch (TransactionException ex) {
@@ -121,7 +117,7 @@ public class MarketHelper {
             email.subject = "Insufficient Balance in your account";
             email.to = account.getEmail();
             email.text = "Your PURCHASE transaction of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been DECLINED due to insufficient balance.";
-            transaction.setStatus(Activity.Status.REJECTED);
+            transaction.setStatus(Activity.Status.DECLINED);
             messageService.sendEmail(email);
         }
         log.info("Completed purchase ID:{} for {} of {} {}", purchaseMessage.transactionId, purchaseMessage.accountId, purchaseMessage.symbol, purchaseMessage.amount);
@@ -156,7 +152,7 @@ public class MarketHelper {
             subject = "Insufficient Balance in your account";
             to = account.getEmail();
             text = "Your SELL transaction of " + sellMessage.amount + " " + sellMessage.symbol + " has been DECLINED due to insufficient balance.";
-            transaction.setStatus(Activity.Status.REJECTED);
+            transaction.setStatus(Activity.Status.DECLINED);
             sendMarketEmail(subject, to, text);
         }
         subject = "Sell executed";

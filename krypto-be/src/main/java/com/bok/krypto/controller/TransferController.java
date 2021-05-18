@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/transfer")
 public class TransferController {
@@ -20,7 +22,7 @@ public class TransferController {
     TransferService transferService;
 
     @GetMapping("/{transferId}")
-    TransferInfoDTO transferInfo(@RequestParam("accountId") Long userId, @PathVariable("transferId") String transferId) {
+    TransferInfoDTO transferInfo(@RequestParam("accountId") Long userId, @PathVariable("transferId") UUID transferId) {
         return transferService.transferInfo(userId, transferId);
     }
 

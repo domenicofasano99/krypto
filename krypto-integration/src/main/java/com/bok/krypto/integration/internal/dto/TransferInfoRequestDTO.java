@@ -1,5 +1,7 @@
 package com.bok.krypto.integration.internal.dto;
 
+import java.util.UUID;
+
 public class TransferInfoRequestDTO {
-    public String transferId;
+    public UUID transferId;
 }
