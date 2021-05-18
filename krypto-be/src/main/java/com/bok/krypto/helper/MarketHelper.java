@@ -65,14 +65,14 @@ public class MarketHelper {
         AuthorizationResponseDTO authorizationResponse = bankService.authorize(accountId, transaction.getPublicId(), money, k.getSymbol());
         transaction.status = authorizationResponse.authorized ? Activity.Status.AUTHORIZED : Activity.Status.DECLINED;
         log.info("Received {} from Bank for transaction {}", transaction.status.name(), transaction.getId());
-        transaction.setTransactionId(authorizationResponse.transactionId);
+        transaction.setPublicId(authorizationResponse.extTransactionId);
         transactionHelper.saveOrUpdate(transaction);
 
 
         if (authorizationResponse.authorized) {
             sendPurchase(accountId, transaction.getId(), purchaseRequest.amount, purchaseRequest.symbol);
         }
-        return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), purchaseRequest.amount, transaction.status.name(), authorizationResponse.transactionId);
+        return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), purchaseRequest.amount, transaction.status.name());
     }
 
     @Transactional
@@ -86,7 +86,7 @@ public class MarketHelper {
         transaction = transactionHelper.saveOrUpdate(transaction);
 
         sendSell(accountId, transaction.getId(), sellRequest.amount, sellRequest.symbol);
-        return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), sellRequest.amount, transaction.status.name(), null);
+        return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), sellRequest.amount, transaction.status.name());
     }
 
     public void handle(PurchaseMessage purchaseMessage) {
@@ -139,7 +139,7 @@ public class MarketHelper {
             walletHelper.withdraw(source, sellMessage.amount);
 
             Money amountToDeposit = convertIntoMoney(source.getKrypto(), sellMessage.amount);
-            BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, sellMessage.accountId, source.getKrypto().getSymbol(), transaction.getPublicId());
+            BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, sellMessage.accountId, source.getKrypto().getSymbol());
             bankService.sendBankDeposit(bankDepositMessage);
 
         } catch (TransactionException ex) {
@@ -166,7 +166,7 @@ public class MarketHelper {
         sellTransaction.setAccount(account);
         Money money = convertIntoMoney(walletToEmpty.getKrypto(), amountToSell);
         //send message to bank to credit money USD
-        bankService.sendBankDeposit(new BankDepositMessage(money, account.getId(), walletToEmpty.getKrypto().getSymbol(), sellTransaction.getPublicId()));
+        bankService.sendBankDeposit(new BankDepositMessage(money, account.getId(), walletToEmpty.getKrypto().getSymbol()));
         transactionHelper.saveOrUpdate(sellTransaction);
 
         String subject, to, text;

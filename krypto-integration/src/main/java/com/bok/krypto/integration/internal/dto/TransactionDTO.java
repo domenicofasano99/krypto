@@ -18,5 +18,4 @@ public class TransactionDTO {
     public String type;
     public BigDecimal amount;
     public String status;
-    public Long transactionId;
 }
