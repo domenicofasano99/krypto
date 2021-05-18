@@ -28,7 +28,7 @@ public class Transaction extends Activity {
     public Type type;
 
     @Column
-    private String bankAuthorizationId;
+    private Long transactionId;
 
 
     public enum Type {
@@ -41,9 +41,9 @@ public class Transaction extends Activity {
         this.type = type;
     }
 
-    public Transaction(Type type, String bankAuthorizationId) {
+    public Transaction(Type type, Long transactionId) {
         super();
         this.type = type;
-        this.bankAuthorizationId = bankAuthorizationId;
+        this.transactionId = transactionId;
     }
 }

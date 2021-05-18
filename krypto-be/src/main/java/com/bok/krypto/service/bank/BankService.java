@@ -19,8 +19,8 @@ public class BankService {
     @Autowired
     MessageService messageService;
 
-    public AuthorizationResponseDTO preauthorize(Long accountId, Money money) {
-        AuthorizationRequestDTO paymentAmountRequestDTO = new AuthorizationRequestDTO(accountId, money);
+    public AuthorizationResponseDTO preauthorize(Long accountId, Money money, String fromMarket) {
+        AuthorizationRequestDTO paymentAmountRequestDTO = new AuthorizationRequestDTO(accountId, money, fromMarket);
         return bankClient.authorize(accountId, paymentAmountRequestDTO);
     }
 

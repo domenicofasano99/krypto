@@ -33,6 +33,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.bok.krypto.utils.Constants.BTC;
@@ -78,7 +79,7 @@ public class MarketServiceTest {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
         Wallet wallet = modelTestUtils.createWallet(account, krypto, new BigDecimal("0.9"));
-        when(bankService.preauthorize(any(), any())).thenReturn(new AuthorizationResponseDTO(true, "", 1L));
+        when(bankService.preauthorize(any(), any(), any())).thenReturn(new AuthorizationResponseDTO(true, "", 1L));
         PurchaseRequestDTO purchaseRequestDTO = new PurchaseRequestDTO();
         purchaseRequestDTO.symbol = BTC;
         purchaseRequestDTO.amount = new BigDecimal("0.8989827");
@@ -164,7 +165,7 @@ public class MarketServiceTest {
     public void deniedPurchaseTest_insufficientBalance() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.preauthorize(any(), any())).thenReturn(new AuthorizationResponseDTO(false, "", 1L));
+        when(bankService.preauthorize(any(), any(), any())).thenReturn(new AuthorizationResponseDTO(false, "", -1L));
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
@@ -177,7 +178,7 @@ public class MarketServiceTest {
     public void purchaseTest_permitted() {
         Account account = modelTestUtils.createAccount();
         Krypto modelTestUtilsKrypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.preauthorize(any(), any())).thenReturn(new AuthorizationResponseDTO(true, "", 1L));
+        when(bankService.preauthorize(any(), any(), any())).thenReturn(new AuthorizationResponseDTO(true, "", 1L));
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");

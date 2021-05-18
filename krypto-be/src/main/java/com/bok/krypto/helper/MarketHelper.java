@@ -65,7 +65,7 @@ public class MarketHelper {
 
         AuthorizationResponseDTO authorizationResponse = null;
         try {
-            authorizationResponse = bankService.preauthorize(accountId, money);
+            authorizationResponse = bankService.preauthorize(accountId, money, k.getSymbol());
             transaction.status = Activity.Status.AUTHORIZED;
         } catch (AuthorizationException ae) {
             transaction.status = Activity.Status.REJECTED;
@@ -73,16 +73,16 @@ public class MarketHelper {
         } catch (Exception e) {
             log.error("An unknown error occurred, {}", e.getMessage());
             authorizationResponse = new AuthorizationResponseDTO();
-            authorizationResponse.authorizationId = "UNAUTHORIZED";
+            authorizationResponse.transactionId = -1L;
         } finally {
-            transaction.setBankAuthorizationId(authorizationResponse.authorizationId);
+            transaction.setTransactionId(authorizationResponse.transactionId);
             transactionHelper.saveOrUpdate(transaction);
         }
 
         if (authorizationResponse.authorized) {
             sendPurchase(accountId, transaction.getId(), purchaseRequest.amount, purchaseRequest.symbol);
         }
-        return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), purchaseRequest.amount, transaction.status.name(), authorizationResponse.authorizationId);
+        return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), purchaseRequest.amount, transaction.status.name(), authorizationResponse.transactionId);
     }
 
     @Transactional
@@ -112,7 +112,7 @@ public class MarketHelper {
             walletHelper.deposit(destination, purchaseMessage.amount);
 
             Money amountToWithdraw = convertIntoMoney(destination.getKrypto(), purchaseMessage.amount);
-            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, purchaseMessage.accountId, destination.getKrypto().getSymbol());
+            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, purchaseMessage.accountId, destination.getKrypto().getSymbol(), purchaseMessage.transactionId);
             bankService.sendBankWithdrawal(bankWithdrawalMessage);
 
         } catch (TransactionException ex) {
