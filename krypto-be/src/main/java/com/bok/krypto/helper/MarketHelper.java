@@ -1,7 +1,7 @@
 package com.bok.krypto.helper;
 
-import com.bok.bank.integration.AuthorizationException;
-import com.bok.bank.integration.Money;
+import com.bok.bank.integration.util.AuthorizationException;
+import com.bok.bank.integration.util.Money;
 import com.bok.bank.integration.dto.AuthorizationResponseDTO;
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
@@ -73,7 +73,7 @@ public class MarketHelper {
         } catch (Exception e) {
             log.error("An unknown error occurred, {}", e.getMessage());
             authorizationResponse = new AuthorizationResponseDTO();
-            authorizationResponse.authorizationId = -1L;
+            authorizationResponse.authorizationId = "UNAUTHORIZED";
         } finally {
             transaction.setBankAuthorizationId(authorizationResponse.authorizationId);
             transactionHelper.saveOrUpdate(transaction);

@@ -1,6 +1,6 @@
 package com.bok.krypto.service.bank;
 
-import com.bok.bank.integration.Money;
+import com.bok.bank.integration.util.Money;
 import com.bok.bank.integration.dto.AuthorizationRequestDTO;
 import com.bok.bank.integration.dto.AuthorizationResponseDTO;
 import com.bok.bank.integration.dto.BankAccountInfoDTO;
