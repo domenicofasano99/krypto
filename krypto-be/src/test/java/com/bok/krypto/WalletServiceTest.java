@@ -1,7 +1,5 @@
 package com.bok.krypto;
 
-import com.bok.bank.integration.dto.AuthorizationRequestDTO;
-import com.bok.bank.integration.dto.BankCheckRequestDTO;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
 import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
@@ -21,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,8 +31,6 @@ import static com.bok.krypto.utils.Constants.ETH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 
 @SpringBootTest
@@ -56,7 +51,7 @@ public class WalletServiceTest {
     BankService bankService;
 
     @Before
-    public void setup(){
+    public void setup() {
         BankClient bankClient = mock(BankClient.class);
         //Mockito.when(bankClient.authorize(anyLong(), any(AuthorizationRequestDTO)).thenReturn(true);
 

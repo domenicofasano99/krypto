@@ -1,7 +1,7 @@
 package com.bok.krypto.service.bank;
 
-import com.bok.bank.integration.dto.AuthorizationResponseDTO;
 import com.bok.bank.integration.dto.AuthorizationRequestDTO;
+import com.bok.bank.integration.dto.AuthorizationResponseDTO;
 import com.bok.bank.integration.dto.BankAccountInfoDTO;
 import com.bok.bank.integration.service.BankAccountController;
 import org.springframework.cloud.openfeign.FeignClient;
