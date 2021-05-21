@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -100,6 +101,7 @@ public class TransferHelper {
         return null;
     }
 
+    @Transactional
     public void handle(TransferMessage transferMessage) {
         log.info("Processing transfer {}", transferMessage);
         Account account = accountHelper.findById(transferMessage.accountId);
@@ -131,6 +133,7 @@ public class TransferHelper {
         messageService.sendEmail(email);
     }
 
+    @Transactional
     public void transfer(Wallet source, Wallet destination, BigDecimal amount) {
         BigDecimal withdrawn = walletHelper.withdraw(source, amount);
         walletHelper.deposit(destination, withdrawn);
