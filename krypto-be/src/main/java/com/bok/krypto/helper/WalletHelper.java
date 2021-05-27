@@ -130,7 +130,7 @@ public class WalletHelper {
     private EmailMessage emailWalletCreation(Wallet w, Account u) {
         EmailMessage email = new EmailMessage();
         email.subject = "BOK - Wallet creation";
-        email.text = "Your wallet for Krypto " + w.getKrypto().getSymbol() + " has been created.";
+        email.body = "Your wallet for Krypto " + w.getKrypto().getSymbol() + " has been created.";
         email.to = u.getEmail();
         return email;
     }
@@ -159,7 +159,7 @@ public class WalletHelper {
         EmailMessage emailMessage = new EmailMessage();
         emailMessage.subject = subject;
         emailMessage.to = email;
-        emailMessage.text = text;
+        emailMessage.body = text;
         messageService.sendEmail(emailMessage);
     }
 

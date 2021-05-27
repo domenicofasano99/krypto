@@ -110,7 +110,7 @@ public class MarketHelper {
             EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";
             email.to = account.getEmail();
-            email.text = "Your PURCHASE transaction of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been DECLINED due to insufficient balance.";
+            email.body = "Your PURCHASE transaction of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
             messageService.sendEmail(email);
         }
@@ -118,7 +118,7 @@ public class MarketHelper {
         EmailMessage email = new EmailMessage();
         email.subject = "Transfer executed";
         email.to = account.getEmail();
-        email.text = "Your PURCHASE of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been ACCEPTED.";
+        email.body = "Your PURCHASE of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been ACCEPTED.";
         transaction.setStatus(Activity.Status.SETTLED);
         transactionHelper.saveOrUpdate(transaction);
         messageService.sendEmail(email);
@@ -187,7 +187,7 @@ public class MarketHelper {
         EmailMessage emailMessage = new EmailMessage();
         emailMessage.subject = subject;
         emailMessage.to = email;
-        emailMessage.text = text;
+        emailMessage.body = text;
         messageService.sendEmail(emailMessage);
     }
 
