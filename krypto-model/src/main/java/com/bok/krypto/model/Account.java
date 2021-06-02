@@ -49,13 +49,4 @@ public class Account {
         this.wallets = wallets;
         this.transactions = transactions;
     }
-
-    //TODO get email from parent service
-    public String getEmail() {
-        return null;
-    }
-
-    public void setEmail(String email) {
-
-    }
 }

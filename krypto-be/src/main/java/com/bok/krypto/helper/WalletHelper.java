@@ -127,11 +127,11 @@ public class WalletHelper {
         messageService.sendEmail(emailWalletCreation(w, account));
     }
 
-    private EmailMessage emailWalletCreation(Wallet w, Account u) {
+    private EmailMessage emailWalletCreation(Wallet wallet, Account account) {
         EmailMessage email = new EmailMessage();
         email.subject = "BOK - Wallet creation";
-        email.body = "Your wallet for Krypto " + w.getKrypto().getSymbol() + " has been created.";
-        email.to = u.getEmail();
+        email.body = "Your wallet for Krypto " + wallet.getKrypto().getSymbol() + " has been created.";
+        email.to = accountHelper.getEmailByAccountId(account.getId());
         return email;
     }
 
@@ -148,7 +148,7 @@ public class WalletHelper {
         marketHelper.emptyWallet(account, wallet);
         walletRepository.delete(wallet);
         String to, subject, text;
-        to = account.getEmail();
+        to = accountHelper.getEmailByAccountId(account.getId());
         subject = "BOK - Wallet deletion";
         text = "Your wallet " + wallet.getKrypto().getSymbol() + " has been deleted.";
         sendMarketEmail(subject, to, text);

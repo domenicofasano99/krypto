@@ -1,6 +1,6 @@
 package com.bok.krypto;
 
-import com.bok.bank.integration.dto.AuthorizationResponseDTO;
+import com.bok.bank.integration.grpc.AuthorizationResponse;
 import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
 import com.bok.krypto.integration.internal.dto.HistoricalDataRequestDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
@@ -78,7 +78,7 @@ public class MarketServiceTest {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
         Wallet wallet = modelTestUtils.createWallet(account, krypto, new BigDecimal("0.9"));
-        when(bankService.authorize(any(), any(), any(), any())).thenReturn(new AuthorizationResponseDTO(true, "", UUID.randomUUID()));
+        when(bankService.authorize(any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
         PurchaseRequestDTO purchaseRequestDTO = new PurchaseRequestDTO();
         purchaseRequestDTO.symbol = BTC;
         purchaseRequestDTO.amount = new BigDecimal("0.8989827");
@@ -164,7 +164,7 @@ public class MarketServiceTest {
     public void deniedPurchaseTest_insufficientBalance() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.authorize(any(), any(), any(), any())).thenReturn(new AuthorizationResponseDTO(false, "", null));
+        when(bankService.authorize(any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(false).setAuthorizationId(UUID.randomUUID().toString()).build());
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
@@ -177,7 +177,7 @@ public class MarketServiceTest {
     public void purchaseTest_permitted() {
         Account account = modelTestUtils.createAccount();
         Krypto modelTestUtilsKrypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.authorize(any(), any(), any(), any())).thenReturn(new AuthorizationResponseDTO(true, "", UUID.randomUUID()));
+        when(bankService.authorize(any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).build());
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");

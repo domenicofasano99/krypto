@@ -17,11 +17,10 @@ public class KryptoGrpcServerService extends KryptoGrpc.KryptoImplBase {
     @Override
     public void createAccount(AccountCreationRequest request, StreamObserver<AccountCreationResponse> responseObserver) {
         AccountCreationResponse.Builder responseBuilder = AccountCreationResponse.newBuilder();
-        accountHelper.createAccount(request.getAccountId(), request.getEmail());
+        accountHelper.createAccount(request.getAccountId());
         responseObserver.onNext(responseBuilder.setCreated(true).build());
         responseObserver.onCompleted();
     }
-
 
 
 }

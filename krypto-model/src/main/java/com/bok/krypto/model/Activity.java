@@ -30,45 +30,38 @@ import java.util.UUID;
         discriminatorType = DiscriminatorType.STRING)
 public abstract class Activity {
 
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @Column
-    @GeneratedValue
-    private UUID publicId;
-
-    @Column(updatable = false)
-    @CreationTimestamp
-    private Instant creationTimestamp;
-
-    @Column
-    @UpdateTimestamp
-    private Instant updateTimestamp;
-
-    @ManyToOne
-    private Account account;
-
-    @Column(updatable = false)
-    private BigDecimal amount;
-
-    @Column
-    private Double fee;
-
     @Column
     @Enumerated(EnumType.STRING)
     public Status status;
+    @Id
+    @GeneratedValue
+    private Long id;
+    @Column
+    @GeneratedValue
+    private UUID publicId;
+    @Column(updatable = false)
+    @CreationTimestamp
+    private Instant creationTimestamp;
+    @Column
+    @UpdateTimestamp
+    private Instant updateTimestamp;
+    @ManyToOne
+    private Account account;
+    @Column(updatable = false)
+    private BigDecimal amount;
+    @Column
+    private Double fee;
+
+    @PrePersist
+    public void prePersist() {
+        this.status = Status.PENDING;
+        this.publicId = UUID.randomUUID();
+    }
 
     public enum Status {
         AUTHORIZED, //if bank has approved
         PENDING, //at creation
         SETTLED,
         DECLINED
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.status = Status.PENDING;
-        this.publicId = UUID.randomUUID();
     }
 }

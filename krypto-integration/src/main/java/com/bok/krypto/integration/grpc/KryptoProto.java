@@ -4,60 +4,63 @@
 package com.bok.krypto.integration.grpc;
 
 public final class KryptoProto {
-  private KryptoProto() {}
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistryLite registry) {
-  }
-
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-        (com.google.protobuf.ExtensionRegistryLite) registry);
-  }
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_AccountCreationResponse_descriptor;
-  static final 
+    static final com.google.protobuf.Descriptors.Descriptor
+            internal_static_AccountCreationResponse_descriptor;
+    static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_AccountCreationResponse_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_AccountCreationRequest_descriptor;
-  static final 
+            internal_static_AccountCreationResponse_fieldAccessorTable;
+    static final com.google.protobuf.Descriptors.Descriptor
+            internal_static_AccountCreationRequest_descriptor;
+    static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_AccountCreationRequest_fieldAccessorTable;
+            internal_static_AccountCreationRequest_fieldAccessorTable;
+    private static com.google.protobuf.Descriptors.FileDescriptor
+            descriptor;
 
-  public static com.google.protobuf.Descriptors.FileDescriptor
-      getDescriptor() {
-    return descriptor;
-  }
-  private static  com.google.protobuf.Descriptors.FileDescriptor
-      descriptor;
-  static {
-    java.lang.String[] descriptorData = {
-      "\n\014krypto.proto\"9\n\027AccountCreationRespons" +
-      "e\022\017\n\007created\030\001 \001(\010\022\r\n\005error\030\002 \001(\t\":\n\026Acc" +
-      "ountCreationRequest\022\021\n\taccountId\030\001 \001(\003\022\r" +
-      "\n\005email\030\002 \001(\t2N\n\006Krypto\022D\n\rCreateAccount" +
-      "\022\027.AccountCreationRequest\032\030.AccountCreat" +
-      "ionResponse\"\000B0\n\037com.bok.krypto.integrat" +
-      "ion.grpcB\013KryptoProtoP\001b\006proto3"
-    };
-    descriptor = com.google.protobuf.Descriptors.FileDescriptor
-      .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-        });
-    internal_static_AccountCreationResponse_descriptor =
-      getDescriptor().getMessageTypes().get(0);
-    internal_static_AccountCreationResponse_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_AccountCreationResponse_descriptor,
-        new java.lang.String[] { "Created", "Error", });
-    internal_static_AccountCreationRequest_descriptor =
-      getDescriptor().getMessageTypes().get(1);
-    internal_static_AccountCreationRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_AccountCreationRequest_descriptor,
-        new java.lang.String[] { "AccountId", "Email", });
-  }
+    static {
+        java.lang.String[] descriptorData = {
+                "\n\014krypto.proto\"9\n\027AccountCreationRespons" +
+                        "e\022\017\n\007created\030\001 \001(\010\022\r\n\005error\030\002 \001(\t\":\n\026Acc" +
+                        "ountCreationRequest\022\021\n\taccountId\030\001 \001(\003\022\r" +
+                        "\n\005email\030\002 \001(\t2N\n\006Krypto\022D\n\rCreateAccount" +
+                        "\022\027.AccountCreationRequest\032\030.AccountCreat" +
+                        "ionResponse\"\000B0\n\037com.bok.krypto.integrat" +
+                        "ion.grpcB\013KryptoProtoP\001b\006proto3"
+        };
+        descriptor = com.google.protobuf.Descriptors.FileDescriptor
+                .internalBuildGeneratedFileFrom(descriptorData,
+                        new com.google.protobuf.Descriptors.FileDescriptor[]{
+                        });
+        internal_static_AccountCreationResponse_descriptor =
+                getDescriptor().getMessageTypes().get(0);
+        internal_static_AccountCreationResponse_fieldAccessorTable = new
+                com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+                internal_static_AccountCreationResponse_descriptor,
+                new java.lang.String[]{"Created", "Error",});
+        internal_static_AccountCreationRequest_descriptor =
+                getDescriptor().getMessageTypes().get(1);
+        internal_static_AccountCreationRequest_fieldAccessorTable = new
+                com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+                internal_static_AccountCreationRequest_descriptor,
+                new java.lang.String[]{"AccountId", "Email",});
+    }
+    private KryptoProto() {
+    }
 
-  // @@protoc_insertion_point(outer_class_scope)
+    public static void registerAllExtensions(
+            com.google.protobuf.ExtensionRegistryLite registry) {
+    }
+
+    public static void registerAllExtensions(
+            com.google.protobuf.ExtensionRegistry registry) {
+        registerAllExtensions(
+                (com.google.protobuf.ExtensionRegistryLite) registry);
+    }
+
+    public static com.google.protobuf.Descriptors.FileDescriptor
+    getDescriptor() {
+        return descriptor;
+    }
+
+    // @@protoc_insertion_point(outer_class_scope)
 }

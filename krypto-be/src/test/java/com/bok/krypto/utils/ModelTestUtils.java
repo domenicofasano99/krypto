@@ -98,7 +98,6 @@ public class ModelTestUtils {
         //Id for this class should reflect parent User ids
         Account u = new Account();
         u.setId(randomID());
-        u.setEmail(faker.internet().emailAddress());
         log.info("Created user with id: {}", u.getId());
         return accountRepository.save(u);
     }

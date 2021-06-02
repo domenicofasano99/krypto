@@ -119,14 +119,14 @@ public class TransferHelper {
         } catch (TransactionException ex) {
             EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";
-            email.to = account.getEmail();
+            email.to = accountHelper.getEmailByAccountId(account.getId());
             email.body = "Your transfer of " + transferMessage.amount + " " + transferMessage.symbol + " has been DECLINED due to insufficient balance.";
             transfer.setStatus(Activity.Status.DECLINED);
             messageService.sendEmail(email);
         }
         EmailMessage email = new EmailMessage();
         email.subject = "Transfer executed";
-        email.to = account.getEmail();
+        email.to = accountHelper.getEmailByAccountId(account.getId());
         email.body = "Your transfer of " + transferMessage.amount + " " + transferMessage.symbol + " has been ACCEPTED.";
         transfer.setStatus(Activity.Status.SETTLED);
         transferRepository.saveAndFlush(transfer);

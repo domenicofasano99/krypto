@@ -20,24 +20,22 @@ import javax.persistence.ManyToOne;
 @DiscriminatorValue("transaction")
 public class Transaction extends Activity {
 
-    @ManyToOne
-    private Wallet wallet;
-
     @Column
     @Enumerated(EnumType.STRING)
     public Type type;
-
+    @ManyToOne
+    private Wallet wallet;
     @Column
     private Long transactionId;
 
 
-    public enum Type {
-        PURCHASE,
-        SELL
-    }
-
     public Transaction(Type type) {
         super();
         this.type = type;
+    }
+
+    public enum Type {
+        PURCHASE,
+        SELL
     }
 }

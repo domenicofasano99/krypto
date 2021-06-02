@@ -1,6 +1,6 @@
 package com.bok.krypto.helper;
 
-import com.bok.bank.integration.dto.AuthorizationResponseDTO;
+import com.bok.bank.integration.grpc.AuthorizationResponse;
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.bank.integration.util.Money;
@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -62,14 +63,14 @@ public class MarketHelper {
         Transaction transaction = new Transaction(Transaction.Type.PURCHASE);
         transaction = transactionHelper.saveOrUpdate(transaction);
 
-        AuthorizationResponseDTO authorizationResponse = bankService.authorize(accountId, transaction.getPublicId(), money, k.getSymbol());
-        transaction.status = authorizationResponse.authorized ? Activity.Status.AUTHORIZED : Activity.Status.DECLINED;
+        AuthorizationResponse authorizationResponse = bankService.authorize(accountId, transaction.getPublicId(), money, k.getSymbol());
+        transaction.status = authorizationResponse.getAuthorized() ? Activity.Status.AUTHORIZED : Activity.Status.DECLINED;
         log.info("Received {} from Bank for transaction {}", transaction.status.name(), transaction.getId());
-        transaction.setPublicId(authorizationResponse.extTransactionId);
+        transaction.setPublicId(UUID.fromString(authorizationResponse.getAuthorizationId()));
         transactionHelper.saveOrUpdate(transaction);
 
 
-        if (authorizationResponse.authorized) {
+        if (authorizationResponse.getAuthorized()) {
             sendPurchase(accountId, transaction.getId(), purchaseRequest.amount, purchaseRequest.symbol);
         }
         return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), purchaseRequest.amount, transaction.status.name());
@@ -109,7 +110,7 @@ public class MarketHelper {
             log.info("Purchase {} error, insufficient balance", purchaseMessage);
             EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";
-            email.to = account.getEmail();
+            email.to = accountHelper.getEmailByAccountId(account.getId());
             email.body = "Your PURCHASE transaction of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
             messageService.sendEmail(email);
@@ -117,7 +118,7 @@ public class MarketHelper {
         log.info("Completed purchase ID:{} for {} of {} {}", purchaseMessage.transactionId, purchaseMessage.accountId, purchaseMessage.symbol, purchaseMessage.amount);
         EmailMessage email = new EmailMessage();
         email.subject = "Transfer executed";
-        email.to = account.getEmail();
+        email.to = accountHelper.getEmailByAccountId(account.getId());
         email.body = "Your PURCHASE of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been ACCEPTED.";
         transaction.setStatus(Activity.Status.SETTLED);
         transactionHelper.saveOrUpdate(transaction);
@@ -144,13 +145,13 @@ public class MarketHelper {
 
         } catch (TransactionException ex) {
             subject = "Insufficient Balance in your account";
-            to = account.getEmail();
+            to = accountHelper.getEmailByAccountId(account.getId());
             text = "Your SELL transaction of " + sellMessage.amount + " " + sellMessage.symbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
             sendMarketEmail(subject, to, text);
         }
         subject = "Sell executed";
-        to = account.getEmail();
+        to = accountHelper.getEmailByAccountId(account.getId());
         text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
         transaction.setStatus(Activity.Status.SETTLED);
         transactionHelper.saveOrUpdate(transaction);
@@ -171,7 +172,7 @@ public class MarketHelper {
 
         String subject, to, text;
         subject = "Wallet emptied";
-        to = account.getEmail();
+        to = accountHelper.getEmailByAccountId(account.getId());
         text = "Your " + walletToEmpty.getKrypto().getSymbol() + " wallet has been emptied, you should receive " +
                 "the converted amount in your bank account in a few minutes.";
         sendMarketEmail(subject, to, text);
