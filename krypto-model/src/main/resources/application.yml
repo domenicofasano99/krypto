@@ -2,6 +2,10 @@ server:
   port: 8080
   baseurl: http://dev.faraone.ovh:81
 
+grpc:
+  server:
+    port: 3030
+
 active-mq:
   transfers: transfers
   market-sell: market-sell

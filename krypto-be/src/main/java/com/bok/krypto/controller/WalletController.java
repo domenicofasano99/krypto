@@ -26,12 +26,12 @@ public class WalletController {
         return walletService.create(userid, requestDTO);
     }
 
-    @PostMapping("/{userId}/delete")
+    @PostMapping("/delete")
     WalletDeleteResponseDTO delete(@RequestParam("accountId") Long userId, @RequestBody WalletDeleteRequestDTO requestDTO) {
         return walletService.delete(userId, requestDTO);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/list")
     WalletsDTO wallets(@RequestParam("accountId") Long userId) {
         return walletService.wallets(userId);
     }

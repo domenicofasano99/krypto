@@ -15,6 +15,9 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <protobuf.version>3.14.0</protobuf.version>
+        <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
+        <grpc.version>1.35.0</grpc.version>
     </properties>
 
     <dependencies>
@@ -207,7 +210,6 @@
             <url>https://repo.spring.io/milestone</url>
         </repository>
     </repositories>
-
     <build>
         <plugins>
             <plugin>

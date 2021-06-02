@@ -11,6 +11,10 @@ active-mq:
   krypto: krypto-accounts
   broker-url: tcp://localhost:61616
 
+grpc:
+  server:
+    port: 3030
+
 spring:
   application:
     name: krypto

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,10 +24,6 @@ public class Account {
     @Id
     @Column
     private Long id;
-
-    @Column
-    @Unique
-    private String email;
 
     @OneToMany
     private Set<Wallet> wallets;
@@ -53,5 +48,14 @@ public class Account {
     public Account(Set<Wallet> wallets, Set<Transaction> transactions) {
         this.wallets = wallets;
         this.transactions = transactions;
+    }
+
+    //TODO get email from parent service
+    public String getEmail() {
+        return null;
+    }
+
+    public void setEmail(String email) {
+
     }
 }
