@@ -22,17 +22,17 @@ public class WalletController {
     WalletService walletService;
 
     @PostMapping("/create")
-    WalletResponseDTO create(@RequestParam("accountId") Long userid, @RequestBody WalletRequestDTO requestDTO) {
-        return walletService.create(userid, requestDTO);
+    WalletResponseDTO create(@RequestParam("accountId") Long accountId, @RequestBody WalletRequestDTO requestDTO) {
+        return walletService.create(accountId, requestDTO);
     }
 
     @PostMapping("/delete")
-    WalletDeleteResponseDTO delete(@RequestParam("accountId") Long userId, @RequestBody WalletDeleteRequestDTO requestDTO) {
-        return walletService.delete(userId, requestDTO);
+    WalletDeleteResponseDTO delete(@RequestParam("accountId") Long accountId, @RequestBody WalletDeleteRequestDTO requestDTO) {
+        return walletService.delete(accountId, requestDTO);
     }
 
     @GetMapping("/list")
-    WalletsDTO wallets(@RequestParam("accountId") Long userId) {
-        return walletService.wallets(userId);
+    WalletsDTO wallets(@RequestParam("accountId") Long accountId) {
+        return walletService.wallets(accountId);
     }
 }

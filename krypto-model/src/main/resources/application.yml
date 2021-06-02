@@ -1,7 +1,9 @@
 server:
   port: 8080
   baseurl: http://dev.faraone.ovh:81
-
+  error:
+    whitelabel:
+      enabled: false
 grpc:
   server:
     port: 3030
