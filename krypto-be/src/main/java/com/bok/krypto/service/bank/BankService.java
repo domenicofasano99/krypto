@@ -22,7 +22,7 @@ import java.util.UUID;
 @Service
 public class BankService {
 
-    @GrpcClient("bank:3030")
+    @GrpcClient("bank")
     BankGrpc.BankBlockingStub bankBlockingStub;
 
     @Autowired
