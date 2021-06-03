@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParentGrpcClient {
 
-    @GrpcClient("parent")
+    @GrpcClient("parent:3030")
     ParentGrpc.ParentBlockingStub parentBlockingStub;
 
-    @GrpcClient("parent")
+    @GrpcClient("parent:3030")
     ParentGrpc.ParentFutureStub parentFutureStub;
 
     public String getEmailByAccountId(Long accountId) {
