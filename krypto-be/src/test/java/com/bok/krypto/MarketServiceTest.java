@@ -2,7 +2,6 @@ package com.bok.krypto;
 
 import com.bok.bank.integration.grpc.AuthorizationResponse;
 import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
-import com.bok.krypto.integration.internal.dto.HistoricalDataRequestDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosRequestDTO;
@@ -32,6 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -145,12 +145,7 @@ public class MarketServiceTest {
     public void getKryptoHistoricalData() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getRandomKrypto();
-
-        HistoricalDataRequestDTO requestDTO = new HistoricalDataRequestDTO();
-        requestDTO.start = Instant.parse("2020-12-03T10:15:30.00Z");
-        requestDTO.end = Instant.now();
-        requestDTO.symbol = krypto.getSymbol();
-        HistoricalDataDTO response = marketService.getKryptoHistoricalData(requestDTO);
+        HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), LocalDate.MIN, LocalDate.MAX);
         assertNotNull(response.history);
         log.info(String.valueOf(response.history));
         for (RecordDTO datum : response.history) {

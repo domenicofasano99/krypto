@@ -11,6 +11,9 @@ import com.bok.krypto.integration.internal.dto.PricesResponseDTO;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
 import com.bok.krypto.integration.internal.dto.TransactionDTO;
+import org.apache.tomcat.jni.Local;
+
+import java.time.LocalDate;
 
 public interface MarketService {
 
@@ -26,6 +29,7 @@ public interface MarketService {
 
     KryptoInfosDTO getKryptoInfos(KryptoInfosRequestDTO requestDTO);
 
-    HistoricalDataDTO getKryptoHistoricalData(HistoricalDataRequestDTO requestDTO);
+    HistoricalDataDTO getKryptoHistoricalData(String symbol, LocalDate startDate, LocalDate endDate);
 
+    KryptoInfosDTO getAllKryptoInfos();
 }

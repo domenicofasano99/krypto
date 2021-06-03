@@ -6,7 +6,6 @@ import com.bok.krypto.helper.KryptoHelper;
 import com.bok.krypto.helper.MarketHelper;
 import com.bok.krypto.helper.WalletHelper;
 import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
-import com.bok.krypto.integration.internal.dto.HistoricalDataRequestDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosRequestDTO;
@@ -20,6 +19,9 @@ import com.bok.krypto.service.interfaces.MarketService;
 import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 @Service
 public class MarketServiceImpl implements MarketService {
@@ -84,10 +86,15 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public HistoricalDataDTO getKryptoHistoricalData(HistoricalDataRequestDTO requestDTO) {
-        Preconditions.checkNotNull(requestDTO.start, "Start date Instant cannot be null");
-        Preconditions.checkNotNull(requestDTO.end, "End date Instant cannot be null");
-        Preconditions.checkNotNull(requestDTO.symbol, "Symbol cannot be null");
-        return historicalDataHelper.getKryptoHistoricalData(requestDTO.symbol, requestDTO.start, requestDTO.end);
+    public HistoricalDataDTO getKryptoHistoricalData(String symbol, LocalDate startDate, LocalDate endDate) {
+        Preconditions.checkNotNull(startDate, "Start date Instant cannot be null");
+        Preconditions.checkNotNull(endDate, "End date Instant cannot be null");
+        Preconditions.checkNotNull(symbol, "Symbol cannot be null");
+        return historicalDataHelper.getKryptoHistoricalData(symbol, startDate.atStartOfDay().toInstant(ZoneOffset.UTC), endDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+    }
+
+    @Override
+    public KryptoInfosDTO getAllKryptoInfos() {
+        return kryptoHelper.getKryptoInfos();
     }
 }

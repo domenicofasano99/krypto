@@ -74,4 +74,13 @@ public class KryptoHelper {
     public void saveAll(Collection<Krypto> values) {
         kryptoRepository.saveAll(values);
     }
+
+    public KryptoInfosDTO getKryptoInfos() {
+        List<KryptoInfoDTO> infos = new ArrayList<>();
+        List<Krypto> kryptos = kryptoRepository.findAll();
+        for (Krypto k : kryptos) {
+            infos.add(new KryptoInfoDTO(k.getName(), k.getSymbol(), k.getNetworkFee(), k.getPrice(), k.getUpdateTimestamp()));
+        }
+        return new KryptoInfosDTO(infos);
+    }
 }

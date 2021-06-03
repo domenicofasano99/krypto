@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/market")
 public class MarketController {
@@ -59,9 +61,14 @@ public class MarketController {
         return marketService.getKryptoInfos(requestDTO);
     }
 
-    @GetMapping("/history")
-    HistoricalDataDTO getKryptoHistoricalData(@RequestBody HistoricalDataRequestDTO requestDTO) {
-        return marketService.getKryptoHistoricalData(requestDTO);
+    @GetMapping("/{symbol}/history")
+    HistoricalDataDTO getKryptoHistoricalData(@PathVariable("symbol") String symbol, @RequestParam("startDate")LocalDate startDate,  @RequestParam("endDate")LocalDate endDate) {
+        return marketService.getKryptoHistoricalData(symbol, startDate, endDate);
+    }
+
+    @GetMapping("/list")
+    KryptoInfosDTO getKryptoInfoList(){
+        return marketService.getAllKryptoInfos();
     }
 
 }
