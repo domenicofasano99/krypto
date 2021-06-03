@@ -14,7 +14,7 @@ import java.util.UUID;
 @Component
 public class BankGprcClient {
 
-    @GrpcClient("bank")
+    @GrpcClient("bank:3030")
     BankGrpc.BankBlockingStub bankBlockingStub;
 
     public AuthorizationResponse authorize(Long accountId, UUID extTransactionId) {

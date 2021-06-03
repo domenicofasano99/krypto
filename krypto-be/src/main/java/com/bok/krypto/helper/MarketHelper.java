@@ -1,6 +1,5 @@
 package com.bok.krypto.helper;
 
-import com.bok.bank.integration.grpc.AuthorizationResponse;
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.bank.integration.util.Money;
