@@ -10,4 +10,5 @@ FROM amazoncorretto:latest
 #COPY --from=build /usr/src/app/target/*.jar /usr/app/app.jar
 COPY /krypto-be/target/*.jar /usr/app/app.jar
 EXPOSE 8080
+EXPOSE 3030
 ENTRYPOINT ["java","-jar","/usr/app/app.jar"]
