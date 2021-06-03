@@ -7,6 +7,13 @@ server:
 grpc:
   server:
     port: 3030
+  client:
+    bank:
+      address: dns:///bank:3030
+      negotiationType: PLAINTEXT
+    parent:
+      address: dns:///parent:3030
+      negotiationType: PLAINTEXT
 
 active-mq:
   transfers: transfers
