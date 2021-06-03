@@ -4,28 +4,24 @@
 package com.bok.krypto.integration.grpc;
 
 public interface AccountCreationRequestOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:AccountCreationRequest)
-        com.google.protobuf.MessageOrBuilder {
+    // @@protoc_insertion_point(interface_extends:AccountCreationRequest)
+    com.google.protobuf.MessageOrBuilder {
 
-    /**
-     * <code>int64 accountId = 1;</code>
-     *
-     * @return The accountId.
-     */
-    long getAccountId();
+  /**
+   * <code>int64 accountId = 1;</code>
+   * @return The accountId.
+   */
+  long getAccountId();
 
-    /**
-     * <code>string email = 2;</code>
-     *
-     * @return The email.
-     */
-    java.lang.String getEmail();
-
-    /**
-     * <code>string email = 2;</code>
-     *
-     * @return The bytes for email.
-     */
-    com.google.protobuf.ByteString
-    getEmailBytes();
+  /**
+   * <code>string email = 2;</code>
+   * @return The email.
+   */
+  java.lang.String getEmail();
+  /**
+   * <code>string email = 2;</code>
+   * @return The bytes for email.
+   */
+  com.google.protobuf.ByteString
+      getEmailBytes();
 }

@@ -1,5 +1,6 @@
 package com.bok.krypto.helper;
 
+import com.bok.bank.integration.grpc.AccountInfoResponse;
 import com.bok.krypto.grpc.client.BankGprcClient;
 import com.bok.krypto.grpc.client.ParentGrpcClient;
 import com.bok.krypto.model.Account;
