@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -163,14 +164,6 @@ public class WalletHelper {
         messageService.sendEmail(emailMessage);
     }
 
-    public WalletInfoDTO info(Long accountId, String walletID) {
-        Preconditions.checkArgument(accountHelper.existsById(accountId));
-        Preconditions.checkArgument(walletRepository.existsByPublicId(walletID));
-
-        Wallet wallet = findByPublicId(walletID);
-        return getInfoFromWallet(wallet);
-    }
-
     public WalletsDTO wallets(Long accountId) {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
         List<Wallet> wallets = walletRepository.findByAccount_Id(accountId);
@@ -190,4 +183,23 @@ public class WalletHelper {
         info.updateTimestamp = wallet.getUpdateTime();
         return info;
     }
+
+    //TODO complete with balance info
+    private WalletInfoDTO getInfoFromWallet(Wallet wallet, LocalDate startDate, LocalDate endDate) {
+        WalletInfoDTO info = new WalletInfoDTO();
+        info.availableAmount = wallet.getAvailableAmount();
+        info.symbol = wallet.getKrypto().getSymbol();
+        info.creationTimestamp = wallet.getCreationTime();
+        info.updateTimestamp = wallet.getUpdateTime();
+        transactionHelper.findByWalletIdAndDateBetween(wallet, startDate, endDate);
+        return info;
+    }
+
+    public WalletInfoDTO info(Long accountId, String symbol, LocalDate startDate, LocalDate endDate) {
+        Preconditions.checkArgument(accountHelper.existsById(accountId));
+
+        Wallet wallet = findByAccountIdAndSymbol(accountId, symbol);
+        return getInfoFromWallet(wallet, startDate, endDate);
+    }
+
 }

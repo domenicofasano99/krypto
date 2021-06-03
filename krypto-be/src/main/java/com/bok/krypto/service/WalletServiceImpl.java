@@ -12,6 +12,8 @@ import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class WalletServiceImpl implements WalletService {
 
@@ -33,10 +35,10 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletInfoDTO info(Long accountId, String walletId) {
+    public WalletInfoDTO info(Long accountId, String symbol, LocalDate startDate, LocalDate endDate) {
         Preconditions.checkNotNull(accountId);
-        Preconditions.checkNotNull(walletId, "wallet ID cannot be null");
-        return walletHelper.info(accountId, walletId);
+        Preconditions.checkNotNull(symbol, "wallet symbol cannot be null");
+        return walletHelper.info(accountId, symbol, startDate, endDate);
     }
 
     @Override

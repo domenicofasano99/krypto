@@ -6,6 +6,9 @@ import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
 import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
 import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 import com.bok.krypto.integration.internal.dto.WalletsDTO;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.LocalDate;
 
 public interface WalletService {
 
@@ -13,7 +16,7 @@ public interface WalletService {
 
     WalletDeleteResponseDTO delete(Long userId, WalletDeleteRequestDTO walletDeleteRequestDTO);
 
-    WalletInfoDTO info(Long userId, String walletId);
+    WalletInfoDTO info(Long userId, String symbol, LocalDate startDate, LocalDate endDate);
 
     WalletsDTO wallets(Long userId);
 }
