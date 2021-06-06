@@ -31,4 +31,6 @@ public interface KryptoRepository extends JpaRepository<Krypto, Long> {
             BigDecimal getPrice();
         }
     }
+
+
 }

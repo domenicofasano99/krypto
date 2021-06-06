@@ -41,6 +41,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -145,7 +146,7 @@ public class MarketServiceTest {
     public void getKryptoHistoricalData() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getRandomKrypto();
-        HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), LocalDate.MIN, LocalDate.MAX);
+        HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), Instant.MIN, Instant.MAX);
         assertNotNull(response.history);
         log.info(String.valueOf(response.history));
         for (RecordDTO datum : response.history) {
@@ -192,6 +193,13 @@ public class MarketServiceTest {
         long elapsed = end - start;
         long opsPorMillis = (long) kryptos * records / elapsed;
         log.info("Generating {} Historical records for {} Kryptos took {} ms, performing {}ops/ms", kryptos, kryptos, elapsed, opsPorMillis);
+    }
+
+    @Test
+    public void testMarketHistory() {
+        String symbol = "ETH";
+        HistoricalDataDTO response = marketService.getKryptoHistoricalData(symbol, Instant.MIN, Instant.MAX);
+        assertTrue(response.history.size() > 0);
     }
 
 }

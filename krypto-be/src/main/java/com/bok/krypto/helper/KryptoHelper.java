@@ -8,6 +8,7 @@ import com.bok.krypto.integration.internal.dto.KryptoInfosRequestDTO;
 import com.bok.krypto.integration.internal.dto.PriceResponseDTO;
 import com.bok.krypto.integration.internal.dto.PricesRequestDTO;
 import com.bok.krypto.integration.internal.dto.PricesResponseDTO;
+import com.bok.krypto.integration.internal.dto.SymbolsDTO;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.repository.KryptoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,5 +83,9 @@ public class KryptoHelper {
             infos.add(new KryptoInfoDTO(k.getName(), k.getSymbol(), k.getNetworkFee(), k.getPrice(), k.getUpdateTimestamp()));
         }
         return new KryptoInfosDTO(infos);
+    }
+
+    public SymbolsDTO getSymbolLegend() {
+        return null;
     }
 }

@@ -9,6 +9,7 @@ import com.bok.krypto.integration.internal.dto.PricesRequestDTO;
 import com.bok.krypto.integration.internal.dto.PricesResponseDTO;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
+import com.bok.krypto.integration.internal.dto.SymbolsDTO;
 import com.bok.krypto.integration.internal.dto.TransactionDTO;
 import com.bok.krypto.service.interfaces.MarketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @RestController
@@ -61,13 +63,18 @@ public class MarketController {
     }
 
     @GetMapping("/{symbol}/history")
-    HistoricalDataDTO getKryptoHistoricalData(@PathVariable("symbol") String symbol, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
-        return marketService.getKryptoHistoricalData(symbol, startDate, endDate);
+    HistoricalDataDTO getKryptoHistoricalData(@PathVariable("symbol") String symbol, @RequestParam("startDate") Instant startInstant, @RequestParam("endDate") Instant endInstant) {
+        return marketService.getKryptoHistoricalData(symbol, startInstant, endInstant);
     }
 
     @GetMapping("/list")
     KryptoInfosDTO getKryptoInfoList() {
         return marketService.getAllKryptoInfos();
+    }
+
+    @GetMapping("/legend")
+    SymbolsDTO getKryptoSymbols() {
+        return marketService.getSymbolLegend();
     }
 
 }
