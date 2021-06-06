@@ -18,6 +18,7 @@ import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MessageService;
+import com.bok.krypto.util.DTOUtils;
 import com.bok.parent.integration.message.EmailMessage;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -180,6 +182,7 @@ public class WalletHelper {
 
     private WalletInfoDTO getInfoFromWallet(Wallet wallet) {
         WalletInfoDTO info = new WalletInfoDTO();
+        info.address = wallet.getAddress();
         info.availableAmount = wallet.getAvailableAmount();
         info.symbol = wallet.getKrypto().getSymbol();
         info.creationTimestamp = wallet.getCreationTime();
@@ -191,17 +194,16 @@ public class WalletHelper {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
 
         Wallet wallet = findByAccountIdAndSymbol(accountId, symbol);
-        return getInfoFromWallet(wallet, startDate, endDate);
+        return getInfoFromWalletWithTransactions(wallet, startDate, endDate);
     }
 
-    //TODO complete with balance info
-    private WalletInfoDTO getInfoFromWallet(Wallet wallet, LocalDate startDate, LocalDate endDate) {
-        WalletInfoDTO info = new WalletInfoDTO();
-        info.availableAmount = wallet.getAvailableAmount();
-        info.symbol = wallet.getKrypto().getSymbol();
-        info.creationTimestamp = wallet.getCreationTime();
-        info.updateTimestamp = wallet.getUpdateTime();
-        transactionHelper.findByWalletIdAndDateBetween(wallet, startDate, endDate);
+
+    private WalletInfoDTO getInfoFromWalletWithTransactions(Wallet wallet, LocalDate startDate, LocalDate endDate) {
+        WalletInfoDTO info = getInfoFromWallet(wallet);
+        info.transactions = transactionHelper.findByWalletIdAndDateBetween(wallet, startDate, endDate)
+                .stream()
+                .map(DTOUtils::toDTO)
+                .collect(Collectors.toList());
         return info;
     }
 

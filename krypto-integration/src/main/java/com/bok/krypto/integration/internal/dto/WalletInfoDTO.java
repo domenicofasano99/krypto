@@ -8,6 +8,7 @@ import java.util.UUID;
 public class WalletInfoDTO {
     public BigDecimal availableAmount;
     public String symbol;
+    public String address;
     public Instant creationTimestamp;
     public Instant updateTimestamp;
     public UUID id;
