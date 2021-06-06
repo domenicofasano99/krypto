@@ -6,7 +6,6 @@ import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
 import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
 import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 import com.bok.krypto.integration.internal.dto.WalletsDTO;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 

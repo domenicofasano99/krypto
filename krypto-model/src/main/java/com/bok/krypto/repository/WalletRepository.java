@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
-    boolean existsByPublicId(String publicId);
+    boolean existsByAddress(String address);
 
-    Optional<Wallet> findByPublicId(String publicId);
+    Optional<Wallet> findByAddress(String address);
 
     Optional<Wallet> findByAccount_IdAndKrypto_Symbol(Long accountId, String symbol);
 

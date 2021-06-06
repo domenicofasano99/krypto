@@ -1,5 +1,6 @@
 package com.bok.krypto.helper;
 
+import com.bok.krypto.core.AddressGenerator;
 import com.bok.krypto.exception.InvalidRequestException;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.TransactionException;
@@ -28,7 +29,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -55,13 +55,16 @@ public class WalletHelper {
     @Autowired
     BankService bankService;
 
+    @Autowired
+    AddressGenerator addressGenerator;
+
 
     public Wallet findByPublicId(String publicId) {
-        return walletRepository.findByPublicId(publicId).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
+        return walletRepository.findByAddress(publicId).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
     }
 
     public Boolean existsByPublicId(String publicId) {
-        return walletRepository.existsByPublicId(publicId);
+        return walletRepository.existsByAddress(publicId);
     }
 
     public Wallet findByAccountIdAndSymbol(Long userId, String symbol) {
@@ -74,25 +77,25 @@ public class WalletHelper {
         if (wallet.getAvailableAmount().compareTo(amount) < 0) {
             throw new TransactionException("not enough funds to perform the withdrawal");
         }
-        log.info("withdrawing {} from wallet {}", amount, wallet.getPublicId());
+        log.info("withdrawing {} from wallet {}", amount, wallet.getAddress());
         BigDecimal newBalance = wallet.getAvailableAmount().subtract(amount);
         wallet.setAvailableAmount(newBalance);
         walletRepository.saveAndFlush(wallet);
-        log.info("wallet {} balance: {}", wallet.getPublicId(), newBalance);
+        log.info("wallet {} balance: {}", wallet.getAddress(), newBalance);
         return amount;
     }
 
     @Transactional
     public BigDecimal deposit(Wallet wallet, BigDecimal amount) {
-        Wallet w = findByPublicId(wallet.getPublicId());
+        Wallet w = findByPublicId(wallet.getAddress());
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidRequestException("Cannot deposit negative amounts");
         }
-        log.info("depositing {} {} to wallet {}", amount, w.getKrypto().getSymbol(), wallet.getPublicId());
+        log.info("depositing {} {} to wallet {}", amount, w.getKrypto().getSymbol(), wallet.getAddress());
         BigDecimal newBalance = w.getAvailableAmount().add(amount);
         w.setAvailableAmount(newBalance);
         walletRepository.saveAndFlush(w);
-        log.info("wallet {} balance: {}", wallet.getPublicId(), newBalance);
+        log.info("wallet {} balance: {}", wallet.getAddress(), newBalance);
         return amount;
     }
 
@@ -122,7 +125,7 @@ public class WalletHelper {
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
         Account account = accountHelper.findById(walletMessage.accountId);
         w.setAccount(account);
-        w.setPublicId(UUID.randomUUID().toString());
+        w.setAddress(addressGenerator.generateBitcoinAddress());
         w.setKrypto(kryptoHelper.findBySymbol(walletMessage.symbol));
         walletRepository.save(w);
         messageService.sendEmail(emailWalletCreation(w, account));
@@ -153,7 +156,7 @@ public class WalletHelper {
         subject = "BOK - Wallet deletion";
         text = "Your wallet " + wallet.getKrypto().getSymbol() + " has been deleted.";
         sendMarketEmail(subject, to, text);
-        return new WalletDeleteResponseDTO(wallet.getPublicId());
+        return new WalletDeleteResponseDTO(wallet.getAddress());
     }
 
     public void sendMarketEmail(String subject, String email, String text) {
@@ -184,6 +187,13 @@ public class WalletHelper {
         return info;
     }
 
+    public WalletInfoDTO info(Long accountId, String symbol, LocalDate startDate, LocalDate endDate) {
+        Preconditions.checkArgument(accountHelper.existsById(accountId));
+
+        Wallet wallet = findByAccountIdAndSymbol(accountId, symbol);
+        return getInfoFromWallet(wallet, startDate, endDate);
+    }
+
     //TODO complete with balance info
     private WalletInfoDTO getInfoFromWallet(Wallet wallet, LocalDate startDate, LocalDate endDate) {
         WalletInfoDTO info = new WalletInfoDTO();
@@ -193,13 +203,6 @@ public class WalletHelper {
         info.updateTimestamp = wallet.getUpdateTime();
         transactionHelper.findByWalletIdAndDateBetween(wallet, startDate, endDate);
         return info;
-    }
-
-    public WalletInfoDTO info(Long accountId, String symbol, LocalDate startDate, LocalDate endDate) {
-        Preconditions.checkArgument(accountHelper.existsById(accountId));
-
-        Wallet wallet = findByAccountIdAndSymbol(accountId, symbol);
-        return getInfoFromWallet(wallet, startDate, endDate);
     }
 
 }
