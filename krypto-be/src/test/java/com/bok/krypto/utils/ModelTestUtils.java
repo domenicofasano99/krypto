@@ -108,7 +108,7 @@ public class ModelTestUtils {
 
     public Wallet createWallet(Account account, Krypto krypto, BigDecimal baseAmount) {
         Wallet w = new Wallet();
-        w.setPublicId(UUID.randomUUID().toString());
+        w.setAddress(UUID.randomUUID().toString());
         w.setKrypto(krypto);
         w.setAccount(account);
         w.setAvailableAmount(baseAmount);

@@ -1,7 +1,6 @@
 package com.bok.krypto.controller;
 
 import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
-import com.bok.krypto.integration.internal.dto.HistoricalDataRequestDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosRequestDTO;
@@ -62,12 +61,12 @@ public class MarketController {
     }
 
     @GetMapping("/{symbol}/history")
-    HistoricalDataDTO getKryptoHistoricalData(@PathVariable("symbol") String symbol, @RequestParam("startDate")LocalDate startDate,  @RequestParam("endDate")LocalDate endDate) {
+    HistoricalDataDTO getKryptoHistoricalData(@PathVariable("symbol") String symbol, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
         return marketService.getKryptoHistoricalData(symbol, startDate, endDate);
     }
 
     @GetMapping("/list")
-    KryptoInfosDTO getKryptoInfoList(){
+    KryptoInfosDTO getKryptoInfoList() {
         return marketService.getAllKryptoInfos();
     }
 

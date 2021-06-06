@@ -29,8 +29,8 @@ public class Wallet {
     @GeneratedValue
     private Long id;
 
-    @Column(length = 36, unique = true)
-    private String publicId;
+    @Column
+    private String address;
 
     @ManyToOne
     private Account account;

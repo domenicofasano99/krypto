@@ -67,8 +67,8 @@ public class TransferServiceTest {
         Wallet wb = modelTestUtils.createWallet(b, k, BigDecimal.valueOf(10));
 
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
-        transferRequestDTO.source = wa.getPublicId();
-        transferRequestDTO.destination = wb.getPublicId();
+        transferRequestDTO.source = wa.getAddress();
+        transferRequestDTO.destination = wb.getAddress();
         transferRequestDTO.symbol = BTC;
         transferRequestDTO.amount = BigDecimal.valueOf(5);
 
@@ -92,8 +92,8 @@ public class TransferServiceTest {
         Account b = modelTestUtils.createAccount();
         Wallet wb = modelTestUtils.createWallet(b, k, BigDecimal.valueOf(0));
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
-        transferRequestDTO.source = wa.getPublicId();
-        transferRequestDTO.destination = wb.getPublicId();
+        transferRequestDTO.source = wa.getAddress();
+        transferRequestDTO.destination = wb.getAddress();
         transferRequestDTO.symbol = BTC;
         transferRequestDTO.amount = BigDecimal.valueOf(5);
         assertThrows(TransactionException.class, () -> transferService.transfer(a.getId(), transferRequestDTO));
@@ -109,7 +109,7 @@ public class TransferServiceTest {
         Wallet wb = modelTestUtils.createWallet(b, k, BigDecimal.valueOf(10));
         TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
         transferRequestDTO.symbol = BTC;
-        transferRequestDTO.destination = wb.getPublicId();
+        transferRequestDTO.destination = wb.getAddress();
         transferRequestDTO.amount = BigDecimal.valueOf(5);
         TransferResponseDTO responseDTO = transferService.transfer(a.getId(), transferRequestDTO);
         modelTestUtils.await();

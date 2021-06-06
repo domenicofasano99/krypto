@@ -1,7 +1,6 @@
 package com.bok.krypto.service.interfaces;
 
 import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
-import com.bok.krypto.integration.internal.dto.HistoricalDataRequestDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosRequestDTO;
@@ -11,7 +10,6 @@ import com.bok.krypto.integration.internal.dto.PricesResponseDTO;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
 import com.bok.krypto.integration.internal.dto.TransactionDTO;
-import org.apache.tomcat.jni.Local;
 
 import java.time.LocalDate;
 

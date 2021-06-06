@@ -84,8 +84,8 @@ public class TransferHelper {
         TransferInfoDTO response = new TransferInfoDTO();
         response.publicId = t.getPublicId();
         response.amount = t.getAmount();
-        response.source = t.getSourceWallet().getPublicId();
-        response.destination = t.getDestinationWallet().getPublicId();
+        response.source = t.getSourceWallet().getAddress();
+        response.destination = t.getDestinationWallet().getAddress();
         response.timestamp = t.getCreationTimestamp();
         response.status = t.getStatus().name();
         return response;
