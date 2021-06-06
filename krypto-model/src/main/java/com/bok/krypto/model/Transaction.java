@@ -23,8 +23,10 @@ public class Transaction extends Activity {
     @Column
     @Enumerated(EnumType.STRING)
     public Type type;
+
     @ManyToOne
     private Wallet wallet;
+
     @Column
     private Long transactionId;
 

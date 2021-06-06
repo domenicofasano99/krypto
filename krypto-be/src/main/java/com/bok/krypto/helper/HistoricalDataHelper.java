@@ -8,9 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +25,9 @@ public class HistoricalDataHelper {
         if (!kryptoHelper.existsBySymbol(symbol)) {
             throw new KryptoNotFoundException("Krypto " + symbol + " does not exist");
         }
-        List<HistoricalDataRepository.Projection.HistoricalDataProjection> data = historicalDataRepository.findHistoricalDataByKrypto_SymbolAndRecordTimestampBetween(symbol, start, end);
+        List<HistoricalDataRepository.Projection.HistoricalDataProjection> data = historicalDataRepository.findHistoricalDataByKrypto_SymbolAndTimestampBetween(symbol, start, end);
         HistoricalDataDTO dto = new HistoricalDataDTO();
+        dto.symbol = symbol;
         dto.history = new ArrayList<>();
         dto.start = start;
         dto.end = end;
@@ -37,8 +35,7 @@ public class HistoricalDataHelper {
             RecordDTO record = new RecordDTO();
             record.id = datum.getId();
             record.price = datum.getPrice().doubleValue();
-            record.instant = datum.getRecordTimestamp();
-            record.marketCap = datum.getMarketCap();
+            record.instant = datum.getTimestamp();
             dto.history.add(record);
         }
         return dto;

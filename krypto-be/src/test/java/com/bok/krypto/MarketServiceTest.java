@@ -31,7 +31,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -74,7 +73,7 @@ public class MarketServiceTest {
         modelTestUtils.createBaseKryptos();
     }
 
-    @Test //if it doesnt pass try running it alone, message timing problems...
+    @Test //if it doesn't pass try running it alone, message timing problems...
     public void purchaseTest() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
@@ -146,7 +145,7 @@ public class MarketServiceTest {
     public void getKryptoHistoricalData() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getRandomKrypto();
-        HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), Instant.MIN, Instant.MAX);
+        HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), Instant.now().minusSeconds(99999), Instant.now());
         assertNotNull(response.history);
         log.info(String.valueOf(response.history));
         for (RecordDTO datum : response.history) {
@@ -173,7 +172,7 @@ public class MarketServiceTest {
     public void purchaseTest_permitted() {
         Account account = modelTestUtils.createAccount();
         Krypto modelTestUtilsKrypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.authorize(any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).build());
+        when(bankService.authorize(any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
@@ -197,9 +196,10 @@ public class MarketServiceTest {
 
     @Test
     public void testMarketHistory() {
-        String symbol = "ETH";
-        HistoricalDataDTO response = marketService.getKryptoHistoricalData(symbol, Instant.MIN, Instant.MAX);
-        assertTrue(response.history.size() > 0);
+        Krypto k = modelTestUtils.getRandomKrypto();
+        modelTestUtils.addHistoricalDataForKrypto(k, 100);
+        HistoricalDataDTO response = marketService.getKryptoHistoricalData(k.getSymbol(), Instant.now().minusSeconds(999999999), Instant.now());
+        assertEquals(100, response.history.size());
     }
 
 }

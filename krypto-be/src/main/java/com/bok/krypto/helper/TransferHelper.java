@@ -56,7 +56,7 @@ public class TransferHelper {
         Preconditions.checkNotNull(a);
         //Preconditions.checkArgument(accountHelper.checkRightsOnResource(a, source));
         Preconditions.checkArgument(transferRequestDTO.amount.compareTo(BigDecimal.ZERO) > 0);
-        Preconditions.checkArgument(walletHelper.existsByUserIdAndSymbol(accountId, transferRequestDTO.symbol));
+        Preconditions.checkArgument(walletHelper.existsByAccountIdAndSymbol(accountId, transferRequestDTO.symbol));
         if (!walletHelper.hasSufficientBalance(accountId, transferRequestDTO.symbol, transferRequestDTO.amount)) {
             throw new TransactionException("Insufficient balance");
         }

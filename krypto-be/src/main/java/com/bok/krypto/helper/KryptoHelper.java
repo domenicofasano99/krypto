@@ -9,12 +9,15 @@ import com.bok.krypto.integration.internal.dto.PriceResponseDTO;
 import com.bok.krypto.integration.internal.dto.PricesRequestDTO;
 import com.bok.krypto.integration.internal.dto.PricesResponseDTO;
 import com.bok.krypto.integration.internal.dto.SymbolsDTO;
+import com.bok.krypto.model.HistoricalData;
 import com.bok.krypto.model.Krypto;
+import com.bok.krypto.repository.HistoricalDataRepository;
 import com.bok.krypto.repository.KryptoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +28,9 @@ public class KryptoHelper {
 
     @Autowired
     KryptoRepository kryptoRepository;
+
+    @Autowired
+    HistoricalDataRepository historicalDataRepository;
 
 
     public PricesResponseDTO getPrices(PricesRequestDTO requestDTO) {
@@ -87,5 +93,15 @@ public class KryptoHelper {
 
     public SymbolsDTO getSymbolLegend() {
         return null;
+    }
+
+    @Transactional
+    public void addHistoricalData(Krypto krypto, HistoricalData historicalData) {
+        historicalData.setKrypto(krypto);
+        historicalDataRepository.save(historicalData);
+    }
+
+    public Krypto saveOrUpdate(Krypto krypto) {
+        return kryptoRepository.save(krypto);
     }
 }

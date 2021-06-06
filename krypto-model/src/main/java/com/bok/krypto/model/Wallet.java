@@ -14,10 +14,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,10 +31,10 @@ public class Wallet {
     @GeneratedValue
     private Long id;
 
-    @Column
+    @Column(unique = true, updatable = false)
     private String address;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Account account;
 
     @OneToOne
@@ -41,17 +43,21 @@ public class Wallet {
     @Column
     private BigDecimal availableAmount;
 
-    @Column
     @CreationTimestamp
     private Instant creationTime;
 
-    @Column
     @UpdateTimestamp
     private Instant updateTime;
 
     @Column
     @Enumerated(value = EnumType.STRING)
     private Status status;
+
+    @OneToMany
+    private List<Transfer> transfers;
+
+    @OneToMany
+    private List<Transaction> transactions;
 
 
     public Wallet(Account u, Krypto k) {
@@ -66,7 +72,6 @@ public class Wallet {
 
     public enum Status {
         PENDING,
-        CREATED,
-        FAILED
+        CREATED
     }
 }

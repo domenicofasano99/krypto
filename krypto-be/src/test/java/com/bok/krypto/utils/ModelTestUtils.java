@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class ModelTestUtils {
         kryptoList.add(new Krypto("Litecoin", "LTC", new BigDecimal(1800)));
         kryptoList.add(new Krypto("Cardano", "ADA", new BigDecimal(1800)));
         kryptoList.add(new Krypto("DogeCoin", "DOGE", new BigDecimal(1800)));
-        kryptoRepository.saveAll(kryptoList);
+        kryptoHelper.saveAll(kryptoList);
     }
 
     public void clearAll() {
@@ -131,7 +132,7 @@ public class ModelTestUtils {
         List<HistoricalData> list = new ArrayList<>();
         for (long c = 0; c < numberOfRecords; c++) {
             HistoricalData datum = new HistoricalData();
-            datum.setRecordTimestamp(between(start, end));
+            datum.setTimestamp(between(start, end));
             datum.setPrice(faker.number().randomDouble(5, 100, 250));
             datum.setKrypto(krypto);
             list.add(datum);
@@ -159,6 +160,14 @@ public class ModelTestUtils {
                 walletRepository.countPendingWallets() > 0 &&
                 transactionRepository.countPendingTransactions() > 0 &&
                 times < maxTimes);
+    }
+
+    public void addHistoricalDataForKrypto(Krypto krypto, int numOfRecords) {
+        List<HistoricalData> historicalDataList = new ArrayList<>();
+        for (int c = 0; c < numOfRecords; c++) {
+            historicalDataList.add(new HistoricalData(krypto, random.nextDouble()));
+        }
+        historicalDataRepository.saveAll(historicalDataList);
     }
 
 

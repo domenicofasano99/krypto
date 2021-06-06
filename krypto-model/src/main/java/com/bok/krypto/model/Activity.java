@@ -33,22 +33,27 @@ public abstract class Activity {
     @Column
     @Enumerated(EnumType.STRING)
     public Status status;
+
     @Id
     @GeneratedValue
     private Long id;
+
     @Column
     @GeneratedValue
     private UUID publicId;
-    @Column(updatable = false)
+
     @CreationTimestamp
     private Instant creationTimestamp;
-    @Column
+
     @UpdateTimestamp
     private Instant updateTimestamp;
-    @ManyToOne
+
+    @ManyToOne(targetEntity = Account.class)
     private Account account;
+
     @Column(updatable = false)
     private BigDecimal amount;
+
     @Column
     private Double fee;
 

@@ -10,7 +10,7 @@ import java.util.List;
 public interface HistoricalDataRepository extends JpaRepository<HistoricalData, Long> {
 
 
-    List<Projection.HistoricalDataProjection> findHistoricalDataByKrypto_SymbolAndRecordTimestampBetween(String symbol, Instant start, Instant end);
+    List<Projection.HistoricalDataProjection> findHistoricalDataByKrypto_SymbolAndTimestampBetween(String symbol, Instant start, Instant end);
 
 
     public class Projection {
@@ -19,9 +19,7 @@ public interface HistoricalDataRepository extends JpaRepository<HistoricalData, 
 
             BigDecimal getPrice();
 
-            Double getMarketCap();
-
-            Instant getRecordTimestamp();
+            Instant getTimestamp();
         }
     }
 

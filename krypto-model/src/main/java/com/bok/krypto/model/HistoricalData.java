@@ -26,41 +26,11 @@ public class HistoricalData {
     @ManyToOne
     private Krypto krypto;
 
-    @Column
-    private Double circulatingSupply;
-
-    @Column
-    private Double totalSupply;
-
-    @Column
-    private Integer cmcRank;
-
-    @Column
-    private String lastUpdated;
-
     @CreationTimestamp
-    private Instant recordTimestamp;
+    private Instant timestamp;
 
     @Column
     private Double price;
-
-    @Column
-    private Double volume24h;
-
-    @Column
-    private Double percentChange1h;
-
-    @Column
-    private Double percentChange24h;
-
-    @Column
-    private Double percentChange7d;
-
-    @Column
-    private Double percentChange30d;
-
-    @Column
-    private Double marketCap;
 
 
     public HistoricalData(Krypto krypto, Double price) {

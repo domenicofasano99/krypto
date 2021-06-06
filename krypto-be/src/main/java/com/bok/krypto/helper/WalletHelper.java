@@ -101,22 +101,22 @@ public class WalletHelper {
         return amount;
     }
 
-    public Boolean existsByUserIdAndSymbol(Long userId, String symbol) {
-        return walletRepository.existsByAccount_IdAndKrypto_Symbol(userId, symbol);
+    public Boolean existsByAccountIdAndSymbol(Long accountId, String symbol) {
+        return walletRepository.existsByAccount_IdAndKrypto_Symbol(accountId, symbol);
     }
 
-    public WalletResponseDTO createWallet(Long userId, WalletRequestDTO requestDTO) {
+    public WalletResponseDTO createWallet(Long accountId, WalletRequestDTO requestDTO) {
         if (!kryptoHelper.existsBySymbol(requestDTO.symbol)) {
             throw new KryptoNotFoundException("This krypto doesn't exists");
         }
-        if (walletRepository.existsByAccount_IdAndKrypto_Symbol(userId, requestDTO.symbol)) {
+        if (walletRepository.existsByAccount_IdAndKrypto_Symbol(accountId, requestDTO.symbol)) {
             throw new WalletAlreadyExistsException("A wallet with the same Krypto exists for this user");
         }
         Wallet w = new Wallet();
+        w.setAccount(accountHelper.findById(accountId));
         w = walletRepository.save(w);
         WalletMessage walletMessage = new WalletMessage();
         walletMessage.id = w.getId();
-        walletMessage.accountId = userId;
         walletMessage.symbol = requestDTO.symbol;
         messageService.sendWallet(walletMessage);
         return new WalletResponseDTO(WalletResponseDTO.Status.ACCEPTED);
@@ -125,12 +125,11 @@ public class WalletHelper {
     public void handleMessage(WalletMessage walletMessage) {
         Wallet w = walletRepository.findById(walletMessage.id)
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
-        Account account = accountHelper.findById(walletMessage.accountId);
-        w.setAccount(account);
+
         w.setAddress(addressGenerator.generateBitcoinAddress());
         w.setKrypto(kryptoHelper.findBySymbol(walletMessage.symbol));
         walletRepository.save(w);
-        messageService.sendEmail(emailWalletCreation(w, account));
+        messageService.sendEmail(emailWalletCreation(w, w.getAccount()));
     }
 
     private EmailMessage emailWalletCreation(Wallet wallet, Account account) {
