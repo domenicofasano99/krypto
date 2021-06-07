@@ -14,10 +14,10 @@ public class MarketProducer {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${active-mq.market-purchase}")
+    @Value("${queues.market-purchase}")
     private String marketPurchaseQueue;
 
-    @Value("${active-mq.market-sell}")
+    @Value("${queues.market-sell}")
     private String marketSellQueue;
 
     public void send(PurchaseMessage purchaseMessage) {

@@ -150,5 +150,4 @@ public class WalletServiceTest {
         assertEquals(response.wallets.size(), 2);
     }
 
-
 }

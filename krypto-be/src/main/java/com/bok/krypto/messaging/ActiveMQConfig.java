@@ -12,7 +12,7 @@ import javax.jms.ConnectionFactory;
 @Configuration
 public class ActiveMQConfig {
 
-
+/*
     @Value("${active-mq.broker-url}")
     private String brokerUrl;
 
@@ -37,5 +37,5 @@ public class ActiveMQConfig {
         factory.setConnectionFactory(connectionFactory());
         return factory;
     }
-
+*/
 }

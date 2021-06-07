@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "queues.transfers",
+      "type": "java.lang.String",
+      "description": "name of the transfers queue"
+    },
+    {
+      "name": "queues.market-sell",
+      "type": "java.lang.String",
+      "description": "name of the queue for market-sell."
+    },
+    {
+      "name": "queues.market-purchase",
+      "type": "java.lang.String",
+      "description": "name of the queue for market-purchase."
+    }
+  ]
+}

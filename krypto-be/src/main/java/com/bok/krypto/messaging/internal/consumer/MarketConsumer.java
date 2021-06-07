@@ -15,13 +15,13 @@ public class MarketConsumer {
     @Autowired
     MarketHelper marketHelper;
 
-    @JmsListener(destination = "${active-mq.market-sell}")
+    @JmsListener(destination = "${queues.market-sell}")
     public void marketListener(SellMessage message) {
         log.info("Received market sell essage: " + message.toString());
         marketHelper.handle(message);
     }
 
-    @JmsListener(destination = "${active-mq.market-purchase}")
+    @JmsListener(destination = "${queues.market-purchase}")
     public void marketListener(PurchaseMessage message) {
         log.info("Received market purchase message: " + message.toString());
         marketHelper.handle(message);

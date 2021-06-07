@@ -1,9 +1,8 @@
 # ACTIVE-MQ CONFIG
-active-mq:
+queues:
   transfers: transfers
   market-sell: market-sell
   market-purchase: market-purchase
-  prices-topic: prices
   users: users
   transactions: transactions
   wallets: wallets
@@ -21,31 +20,31 @@ spring:
   activemq:
     packages:
       trusted:
-        - com.bok.parent.integration
-        - com.bok.krypto.integration
-        - com.bok.bank.integration
-        - com.bok.krypto.messaging
-        - java.math
-        - java.util
         - java.lang
+        - com.bok.krypto.model
+        - com.bok.krypto.messaging
+    in-memory: true
+
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/testing
-    username: testing
-    password: testing
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    url: jdbc:hsqldb:mem:testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
   jpa:
     hibernate:
       ddl-auto: create-drop
     open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MariaDBDialect
+        dialect: org.hibernate.dialect.HSQLDialect
     show-sql: false
+    database: hsql
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
+    enabled: false
   instance:
     lease-renewal-interval-in-seconds: 30
 

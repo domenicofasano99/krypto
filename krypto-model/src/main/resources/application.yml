@@ -15,16 +15,14 @@ grpc:
       address: dns:///parent:3030
       negotiationType: PLAINTEXT
 
-active-mq:
+queues:
   transfers: transfers
   market-sell: market-sell
   market-purchase: market-purchase
-  prices-topic: prices
   krypto-users: krypto-accounts
   transactions: transactions
   wallets: wallets
   emails: emails
-  broker-url: tcp://activemq:61616
   bank-deposit: bank-deposit
   bank-withdrawal: bank-withdrawal
   krypto-account-deletion: krypto-account-deletion
@@ -32,17 +30,17 @@ active-mq:
 spring:
   application:
     name: krypto
-
   activemq:
     packages:
-      trusted: com.bok.krypto.model
-
+      trusted:
+        - com.bok.krypto.model
+        - com.bok.krypto.messaging
+    broker-url: tcp://activemq:61616
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mysql://dev.faraone.ovh:3307/krypto
     username: developer
     password: password4testing
-
   jpa:
     hibernate:
       ddl-auto: update

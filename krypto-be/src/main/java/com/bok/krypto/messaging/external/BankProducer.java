@@ -15,10 +15,10 @@ public class BankProducer {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${active-mq.bank-deposit}")
+    @Value("${queues.bank-deposit}")
     private String bankDepositQueue;
 
-    @Value("${active-mq.bank-withdrawal}")
+    @Value("${queues.bank-withdrawal}")
     private String bankWithdrawalQueue;
 
     public void send(BankDepositMessage bankDepositMessage) {

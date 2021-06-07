@@ -40,7 +40,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -114,7 +113,6 @@ public class MarketServiceTest {
 
     @Test
     public void getKryptoInfo() {
-        Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getRandomKrypto();
         KryptoInfoDTO responseDTO = marketService.getKryptoInfo(krypto.getSymbol());
         assertNotNull(responseDTO);
@@ -126,7 +124,6 @@ public class MarketServiceTest {
 
     @Test
     public void getKryptoInfos() {
-        Account account = modelTestUtils.createAccount();
         List<Krypto> list = kryptoRepository.findAll();
         KryptoInfosRequestDTO requestDTO = new KryptoInfosRequestDTO();
         requestDTO.symbols = list.stream().map(Krypto::getSymbol).collect(Collectors.toList());
@@ -143,7 +140,6 @@ public class MarketServiceTest {
 
     @Test
     public void getKryptoHistoricalData() {
-        Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getRandomKrypto();
         HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), Instant.now().minusSeconds(99999), Instant.now());
         assertNotNull(response.history);
@@ -163,7 +159,7 @@ public class MarketServiceTest {
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
-        purchaseRequest.symbol = BTC;
+        purchaseRequest.symbol = krypto.getSymbol();
 
         TransactionDTO response = marketService.buy(account.getId(), purchaseRequest);
     }
@@ -171,12 +167,12 @@ public class MarketServiceTest {
     @Test
     public void purchaseTest_permitted() {
         Account account = modelTestUtils.createAccount();
-        Krypto modelTestUtilsKrypto = modelTestUtils.getKrypto(BTC);
+        Krypto krypto = modelTestUtils.getKrypto(BTC);
         when(bankService.authorize(any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
-        purchaseRequest.symbol = BTC;
+        purchaseRequest.symbol = krypto.getSymbol();
 
         TransactionDTO response = marketService.buy(account.getId(), purchaseRequest);
         assertNotNull(response.publicId);
