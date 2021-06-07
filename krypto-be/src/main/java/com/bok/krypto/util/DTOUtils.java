@@ -1,6 +1,5 @@
 package com.bok.krypto.util;
 
-import com.bok.krypto.integration.internal.dto.SymbolsDTO;
 import com.bok.krypto.integration.internal.dto.TransactionDTO;
 import com.bok.krypto.model.Transaction;
 

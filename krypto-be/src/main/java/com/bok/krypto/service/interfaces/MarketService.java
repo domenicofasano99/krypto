@@ -13,7 +13,6 @@ import com.bok.krypto.integration.internal.dto.SymbolsDTO;
 import com.bok.krypto.integration.internal.dto.TransactionDTO;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 public interface MarketService {
 
