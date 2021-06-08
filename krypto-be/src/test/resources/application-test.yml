@@ -25,6 +25,7 @@ spring:
         - com.bok.krypto.messaging
     in-memory: true
 
+
   datasource:
     driver-class-name: org.hsqldb.jdbc.JDBCDriver
     url: jdbc:hsqldb:mem:testdb;DB_CLOSE_DELAY=-1

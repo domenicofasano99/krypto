@@ -33,8 +33,9 @@ spring:
   activemq:
     packages:
       trusted:
-        - com.bok.krypto.model
-        - com.bok.krypto.messaging
+        - com.bok.krypto
+        - com.bok.krypto
+        - java.lang
     broker-url: tcp://activemq:61616
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver

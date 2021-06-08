@@ -112,6 +112,7 @@ public class WalletHelper {
         if (walletRepository.existsByAccount_IdAndKrypto_Symbol(accountId, requestDTO.symbol)) {
             throw new WalletAlreadyExistsException("A wallet with the same Krypto exists for this user");
         }
+
         Wallet w = new Wallet();
         w.setAccount(accountHelper.findById(accountId));
         w = walletRepository.save(w);
