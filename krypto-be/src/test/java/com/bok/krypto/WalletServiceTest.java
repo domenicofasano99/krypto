@@ -1,5 +1,6 @@
 package com.bok.krypto;
 
+import com.bok.krypto.core.AddressGenerator;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
 import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
@@ -49,6 +50,9 @@ public class WalletServiceTest {
 
     @Autowired
     BankService bankService;
+
+    @Autowired
+    AddressGenerator addressGenerator;
 
     @Before
     public void setup() {
@@ -167,6 +171,11 @@ public class WalletServiceTest {
         assertEquals(1, response.wallets.size());
         assertEquals(k.getSymbol(), response.wallets.get(0).symbol);
 
+    }
+
+    @Test
+    public void generateWalletAddress() {
+        String address = addressGenerator.generateBitcoinAddress();
 
     }
 

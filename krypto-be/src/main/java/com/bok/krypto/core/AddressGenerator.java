@@ -2,6 +2,7 @@ package com.bok.krypto.core;
 
 import lombok.SneakyThrows;
 import org.bitcoinj.core.Base58;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -10,6 +11,7 @@ import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
@@ -17,6 +19,10 @@ import java.security.spec.ECPoint;
 
 @Component
 public class AddressGenerator {
+
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     static private String adjustTo64(String s) {
         switch (s.length()) {
