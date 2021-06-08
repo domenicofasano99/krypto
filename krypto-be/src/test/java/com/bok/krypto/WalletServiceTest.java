@@ -152,4 +152,22 @@ public class WalletServiceTest {
         assertEquals(response.wallets.size(), 3);
     }
 
+
+    @Test
+    public void createWalletAndThenGetList() {
+        Account u = modelTestUtils.createAccount();
+        Krypto k = modelTestUtils.getRandomKrypto();
+
+        WalletRequestDTO requestDTO = new WalletRequestDTO();
+        requestDTO.symbol = k.getSymbol();
+        WalletResponseDTO responseDTO = walletService.create(u.getId(), requestDTO);
+
+        WalletsDTO response = walletService.wallets(u.getId());
+
+        assertEquals(1, response.wallets.size());
+        assertEquals(k.getSymbol(), response.wallets.get(0).symbol);
+
+
+    }
+
 }
