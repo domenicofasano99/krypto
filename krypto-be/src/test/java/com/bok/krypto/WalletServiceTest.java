@@ -142,12 +142,14 @@ public class WalletServiceTest {
         Account u = modelTestUtils.createAccount();
         Krypto btc = modelTestUtils.getKrypto(BTC);
         Krypto eth = modelTestUtils.getKrypto(ETH);
+        Krypto k = modelTestUtils.getRandomKrypto();
         Wallet wa = modelTestUtils.createWallet(u, btc, BigDecimal.TEN);
         Wallet wb = modelTestUtils.createWallet(u, eth, BigDecimal.ZERO);
+        Wallet wc = modelTestUtils.createWallet(u, k, BigDecimal.ZERO);
 
         WalletsDTO response = walletService.wallets(u.getId());
         assertNotNull(response);
-        assertEquals(response.wallets.size(), 2);
+        assertEquals(response.wallets.size(), 3);
     }
 
 }
