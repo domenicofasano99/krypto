@@ -31,6 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class ModelTestUtils {
 
+
     public static final Random random = new Random();
     public static final Faker faker = new Faker();
     @Autowired

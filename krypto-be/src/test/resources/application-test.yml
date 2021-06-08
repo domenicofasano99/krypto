@@ -18,6 +18,7 @@ spring:
   application:
     name: krypto
   activemq:
+    persistent: false
     packages:
       trusted:
         - java.lang
