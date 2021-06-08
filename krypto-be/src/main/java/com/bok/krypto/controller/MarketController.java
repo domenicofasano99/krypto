@@ -65,7 +65,7 @@ public class MarketController {
 
     @GetMapping("/{symbol}/history")
     HistoricalDataDTO getKryptoHistoricalData(@PathVariable("symbol") String symbol, @RequestParam("startDate") Instant startDate, @RequestParam("endDate") Instant endDate) {
-        log.info("{} history from {} to {}",symbol, startDate, endDate);
+        log.info("{} history from {} to {}", symbol, startDate, endDate);
         return marketService.getKryptoHistoricalData(symbol, startDate, endDate);
     }
 

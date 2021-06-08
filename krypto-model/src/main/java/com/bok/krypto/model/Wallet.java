@@ -31,10 +31,10 @@ public class Wallet {
     @GeneratedValue
     private Long id;
 
-    @Column(unique = true, updatable = false)
+    @Column
     private String address;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Account account;
 
     @OneToOne

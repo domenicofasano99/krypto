@@ -31,7 +31,7 @@ public class Krypto {
     @Column
     private String name;
 
-    @Column(unique = true)
+    @Column
     private String symbol;
 
     @Column
