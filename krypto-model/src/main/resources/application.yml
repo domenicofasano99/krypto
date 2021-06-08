@@ -34,7 +34,8 @@ spring:
     packages:
       trusted:
         - com.bok.krypto
-        - com.bok.krypto
+        - com.bok.parent
+        - com.bok.bank
         - java.lang
     broker-url: tcp://activemq:61616
   datasource:
