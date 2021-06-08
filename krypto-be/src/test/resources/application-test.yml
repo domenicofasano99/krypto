@@ -21,9 +21,9 @@ spring:
     packages:
       trusted:
         - java.lang
-        - com.bok.krypto.model
-        - com.bok.krypto.messaging
-    in-memory: true
+        - com.bok.krypto
+        - com.bok.bank
+        - com.bok.parent
 
 
   datasource:
