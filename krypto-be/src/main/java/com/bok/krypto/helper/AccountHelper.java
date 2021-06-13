@@ -5,9 +5,13 @@ import com.bok.krypto.grpc.client.BankGprcClient;
 import com.bok.krypto.grpc.client.ParentGrpcClient;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.repository.AccountRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static java.util.Optional.ofNullable;
+
+@Slf4j
 @Component
 public class AccountHelper {
 
@@ -25,7 +29,9 @@ public class AccountHelper {
     }
 
     public String getEmailByAccountId(Long accountId) {
-        return parentGrpcClient.getEmailByAccountId(accountId);
+        String email = parentGrpcClient.getEmailByAccountId(accountId);
+        log.info("Email for accountID {} : {}", accountId, email);
+        return ofNullable(email).orElseThrow(() -> new RuntimeException("Error while retrieving account " + accountId + "'s email"));
     }
 
     private Account saveOrUpdate(Account account) {
@@ -46,6 +52,6 @@ public class AccountHelper {
     }
 
     public Account findById(Long accountId) {
-        return accountRepository.findById(accountId).orElse(null);
+        return accountRepository.findById(accountId).orElseThrow(() -> new RuntimeException("Account: " + accountId + " not found."));
     }
 }

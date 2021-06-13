@@ -18,13 +18,19 @@ spring:
   application:
     name: krypto
   activemq:
-    persistent: false
     packages:
       trusted:
+        - com.bok.parent.integration
+        - com.bok.krypto.integration
+        - com.bok.bank.integration
+        - com.bok.krypto.messaging
+        - java.math
+        - java.util
         - java.lang
-        - com.bok.krypto
-        - com.bok.bank
-        - com.bok.parent
+    in-memory: true
+  artemis:
+    embedded:
+      enabled: true
 
 
   datasource:

@@ -33,11 +33,17 @@ spring:
   activemq:
     packages:
       trusted:
-        - com.bok.krypto
         - com.bok.parent
+        - com.bok.krypto
         - com.bok.bank
         - java.lang
-    broker-url: tcp://activemq:61616
+  artemis:
+    user: developer
+    password: password4testing
+    host: tcp://activemq:61616
+    embedded:
+      enabled: false
+
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mysql://dev.faraone.ovh:3307/krypto

@@ -40,6 +40,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -196,6 +197,13 @@ public class MarketServiceTest {
         modelTestUtils.addHistoricalDataForKrypto(k, 100);
         HistoricalDataDTO response = marketService.getKryptoHistoricalData(k.getSymbol(), Instant.now().minusSeconds(999999999), Instant.now());
         assertEquals(100, response.history.size());
+    }
+
+    @Test
+    public void testKryptoInfoList() {
+        KryptoInfosDTO kryptoInfosDTO = marketService.getAllKryptoInfos();
+        assertNotNull(kryptoInfosDTO);
+        assertTrue(kryptoInfosDTO.kryptos.size() > 0);
     }
 
 }
