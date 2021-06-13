@@ -28,6 +28,7 @@ spring:
         - java.util
         - java.lang
     in-memory: true
+    broker-url: vm://localhost?broker.persistent=false
 
 
   datasource:
