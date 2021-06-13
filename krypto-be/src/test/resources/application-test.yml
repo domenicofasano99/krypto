@@ -28,9 +28,6 @@ spring:
         - java.util
         - java.lang
     in-memory: true
-  artemis:
-    embedded:
-      enabled: true
 
 
   datasource:

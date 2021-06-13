@@ -37,12 +37,9 @@ spring:
         - com.bok.krypto
         - com.bok.bank
         - java.lang
-  artemis:
     user: developer
     password: password4testing
-    host: tcp://activemq:61616
-    embedded:
-      enabled: false
+    broker-url: tcp://activemq:61616
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
