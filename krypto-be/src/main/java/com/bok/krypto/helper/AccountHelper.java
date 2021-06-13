@@ -5,6 +5,7 @@ import com.bok.krypto.grpc.client.BankGprcClient;
 import com.bok.krypto.grpc.client.ParentGrpcClient;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.repository.AccountRepository;
+import com.bok.parent.integration.message.AccountCreationMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,5 +54,9 @@ public class AccountHelper {
 
     public Account findById(Long accountId) {
         return accountRepository.findById(accountId).orElseThrow(() -> new RuntimeException("Account: " + accountId + " not found."));
+    }
+
+    public void handle(AccountCreationMessage message) {
+        createAccount(message.accountId);
     }
 }
