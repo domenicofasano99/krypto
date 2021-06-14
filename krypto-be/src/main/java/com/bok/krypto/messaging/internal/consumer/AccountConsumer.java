@@ -1,7 +1,6 @@
 package com.bok.krypto.messaging.internal.consumer;
 
 import com.bok.krypto.helper.AccountHelper;
-import com.bok.krypto.messaging.internal.messages.SellMessage;
 import com.bok.parent.integration.message.AccountCreationMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
