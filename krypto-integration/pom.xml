@@ -6,12 +6,12 @@
     <parent>
         <artifactId>krypto</artifactId>
         <groupId>com.bok</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
 
     <groupId>com.bok.krypto</groupId>
     <artifactId>krypto-integration</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
 
 
     <properties>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>29.0-jre</version>
+            <version>30.1-jre</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
         <dependency>
