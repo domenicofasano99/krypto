@@ -17,7 +17,7 @@ public class AccountConsumer {
 
     @JmsListener(destination = "${queues.krypto-users}")
     public void marketListener(AccountCreationMessage message) {
-        log.info("Received market sell essage: " + message.toString());
+        log.info("Received Account Creation Message: " + message.toString());
         accountHelper.handle(message);
     }
 }
