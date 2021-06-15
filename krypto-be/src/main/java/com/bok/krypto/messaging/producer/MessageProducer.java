@@ -1,6 +1,6 @@
-package com.bok.krypto.messaging.internal.producer;
+package com.bok.krypto.messaging.producer;
 
-import com.bok.krypto.messaging.internal.messages.TransferMessage;
+import com.bok.parent.integration.message.EmailMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,20 +9,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class TransferProducer {
-
+public class MessageProducer {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${queues.transfers}")
-    private String transfersTopic;
+    @Value("${queue.emails}")
+    private String emailQueue;
 
-    public void send(TransferMessage transferMessage) {
+    public void send(EmailMessage emailMessage) {
         try {
-            log.info("Attempting Send transfer to Topic: " + transferMessage);
-            jmsTemplate.convertAndSend(transfersTopic, transferMessage);
+            log.info("Attempting Send transfer to Topic: " + emailQueue);
+            jmsTemplate.convertAndSend(emailQueue, emailMessage);
         } catch (Exception e) {
             log.error("Received Exception during send Message: ", e);
         }
     }
+
 }

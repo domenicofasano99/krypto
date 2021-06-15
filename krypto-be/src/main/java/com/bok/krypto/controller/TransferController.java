@@ -22,12 +22,12 @@ public class TransferController {
     TransferService transferService;
 
     @GetMapping("/{transferId}")
-    TransferInfoDTO transferInfo(@RequestParam("accountId") Long userId, @PathVariable("transferId") UUID transferId) {
+    public TransferInfoDTO transferInfo(@RequestParam("accountId") Long userId, @PathVariable("transferId") UUID transferId) {
         return transferService.transferInfo(userId, transferId);
     }
 
     @PostMapping("/")
-    TransferResponseDTO transfer(@RequestParam("accountId") Long userId, @RequestBody TransferRequestDTO requestDTO) {
+    public TransferResponseDTO transfer(@RequestParam("accountId") Long userId, @RequestBody TransferRequestDTO requestDTO) {
         return transferService.transfer(userId, requestDTO);
     }
 

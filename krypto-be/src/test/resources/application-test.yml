@@ -1,14 +1,20 @@
 # ACTIVE-MQ CONFIG
-queues:
+queue:
+  bank:
+    deposit: bank-deposit
+    withdrawal: bank-withdrawal
   transfers: transfers
-  market-sell: market-sell
-  market-purchase: market-purchase
-  users: users
+  market:
+    sell: market-sell
+    purchase: market-purchase
   transactions: transactions
-  wallets: wallets
+  wallet:
+    creation: wallets-creation
+    deletion: wallets-deletion
   emails: emails
-  krypto: krypto-accounts
-  broker-url: tcp://localhost:61616
+  account:
+    creation: krypto-accounts
+    deletion: krypto-account-deletion
 
 grpc:
   server:

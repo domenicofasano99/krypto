@@ -26,22 +26,22 @@ public class WalletController {
     WalletService walletService;
 
     @PostMapping("/create")
-    WalletResponseDTO create(@RequestParam("accountId") Long accountId, @RequestBody WalletRequestDTO requestDTO) {
+    public WalletResponseDTO create(@RequestParam("accountId") Long accountId, @RequestBody WalletRequestDTO requestDTO) {
         return walletService.create(accountId, requestDTO);
     }
 
     @PostMapping("/delete")
-    WalletDeleteResponseDTO delete(@RequestParam("accountId") Long accountId, @RequestBody WalletDeleteRequestDTO requestDTO) {
+    public WalletDeleteResponseDTO delete(@RequestParam("accountId") Long accountId, @RequestBody WalletDeleteRequestDTO requestDTO) {
         return walletService.delete(accountId, requestDTO);
     }
 
     @GetMapping("/list")
-    WalletsDTO wallets(@RequestParam("accountId") Long accountId) {
-        return walletService.wallets(accountId);
+    public WalletsDTO wallets(@RequestParam("accountId") Long accountId) {
+        return walletService.listWallets(accountId);
     }
 
     @GetMapping("/{symbol}/info")
-    WalletInfoDTO walletInfo(@RequestParam("accountId") Long accountId, @PathVariable("symbol") String symbol, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
+    public WalletInfoDTO walletInfo(@RequestParam("accountId") Long accountId, @PathVariable("symbol") String symbol, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
         return walletService.info(accountId, symbol, startDate, endDate);
     }
 }

@@ -12,7 +12,8 @@ import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
 import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
 import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 import com.bok.krypto.integration.internal.dto.WalletsDTO;
-import com.bok.krypto.messaging.internal.messages.WalletMessage;
+import com.bok.krypto.messaging.messages.WalletCreationMessage;
+import com.bok.krypto.messaging.messages.WalletDeleteMessage;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.WalletRepository;
@@ -112,19 +113,19 @@ public class WalletHelper {
         Wallet w = new Wallet();
         w.setAccount(accountHelper.findById(accountId));
         w = walletRepository.save(w);
-        WalletMessage walletMessage = new WalletMessage();
-        walletMessage.id = w.getId();
-        walletMessage.symbol = requestDTO.symbol;
-        messageService.sendWallet(walletMessage);
+        WalletCreationMessage walletCreationMessage = new WalletCreationMessage();
+        walletCreationMessage.id = w.getId();
+        walletCreationMessage.symbol = requestDTO.symbol;
+        messageService.sendWallet(walletCreationMessage);
         return new WalletResponseDTO(WalletResponseDTO.Status.ACCEPTED);
     }
 
-    public void handleMessage(WalletMessage walletMessage) {
-        Wallet w = walletRepository.findById(walletMessage.id)
+    public void handleMessage(WalletCreationMessage walletCreationMessage) {
+        Wallet w = walletRepository.findById(walletCreationMessage.id)
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
 
         w.setAddress(addressGenerator.generateBitcoinAddress());
-        w.setKrypto(kryptoHelper.findBySymbol(walletMessage.symbol));
+        w.setKrypto(kryptoHelper.findBySymbol(walletCreationMessage.symbol));
         w.setAvailableAmount(BigDecimal.ZERO);
         walletRepository.save(w);
         messageService.sendEmail(emailWalletCreation(w, w.getAccount()));
@@ -145,7 +146,12 @@ public class WalletHelper {
     public WalletDeleteResponseDTO delete(Long accountId, WalletDeleteRequestDTO deleteRequestDTO) {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
         Preconditions.checkArgument(walletRepository.existsByAccount_IdAndKrypto_Symbol(accountId, deleteRequestDTO.symbol));
-        Preconditions.checkNotNull(deleteRequestDTO.destinationIBAN);
+
+        WalletDeleteMessage message = new WalletDeleteMessage();
+        message.accountId = accountId;
+        message.symbol = deleteRequestDTO.symbol;
+        messageService.sendWalletDeletion(message);
+
         Account account = accountHelper.findById(accountId);
         Wallet wallet = findByAccountIdAndSymbol(accountId, deleteRequestDTO.symbol);
         marketHelper.emptyWallet(account, wallet);
@@ -156,6 +162,19 @@ public class WalletHelper {
         text = "Your wallet " + wallet.getKrypto().getSymbol() + " has been deleted.";
         sendMarketEmail(subject, to, text);
         return new WalletDeleteResponseDTO(wallet.getAddress());
+    }
+
+    public void handleWalletDeletion(WalletDeleteMessage walletDeleteMessage) {
+
+        Account account = accountHelper.findById(walletDeleteMessage.accountId);
+        Wallet wallet = findByAccountIdAndSymbol(walletDeleteMessage.accountId, walletDeleteMessage.symbol);
+        marketHelper.emptyWallet(account, wallet);
+        walletRepository.delete(wallet);
+        String to, subject, text;
+        to = accountHelper.getEmailByAccountId(account.getId());
+        subject = "BOK - Wallet deletion";
+        text = "Your wallet " + wallet.getKrypto().getSymbol() + " has been deleted.";
+        sendMarketEmail(subject, to, text);
     }
 
     public void sendMarketEmail(String subject, String email, String text) {
@@ -171,9 +190,10 @@ public class WalletHelper {
         List<Wallet> wallets = walletRepository.findByAccount_Id(accountId);
         WalletsDTO walletsDTO = new WalletsDTO();
         walletsDTO.wallets = new ArrayList<>();
-        for (Wallet w : wallets) {
+        wallets.forEach(w -> {
             walletsDTO.wallets.add(getInfoFromWallet(w));
-        }
+        });
+
         return walletsDTO;
     }
 

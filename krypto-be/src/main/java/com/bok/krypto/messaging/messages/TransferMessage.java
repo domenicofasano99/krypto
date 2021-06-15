@@ -1,4 +1,4 @@
-package com.bok.krypto.messaging.internal.messages;
+package com.bok.krypto.messaging.messages;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -10,9 +10,12 @@ import java.math.BigDecimal;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class MarketMessage implements Serializable {
+public class TransferMessage implements Serializable {
     public Long accountId;
-    public Long transactionId;
-    public BigDecimal amount;
     public String symbol;
+    public String destination;
+    public BigDecimal amount;
+    public Long transferId;
+
+
 }

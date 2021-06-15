@@ -15,17 +15,22 @@ grpc:
       address: dns:///parent:3030
       negotiationType: PLAINTEXT
 
-queues:
+queue:
+  bank:
+    deposit: bank-deposit
+    withdrawal: bank-withdrawal
   transfers: transfers
-  market-sell: market-sell
-  market-purchase: market-purchase
-  krypto-users: krypto-accounts
+  market:
+    sell: market-sell
+    purchase: market-purchase
   transactions: transactions
-  wallets: wallets
+  wallet:
+    creation: wallets-creation
+    deletion: wallets-deletion
   emails: emails
-  bank-deposit: bank-deposit
-  bank-withdrawal: bank-withdrawal
-  krypto-account-deletion: krypto-account-deletion
+  account:
+    creation: krypto-accounts
+    deletion: krypto-account-deletion
 
 spring:
   application:

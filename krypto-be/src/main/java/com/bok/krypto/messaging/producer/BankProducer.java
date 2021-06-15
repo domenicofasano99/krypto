@@ -1,4 +1,4 @@
-package com.bok.krypto.messaging.external;
+package com.bok.krypto.messaging.producer;
 
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
@@ -15,10 +15,10 @@ public class BankProducer {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${queues.bank-deposit}")
+    @Value("${queue.bank.deposit}")
     private String bankDepositQueue;
 
-    @Value("${queues.bank-withdrawal}")
+    @Value("${queue.bank.withdrawal}")
     private String bankWithdrawalQueue;
 
     public void send(BankDepositMessage bankDepositMessage) {

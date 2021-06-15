@@ -9,7 +9,7 @@ import com.bok.krypto.integration.internal.dto.TransferRequestDTO;
 import com.bok.krypto.integration.internal.dto.TransferResponseDTO;
 import com.bok.krypto.integration.internal.dto.TransfersInfoDTO;
 import com.bok.krypto.integration.internal.dto.TransfersInfoRequestDTO;
-import com.bok.krypto.messaging.internal.messages.TransferMessage;
+import com.bok.krypto.messaging.messages.TransferMessage;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Activity;
 import com.bok.krypto.model.Transaction;

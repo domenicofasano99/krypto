@@ -1,4 +1,4 @@
-package com.bok.krypto.messaging.internal.messages;
+package com.bok.krypto.messaging.messages;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -9,8 +9,10 @@ import java.math.BigDecimal;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class SellMessage extends MarketMessage {
+public class PurchaseMessage extends MarketMessage {
+    public Long accountId;
     public Long transactionId;
-    public BigDecimal amount;
     public String symbol;
+    public BigDecimal amount;
+
 }

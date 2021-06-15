@@ -1,7 +1,7 @@
-package com.bok.krypto.messaging.internal.producer;
+package com.bok.krypto.messaging.producer;
 
-import com.bok.krypto.messaging.internal.messages.PurchaseMessage;
-import com.bok.krypto.messaging.internal.messages.SellMessage;
+import com.bok.krypto.messaging.messages.PurchaseMessage;
+import com.bok.krypto.messaging.messages.SellMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,10 +14,10 @@ public class MarketProducer {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    @Value("${queues.market-purchase}")
+    @Value("${queue.market.purchase}")
     private String marketPurchaseQueue;
 
-    @Value("${queues.market-sell}")
+    @Value("${queue.market.sell}")
     private String marketSellQueue;
 
     public void send(PurchaseMessage purchaseMessage) {

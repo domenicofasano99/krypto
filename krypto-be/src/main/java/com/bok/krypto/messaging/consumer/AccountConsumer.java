@@ -1,4 +1,4 @@
-package com.bok.krypto.messaging.internal.consumer;
+package com.bok.krypto.messaging.consumer;
 
 import com.bok.krypto.helper.AccountHelper;
 import com.bok.parent.integration.message.AccountCreationMessage;
@@ -14,7 +14,7 @@ public class AccountConsumer {
     @Autowired
     AccountHelper accountHelper;
 
-    @JmsListener(destination = "${queues.krypto-users}")
+    @JmsListener(destination = "${queue.account.creation}")
     public void marketListener(AccountCreationMessage message) {
         log.info("Received Account Creation Message: " + message.toString());
         accountHelper.handle(message);

@@ -17,5 +17,5 @@ public interface WalletService {
 
     WalletInfoDTO info(Long userId, String symbol, LocalDate startDate, LocalDate endDate);
 
-    WalletsDTO wallets(Long userId);
+    WalletsDTO listWallets(Long userId);
 }

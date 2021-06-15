@@ -1,7 +1,7 @@
-package com.bok.krypto.messaging.internal.consumer;
+package com.bok.krypto.messaging.consumer;
 
 import com.bok.krypto.helper.TransferHelper;
-import com.bok.krypto.messaging.internal.messages.TransferMessage;
+import com.bok.krypto.messaging.messages.TransferMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
@@ -14,7 +14,7 @@ public class TransferConsumer {
     @Autowired
     TransferHelper transferHelper;
 
-    @JmsListener(destination = "${queues.transfers}")
+    @JmsListener(destination = "${queue.transfers}")
     public void transferListener(TransferMessage transferMessage) {
         log.info("Received transfer message: " + transferMessage.toString());
         transferHelper.handle(transferMessage);

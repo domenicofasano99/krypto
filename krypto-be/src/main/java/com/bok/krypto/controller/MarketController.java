@@ -45,38 +45,38 @@ public class MarketController {
     }
 
     @GetMapping("/prices")
-    PricesResponseDTO getKryptoPrices(@RequestBody PricesRequestDTO requestDTO) {
+    public PricesResponseDTO getKryptoPrices(@RequestBody PricesRequestDTO requestDTO) {
         return marketService.getKryptoPrices(requestDTO);
     }
 
     @GetMapping("/{symbol}/price")
-    PriceResponseDTO getKryptoPrice(@PathVariable("symbol") String symbol) {
+    public PriceResponseDTO getKryptoPrice(@PathVariable("symbol") String symbol) {
         return marketService.getKryptoPrice(symbol);
     }
 
     @GetMapping("/{symbol}/info")
-    KryptoInfoDTO getKryptoInfo(@PathVariable("symbol") String symbol) {
+    public KryptoInfoDTO getKryptoInfo(@PathVariable("symbol") String symbol) {
         return marketService.getKryptoInfo(symbol);
     }
 
     @GetMapping("/infos")
-    KryptoInfosDTO getKryptoInfos(@RequestBody KryptoInfosRequestDTO requestDTO) {
+    public KryptoInfosDTO getKryptoInfos(@RequestBody KryptoInfosRequestDTO requestDTO) {
         return marketService.getKryptoInfos(requestDTO);
     }
 
     @GetMapping("/{symbol}/history")
-    HistoricalDataDTO getKryptoHistoricalData(@PathVariable("symbol") String symbol, @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate, @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate) {
+    public HistoricalDataDTO getKryptoHistoricalData(@PathVariable("symbol") String symbol, @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate, @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate) {
         log.info("{} history from {} to {}", symbol, startDate, endDate);
         return marketService.getKryptoHistoricalData(symbol, startDate, endDate);
     }
 
     @GetMapping("/list")
-    KryptoInfosDTO getKryptoInfoList() {
+    public KryptoInfosDTO getKryptoInfoList() {
         return marketService.getAllKryptoInfos();
     }
 
     @GetMapping("/legend")
-    SymbolsDTO getKryptoSymbols() {
+    public SymbolsDTO getKryptoSymbols() {
         return marketService.getSymbolLegend();
     }
 
