@@ -1,6 +1,5 @@
 package com.bok.krypto.helper;
 
-import com.bok.krypto.core.Constants;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
@@ -41,12 +40,12 @@ public class KryptoHelper {
         return new PricesResponseDTO(prices);
     }
 
-    @Cacheable(value = Constants.PRICES, unless = "#result == null")
     public PriceResponseDTO getPrice(String symbol) {
         BigDecimal price = getKryptoPrice(symbol);
         return new PriceResponseDTO(symbol, price);
     }
 
+    @Cacheable("krypto-price")
     public BigDecimal getKryptoPrice(String symbol) {
         KryptoRepository.Projection.KryptoPrice price = kryptoRepository.findPriceBySymbol(symbol);
         return price.getPrice();
@@ -56,10 +55,12 @@ public class KryptoHelper {
         return kryptoRepository.existsBySymbol(symbol);
     }
 
+    @Cacheable("krypto")
     public Krypto findBySymbol(String symbol) {
         return kryptoRepository.findBySymbolIgnoreCase(symbol).orElseThrow(() -> new KryptoNotFoundException("This Krypto does not exist"));
     }
 
+    @Cacheable("krypto-info")
     public KryptoInfoDTO getKryptoInfo(String symbol) {
         Krypto k = findBySymbol(symbol);
         return new KryptoInfoDTO(k.getName(), k.getSymbol(), k.getNetworkFee(), k.getPrice(), k.getUpdateTimestamp());
