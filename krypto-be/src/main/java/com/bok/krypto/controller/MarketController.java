@@ -14,6 +14,7 @@ import com.bok.krypto.integration.internal.dto.TransactionDTO;
 import com.bok.krypto.service.interfaces.MarketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,7 +65,7 @@ public class MarketController {
     }
 
     @GetMapping("/{symbol}/history")
-    HistoricalDataDTO getKryptoHistoricalData(@PathVariable("symbol") String symbol, @RequestParam("startDate") Instant startDate, @RequestParam("endDate") Instant endDate) {
+    HistoricalDataDTO getKryptoHistoricalData(@PathVariable("symbol") String symbol, @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate, @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate) {
         log.info("{} history from {} to {}", symbol, startDate, endDate);
         return marketService.getKryptoHistoricalData(symbol, startDate, endDate);
     }
