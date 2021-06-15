@@ -65,10 +65,6 @@ public class WalletHelper {
         return walletRepository.findByAddress(publicId).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
     }
 
-    public Boolean existsByPublicId(String publicId) {
-        return walletRepository.existsByAddress(publicId);
-    }
-
     public Wallet findByAccountIdAndSymbol(Long userId, String symbol) {
         return walletRepository.findByAccount_IdAndKrypto_Symbol(userId, symbol).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
 
@@ -129,6 +125,7 @@ public class WalletHelper {
 
         w.setAddress(addressGenerator.generateBitcoinAddress());
         w.setKrypto(kryptoHelper.findBySymbol(walletMessage.symbol));
+        w.setAvailableAmount(BigDecimal.ZERO);
         walletRepository.save(w);
         messageService.sendEmail(emailWalletCreation(w, w.getAccount()));
     }
