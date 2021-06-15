@@ -17,6 +17,5 @@ public class RecordDTO {
 
     public Double price;
     public Instant instant;
-    public Double marketCap;
     public Long id;
 }

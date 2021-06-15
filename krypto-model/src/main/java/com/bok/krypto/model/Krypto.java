@@ -38,9 +38,6 @@ public class Krypto {
     private Double networkFee;
 
     @Column
-    private Double marketCap;
-
-    @Column
     private BigDecimal price;
 
     @Column
