@@ -49,7 +49,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://dev.faraone.ovh:3307/krypto
+    url: jdbc:mysql://bok.faraone.ovh:3307/krypto
     username: developer
     password: password4testing
   jpa:
