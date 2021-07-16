@@ -12,7 +12,7 @@
     <groupId>com.bok.krypto</groupId>
     <artifactId>krypto-integration</artifactId>
     <version>1.0</version>
-
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

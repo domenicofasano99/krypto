@@ -65,7 +65,7 @@ eureka:
     serviceUrl:
       defaultZone: http://eureka:8761/eureka
   instance:
-    lease-renewal-interval-in-seconds: 30
+    lease-renewal-interval-in-seconds: 20
 
 coinmarket:
   endpoint: https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
