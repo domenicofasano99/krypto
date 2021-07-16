@@ -2,12 +2,12 @@ package com.bok.krypto.service;
 
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
-import com.bok.krypto.messaging.producer.BankProducer;
 import com.bok.krypto.messaging.messages.PurchaseMessage;
 import com.bok.krypto.messaging.messages.SellMessage;
 import com.bok.krypto.messaging.messages.TransferMessage;
-import com.bok.krypto.messaging.messages.WalletDeleteMessage;
 import com.bok.krypto.messaging.messages.WalletCreationMessage;
+import com.bok.krypto.messaging.messages.WalletDeleteMessage;
+import com.bok.krypto.messaging.producer.BankProducer;
 import com.bok.krypto.messaging.producer.EmailProducer;
 import com.bok.krypto.messaging.producer.MarketProducer;
 import com.bok.krypto.messaging.producer.TransferProducer;

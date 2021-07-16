@@ -1,7 +1,7 @@
 package com.bok.krypto.messaging.producer;
 
-import com.bok.krypto.messaging.messages.WalletDeleteMessage;
 import com.bok.krypto.messaging.messages.WalletCreationMessage;
+import com.bok.krypto.messaging.messages.WalletDeleteMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
