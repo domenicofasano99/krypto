@@ -40,7 +40,7 @@ public class AccountServiceTest {
         accountCreationMessage.accountId = accountId;
         accountCreationMessage.email = email;
 
-        //accountHelper.handle(accountCreationMessage);
+        accountHelper.handle(accountCreationMessage);
 
         Account account = accountRepository.findById(accountCreationMessage.accountId).orElseThrow(RuntimeException::new);
         Assertions.assertNotNull(account);

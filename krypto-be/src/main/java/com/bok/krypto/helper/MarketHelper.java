@@ -51,7 +51,6 @@ public class MarketHelper {
     @Autowired
     BankService bankService;
 
-
     public TransactionDTO buy(Long accountId, PurchaseRequestDTO purchaseRequest) {
         Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequest.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
@@ -68,7 +67,6 @@ public class MarketHelper {
         log.info("Received {} from Bank for transaction {}", transaction.status.name(), transaction.getId());
         transaction.setPublicId(UUID.fromString(authorizationResponse.getAuthorizationId()));
         transactionHelper.saveOrUpdate(transaction);
-
 
         if (authorizationResponse.getAuthorized()) {
             sendPurchase(accountId, transaction.getId(), purchaseRequest.amount, purchaseRequest.symbol);
