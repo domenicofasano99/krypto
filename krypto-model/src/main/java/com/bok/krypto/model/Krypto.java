@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -45,7 +48,7 @@ public class Krypto {
     private Instant updateTimestamp;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<HistoricalData> historicalData;
+    private List<HistoricalData> historicalData = new ArrayList<>();
 
     @OneToMany
     private List<Wallet> wallets;
@@ -76,5 +79,15 @@ public class Krypto {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(id).append(name).append(symbol).toHashCode();
+    }
+
+    @Transactional
+    public void addHistoricalData(HistoricalData historicalData) {
+        this.historicalData.add(historicalData);
+    }
+
+    @Transactional
+    public void addHistoricalData(Collection<HistoricalData> historicalData) {
+        this.historicalData.addAll(historicalData);
     }
 }

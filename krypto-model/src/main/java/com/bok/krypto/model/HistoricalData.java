@@ -37,4 +37,9 @@ public class HistoricalData {
         this.krypto = krypto;
         this.price = price;
     }
+
+    public HistoricalData(Krypto krypto, Double price, Instant timestamp) {
+        this(krypto, price);
+        this.timestamp = timestamp;
+    }
 }

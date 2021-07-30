@@ -29,14 +29,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.bok.krypto.utils.Constants.BTC;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -140,12 +146,25 @@ public class MarketServiceTest {
     }
 
     @Test
+    @Transactional
     public void getKryptoHistoricalData() {
         Krypto krypto = modelTestUtils.getRandomKrypto();
-        HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), Instant.now().minusSeconds(99999), Instant.now());
+        Random random = new Random();
+        Collection<HistoricalData> collection = new ArrayList<>();
+        for (int c = 0; c < 250; c++) {
+            HistoricalData hd = new HistoricalData(krypto, random.nextDouble(), Instant.now().minusSeconds(random.nextInt(99999)));
+            collection.add(hd);
+        }
+        historicalDataRepository.saveAll(collection);
+        krypto.addHistoricalData(collection);
+        kryptoRepository.save(krypto);
+
+        HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), Instant.now().minus(300, ChronoUnit.HOURS), Instant.now());
         assertNotNull(response.history);
+        assertThat(response.history.size(), greaterThan(0));
         log.info(String.valueOf(response.history));
         for (RecordDTO datum : response.history) {
+            log.info("historical record {}", datum);
             HistoricalData savedDatum = historicalDataRepository.findById(datum.id).get();
             assertEquals(savedDatum.getId(), datum.id);
             assertEquals(savedDatum.getPrice(), datum.price);
