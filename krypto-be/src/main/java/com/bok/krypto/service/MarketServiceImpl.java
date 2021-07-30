@@ -21,6 +21,7 @@ import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.Instant;
 
 @Service
@@ -85,7 +86,9 @@ public class MarketServiceImpl implements MarketService {
         return kryptoHelper.getKryptoInfos(requestDTO);
     }
 
+    //TODO fix query and remove transactional
     @Override
+    @Transactional
     public HistoricalDataDTO getKryptoHistoricalData(String symbol, Instant startDate, Instant endDate) {
         Preconditions.checkNotNull(startDate, "Start date Instant cannot be null");
         Preconditions.checkNotNull(endDate, "End date Instant cannot be null");
