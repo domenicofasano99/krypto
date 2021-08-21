@@ -15,7 +15,7 @@ import com.bok.krypto.integration.internal.dto.PricesResponseDTO;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
 import com.bok.krypto.integration.internal.dto.SymbolsDTO;
-import com.bok.krypto.integration.internal.dto.TransactionDTO;
+import com.bok.krypto.integration.internal.dto.ActivityDTO;
 import com.bok.krypto.service.interfaces.MarketService;
 import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,20 +43,22 @@ public class MarketServiceImpl implements MarketService {
     HistoricalDataHelper historicalDataHelper;
 
     @Override
-    public TransactionDTO buy(Long accountId, PurchaseRequestDTO purchaseRequestDTO) {
+    public ActivityDTO buy(Long accountId, PurchaseRequestDTO purchaseRequestDTO) {
         Preconditions.checkNotNull(accountId);
         Preconditions.checkNotNull(purchaseRequestDTO, "Request body was empty");
         Preconditions.checkNotNull(purchaseRequestDTO.symbol, "Symbol cannot be null");
         Preconditions.checkNotNull(purchaseRequestDTO.amount, "Amount cannot be null");
+        Preconditions.checkNotNull(purchaseRequestDTO.currencyCode, "Currency cannot be null");
         return marketHelper.buy(accountId, purchaseRequestDTO);
     }
 
     @Override
-    public TransactionDTO sell(Long accountId, SellRequestDTO sellRequestDTO) {
+    public ActivityDTO sell(Long accountId, SellRequestDTO sellRequestDTO) {
         Preconditions.checkNotNull(accountId);
         Preconditions.checkNotNull(sellRequestDTO, "Request body was empty");
         Preconditions.checkNotNull(sellRequestDTO.symbol, "Symbol cannot be null");
         Preconditions.checkNotNull(sellRequestDTO.amount, "Amount cannot be null");
+        Preconditions.checkNotNull(sellRequestDTO.currencyCode, "Currency cannot be null");
         return marketHelper.sell(accountId, sellRequestDTO);
     }
 

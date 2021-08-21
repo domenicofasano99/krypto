@@ -44,6 +44,9 @@ public class WalletHelper {
     TransactionHelper transactionHelper;
 
     @Autowired
+    TransferHelper transferHelper;
+
+    @Autowired
     AccountHelper accountHelper;
 
     @Autowired
@@ -211,16 +214,22 @@ public class WalletHelper {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
 
         Wallet wallet = findByAccountIdAndSymbol(accountId, symbol);
-        return getInfoFromWalletWithTransactions(wallet, startDate, endDate);
+        return getInfoFromWalletWithActivities(wallet, startDate, endDate);
     }
 
 
-    private WalletInfoDTO getInfoFromWalletWithTransactions(Wallet wallet, LocalDate startDate, LocalDate endDate) {
+    //TODO add also transfers
+    private WalletInfoDTO getInfoFromWalletWithActivities(Wallet wallet, LocalDate startDate, LocalDate endDate) {
         WalletInfoDTO info = getInfoFromWallet(wallet);
-        info.transactions = transactionHelper.findByWalletIdAndDateBetween(wallet, startDate, endDate)
+        info.activities = transactionHelper.findByWalletIdAndDateBetween(wallet, startDate, endDate)
                 .stream()
                 .map(DTOUtils::toDTO)
                 .collect(Collectors.toList());
+
+        info.activities.addAll(transferHelper.findByWalletIdAndDateBetween(wallet, startDate, endDate)
+                .stream()
+                .map(DTOUtils::toDTO)
+                .collect(Collectors.toList()));
         return info;
     }
 

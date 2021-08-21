@@ -1,6 +1,7 @@
 package com.bok.krypto.controller;
 
 
+import com.bok.bank.integration.util.AuthorizationException;
 import com.bok.krypto.exception.ApiError;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -56,6 +57,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<Object> handleAllUnhandledRuntimeExceptions(RuntimeException ex) {
         ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(AuthorizationException.class)
+    protected ResponseEntity<Object> handleAuthorizationException(AuthorizationException ex) {
+        ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }

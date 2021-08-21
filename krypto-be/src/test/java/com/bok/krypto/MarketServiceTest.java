@@ -1,6 +1,8 @@
 package com.bok.krypto;
 
 import com.bok.bank.integration.grpc.AuthorizationResponse;
+import com.bok.bank.integration.grpc.Currency;
+import com.bok.bank.integration.grpc.Money;
 import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
@@ -8,12 +10,8 @@ import com.bok.krypto.integration.internal.dto.KryptoInfosRequestDTO;
 import com.bok.krypto.integration.internal.dto.PriceResponseDTO;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.RecordDTO;
-import com.bok.krypto.integration.internal.dto.TransactionDTO;
-import com.bok.krypto.model.Account;
-import com.bok.krypto.model.HistoricalData;
-import com.bok.krypto.model.Krypto;
-import com.bok.krypto.model.Transaction;
-import com.bok.krypto.model.Wallet;
+import com.bok.krypto.integration.internal.dto.ActivityDTO;
+import com.bok.krypto.model.*;
 import com.bok.krypto.repository.HistoricalDataRepository;
 import com.bok.krypto.repository.KryptoRepository;
 import com.bok.krypto.repository.TransactionRepository;
@@ -80,19 +78,23 @@ public class MarketServiceTest {
     }
 
     @Test //if it doesn't pass try running it alone, message timing problems...
-    public void purchaseTest() {
+    public void purchaseTest() throws InterruptedException {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
         Wallet wallet = modelTestUtils.createWallet(account, krypto, new BigDecimal("0.9"));
         when(bankService.authorize(any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
+        when(bankService.convertMoney(any(), any())).thenReturn(Money.newBuilder().setCurrency(Currency.USD).setAmount(10).build());
         PurchaseRequestDTO purchaseRequestDTO = new PurchaseRequestDTO();
         purchaseRequestDTO.symbol = BTC;
-        purchaseRequestDTO.amount = new BigDecimal("0.8989827");
-        TransactionDTO transactionDTO = marketService.buy(account.getId(), purchaseRequestDTO);
+        purchaseRequestDTO.amount = new BigDecimal("10");
+        purchaseRequestDTO.currencyCode = "USD";
+        ActivityDTO activityDTO = marketService.buy(account.getId(), purchaseRequestDTO);
         modelTestUtils.await();
-        Transaction transaction = transactionRepository.findByPublicId(transactionDTO.publicId).orElse(null);
+        Transaction transaction = transactionRepository.findByPublicId(activityDTO.publicId).orElse(null);
         assertNotNull(transaction);
-        assertEquals(transaction.getPublicId(), transactionDTO.publicId);
+        assertEquals(Transaction.Status.AUTHORIZED, transaction.getStatus());
+        assertEquals(transaction.getPublicId(), activityDTO.publicId);
+        Thread.sleep(10000);
         assertEquals(Transaction.Status.SETTLED, transaction.getStatus());
 
     }
@@ -181,7 +183,7 @@ public class MarketServiceTest {
         purchaseRequest.amount = new BigDecimal("0.012001023");
         purchaseRequest.symbol = krypto.getSymbol();
 
-        TransactionDTO response = marketService.buy(account.getId(), purchaseRequest);
+        ActivityDTO response = marketService.buy(account.getId(), purchaseRequest);
     }
 
     @Test
@@ -194,7 +196,7 @@ public class MarketServiceTest {
         purchaseRequest.amount = new BigDecimal("0.012001023");
         purchaseRequest.symbol = krypto.getSymbol();
 
-        TransactionDTO response = marketService.buy(account.getId(), purchaseRequest);
+        ActivityDTO response = marketService.buy(account.getId(), purchaseRequest);
         assertNotNull(response.publicId);
     }
 

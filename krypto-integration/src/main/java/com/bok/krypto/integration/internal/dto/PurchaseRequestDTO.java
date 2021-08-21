@@ -5,4 +5,6 @@ import java.math.BigDecimal;
 public class PurchaseRequestDTO {
     public String symbol;
     public BigDecimal amount;
+    public String currencyCode;
+
 }

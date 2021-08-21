@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,4 +22,8 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
     Integer countPendingTransfers();
 
     Optional<Transfer> findByPublicId(UUID transferId);
+
+    //TODO write the query to get all transfers with source or destination that ID
+    @Query("SELECT t FROM Transfer t where (t.sourceWallet =: id or t.destinationWallet =:id) and t.creationTimestamp between :start and :end")
+    List<Transfer> findByAndCreationTimestampBetween(Long id, Instant start, Instant end);
 }

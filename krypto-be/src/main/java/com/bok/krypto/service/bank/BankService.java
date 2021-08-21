@@ -1,12 +1,6 @@
 package com.bok.krypto.service.bank;
 
-import com.bok.bank.integration.grpc.AccountInfoRequest;
-import com.bok.bank.integration.grpc.AccountInfoResponse;
-import com.bok.bank.integration.grpc.AuthorizationRequest;
-import com.bok.bank.integration.grpc.AuthorizationResponse;
-import com.bok.bank.integration.grpc.BankGrpc;
-import com.bok.bank.integration.grpc.Currency;
-import com.bok.bank.integration.grpc.Money;
+import com.bok.bank.integration.grpc.*;
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.bank.integration.util.AuthorizationException;
@@ -59,5 +53,11 @@ public class BankService {
 
     public void sendBankDeposit(BankDepositMessage bankDepositMessage) {
         messageService.sendBankDeposit(bankDepositMessage);
+    }
+
+    public Money convertMoney(Money from, Currency to) {
+        ConversionRequest.Builder conversionRequest = ConversionRequest.newBuilder();
+        conversionRequest.setFrom(from).setTo(to);
+        return bankBlockingStub.convertMoney(conversionRequest.build());
     }
 }

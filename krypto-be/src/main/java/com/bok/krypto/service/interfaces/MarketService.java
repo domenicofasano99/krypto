@@ -10,15 +10,15 @@ import com.bok.krypto.integration.internal.dto.PricesResponseDTO;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
 import com.bok.krypto.integration.internal.dto.SymbolsDTO;
-import com.bok.krypto.integration.internal.dto.TransactionDTO;
+import com.bok.krypto.integration.internal.dto.ActivityDTO;
 
 import java.time.Instant;
 
 public interface MarketService {
 
-    TransactionDTO buy(Long userId, PurchaseRequestDTO purchaseRequestDTO);
+    ActivityDTO buy(Long userId, PurchaseRequestDTO purchaseRequestDTO);
 
-    TransactionDTO sell(Long userId, SellRequestDTO sellRequestDTO);
+    ActivityDTO sell(Long userId, SellRequestDTO sellRequestDTO);
 
     PriceResponseDTO getKryptoPrice(String symbol);
 

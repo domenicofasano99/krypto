@@ -3,18 +3,9 @@ package com.bok.krypto.helper;
 import com.bok.krypto.core.Constants;
 import com.bok.krypto.exception.TransactionException;
 import com.bok.krypto.exception.TransactionNotFoundException;
-import com.bok.krypto.integration.internal.dto.StatusDTO;
-import com.bok.krypto.integration.internal.dto.TransferInfoDTO;
-import com.bok.krypto.integration.internal.dto.TransferRequestDTO;
-import com.bok.krypto.integration.internal.dto.TransferResponseDTO;
-import com.bok.krypto.integration.internal.dto.TransfersInfoDTO;
-import com.bok.krypto.integration.internal.dto.TransfersInfoRequestDTO;
+import com.bok.krypto.integration.internal.dto.*;
 import com.bok.krypto.messaging.messages.TransferMessage;
-import com.bok.krypto.model.Account;
-import com.bok.krypto.model.Activity;
-import com.bok.krypto.model.Transaction;
-import com.bok.krypto.model.Transfer;
-import com.bok.krypto.model.Wallet;
+import com.bok.krypto.model.*;
 import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.bok.parent.integration.message.EmailMessage;
@@ -26,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -148,5 +141,9 @@ public class TransferHelper {
 
     public Integer pendingTransfers() {
         return transferRepository.countPendingTransfers();
+    }
+
+    public List<Transfer> findByWalletIdAndDateBetween(Wallet wallet, LocalDate startDate, LocalDate endDate) {
+        return transferRepository.findByAndCreationTimestampBetween(wallet.getId(), startDate.atStartOfDay().toInstant(ZoneOffset.UTC), endDate.atStartOfDay().toInstant(ZoneOffset.UTC));
     }
 }

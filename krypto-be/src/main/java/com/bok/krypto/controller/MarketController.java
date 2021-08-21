@@ -10,7 +10,7 @@ import com.bok.krypto.integration.internal.dto.PricesResponseDTO;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
 import com.bok.krypto.integration.internal.dto.SymbolsDTO;
-import com.bok.krypto.integration.internal.dto.TransactionDTO;
+import com.bok.krypto.integration.internal.dto.ActivityDTO;
 import com.bok.krypto.service.interfaces.MarketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +34,13 @@ public class MarketController {
     MarketService marketService;
 
     @PostMapping("/buy")
-    public TransactionDTO buy(@RequestParam("accountId") Long userId, @RequestBody PurchaseRequestDTO purchaseRequestDTO) {
+    public ActivityDTO buy(@RequestParam("accountId") Long userId, @RequestBody PurchaseRequestDTO purchaseRequestDTO) {
         return marketService.buy(userId, purchaseRequestDTO);
 
     }
 
     @PostMapping("/sell")
-    public TransactionDTO sell(@RequestParam("accountId") Long userId, @RequestBody SellRequestDTO sellRequestDTO) {
+    public ActivityDTO sell(@RequestParam("accountId") Long userId, @RequestBody SellRequestDTO sellRequestDTO) {
         return marketService.sell(userId, sellRequestDTO);
     }
 

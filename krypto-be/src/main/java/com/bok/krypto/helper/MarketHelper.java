@@ -8,7 +8,7 @@ import com.bok.krypto.exception.ErrorCodes;
 import com.bok.krypto.exception.TransactionException;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
-import com.bok.krypto.integration.internal.dto.TransactionDTO;
+import com.bok.krypto.integration.internal.dto.ActivityDTO;
 import com.bok.krypto.messaging.messages.PurchaseMessage;
 import com.bok.krypto.messaging.messages.SellMessage;
 import com.bok.krypto.model.Account;
@@ -51,41 +51,41 @@ public class MarketHelper {
     @Autowired
     BankService bankService;
 
-    public TransactionDTO buy(Long accountId, PurchaseRequestDTO purchaseRequest) {
+    public ActivityDTO buy(Long accountId, PurchaseRequestDTO purchaseRequest) {
         Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequest.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequest.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
 
-        Krypto k = kryptoHelper.findBySymbol(purchaseRequest.symbol);
-        Money money = convertIntoMoney(k, purchaseRequest.amount);
+        //Krypto k = kryptoHelper.findBySymbol(purchaseRequest.symbol);
+        Money money = convertIntoMoney(purchaseRequest.amount, purchaseRequest.currencyCode);
 
         Transaction transaction = new Transaction(Transaction.Type.PURCHASE);
         transaction = transactionHelper.saveOrUpdate(transaction);
 
-        AuthorizationResponse authorizationResponse = bankService.authorize(accountId, transaction.getPublicId(), money, k.getSymbol());
+        AuthorizationResponse authorizationResponse = bankService.authorize(accountId, transaction.getPublicId(), money, purchaseRequest.symbol);
         transaction.status = authorizationResponse.getAuthorized() ? Activity.Status.AUTHORIZED : Activity.Status.DECLINED;
         log.info("Received {} from Bank for transaction {}", transaction.status.name(), transaction.getId());
         transaction.setPublicId(UUID.fromString(authorizationResponse.getAuthorizationId()));
-        transactionHelper.saveOrUpdate(transaction);
+        transaction = transactionHelper.saveOrUpdate(transaction);
 
         if (authorizationResponse.getAuthorized()) {
-            sendPurchase(accountId, transaction.getId(), purchaseRequest.amount, purchaseRequest.symbol);
+            sendPurchase(accountId, transaction.getId(), purchaseRequest.amount, purchaseRequest.currencyCode, purchaseRequest.symbol);
         }
-        return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), purchaseRequest.amount, transaction.status.name());
+        return new ActivityDTO(transaction.getPublicId(), accountId, ActivityDTO.Type.PURCHASE, purchaseRequest.amount, transaction.status.name());
     }
 
     @Transactional
-    public TransactionDTO sell(Long accountId, SellRequestDTO sellRequest) {
+    public ActivityDTO sell(Long accountId, SellRequestDTO sellRequest) {
         Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(sellRequest.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(sellRequest.amount.compareTo(BigDecimal.ZERO) <= 0, "Cannot SELL a negative amount.");
 
 
-        Transaction transaction = new Transaction(Transaction.Type.PURCHASE);
+        Transaction transaction = new Transaction(Transaction.Type.SELL);
         transaction = transactionHelper.saveOrUpdate(transaction);
 
-        sendSell(accountId, transaction.getId(), sellRequest.amount, sellRequest.symbol);
-        return new TransactionDTO(transaction.getPublicId(), accountId, Transaction.Type.PURCHASE.name(), sellRequest.amount, transaction.status.name());
+        sendSell(accountId, transaction.getId(), sellRequest.amount, sellRequest.currencyCode, sellRequest.symbol);
+        return new ActivityDTO(transaction.getPublicId(), accountId, ActivityDTO.Type.SELL, sellRequest.amount, transaction.status.name());
     }
 
     public void handle(PurchaseMessage purchaseMessage) {
@@ -93,15 +93,22 @@ public class MarketHelper {
         Transaction transaction = transactionHelper.findById(purchaseMessage.transactionId);
         Wallet destination = walletHelper.findByAccountIdAndSymbol(purchaseMessage.accountId, purchaseMessage.symbol);
         Account account = accountHelper.findById(purchaseMessage.accountId);
+
+
+        Krypto k = kryptoHelper.findBySymbol(purchaseMessage.symbol);
+
+        Money money = convertIntoMoney(purchaseMessage.amount, purchaseMessage.currencyCode);
+        BigDecimal usd = BigDecimal.valueOf(bankService.convertMoney(money.toGrpcMoney(), com.bok.bank.integration.grpc.Currency.USD).getAmount());
+        BigDecimal kryptoAmount = getKryptoAmount(k, usd);
+
         transaction.setWallet(destination);
-        transaction.setAmount(purchaseMessage.amount);
+        transaction.setAmount(kryptoAmount);
         transaction.setAccount(account);
 
         try {
-            walletHelper.deposit(destination, purchaseMessage.amount);
+            walletHelper.deposit(destination, kryptoAmount);
 
-            Money amountToWithdraw = convertIntoMoney(destination.getKrypto(), purchaseMessage.amount);
-            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(amountToWithdraw, purchaseMessage.accountId, destination.getKrypto().getSymbol(), transaction.getPublicId());
+            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(money, purchaseMessage.accountId, destination.getKrypto().getSymbol(), transaction.getPublicId());
             bankService.sendBankWithdrawal(bankWithdrawalMessage);
 
         } catch (TransactionException ex) {
@@ -109,7 +116,7 @@ public class MarketHelper {
             EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";
             email.to = accountHelper.getEmailByAccountId(account.getId());
-            email.body = "Your PURCHASE transaction of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been DECLINED due to insufficient balance.";
+            email.body = "Your PURCHASE transaction of " + money.amount + money.getCurrency() + " of" + purchaseMessage.symbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
             messageService.sendEmail(email);
         }
@@ -117,7 +124,7 @@ public class MarketHelper {
         EmailMessage email = new EmailMessage();
         email.subject = "Transfer executed";
         email.to = accountHelper.getEmailByAccountId(account.getId());
-        email.body = "Your PURCHASE of " + purchaseMessage.amount + " " + purchaseMessage.symbol + " has been ACCEPTED.";
+        email.body = "Your PURCHASE of " + money.amount + money.getCurrency() + " of" + purchaseMessage.symbol + " has been ACCEPTED.";
         transaction.setStatus(Activity.Status.SETTLED);
         transactionHelper.saveOrUpdate(transaction);
         messageService.sendEmail(email);
@@ -137,7 +144,7 @@ public class MarketHelper {
         try {
             walletHelper.withdraw(source, sellMessage.amount);
 
-            Money amountToDeposit = convertIntoMoney(source.getKrypto(), sellMessage.amount);
+            Money amountToDeposit = convertIntoMoney(sellMessage.amount, sellMessage.currencyCode);
             BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, sellMessage.accountId, source.getKrypto().getSymbol());
             bankService.sendBankDeposit(bankDepositMessage);
 
@@ -163,7 +170,7 @@ public class MarketHelper {
         Transaction sellTransaction = new Transaction();
         sellTransaction.setAmount(amountToSell);
         sellTransaction.setAccount(account);
-        Money money = convertIntoMoney(walletToEmpty.getKrypto(), amountToSell);
+        Money money = convertKryptoIntoMoney(walletToEmpty.getKrypto(), amountToSell);
         //send message to bank to credit money USD
         bankService.sendBankDeposit(new BankDepositMessage(money, account.getId(), walletToEmpty.getKrypto().getSymbol()));
         transactionHelper.saveOrUpdate(sellTransaction);
@@ -178,9 +185,14 @@ public class MarketHelper {
 
     }
 
-    public Money convertIntoMoney(Krypto k, BigDecimal amount) {
+    public Money convertIntoMoney(BigDecimal amount, String currency) {
+        return new Money(Currency.getInstance(currency), amount);
+    }
+
+    public Money convertKryptoIntoMoney(Krypto k, BigDecimal amount) {
         return new Money(Currency.getInstance("USD"), k.getPrice().multiply(amount));
     }
+
 
     public void sendMarketEmail(String subject, String email, String text) {
         EmailMessage emailMessage = new EmailMessage();
@@ -190,21 +202,27 @@ public class MarketHelper {
         messageService.sendEmail(emailMessage);
     }
 
-    private void sendPurchase(Long accountId, Long transactionId, BigDecimal amount, String symbol) {
+    private void sendPurchase(Long accountId, Long transactionId, BigDecimal amount, String currencyCode, String symbol) {
         PurchaseMessage message = new PurchaseMessage();
         message.accountId = accountId;
         message.transactionId = transactionId;
         message.amount = amount;
         message.symbol = symbol;
+        message.currencyCode = currencyCode;
         messageService.sendPurchase(message);
     }
 
-    private void sendSell(Long accountId, Long transactionId, BigDecimal amount, String symbol) {
+    private void sendSell(Long accountId, Long transactionId, BigDecimal amount, String currency, String symbol) {
         SellMessage message = new SellMessage();
         message.accountId = accountId;
         message.transactionId = transactionId;
         message.amount = amount;
+        message.currencyCode = currency;
         message.symbol = symbol;
         messageService.sendSell(message);
+    }
+
+    private BigDecimal getKryptoAmount(Krypto k, BigDecimal usdMoneyAmount) {
+        return usdMoneyAmount.divide(k.getPrice());
     }
 }

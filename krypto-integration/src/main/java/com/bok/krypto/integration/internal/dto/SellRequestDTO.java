@@ -18,4 +18,5 @@ public class SellRequestDTO {
     public Long userId;
     public String symbol;
     public BigDecimal amount;
+    public String currencyCode;
 }

@@ -12,10 +12,18 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TransactionDTO {
+public class ActivityDTO {
+
     public UUID publicId;
     public Long accountId;
-    public String type;
+    public Type type;
     public BigDecimal amount;
     public String status;
+
+    public enum Type {
+        PURCHASE,
+        SELL,
+        TRANSFER
+    }
+
 }

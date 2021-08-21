@@ -15,4 +15,5 @@ public abstract class MarketMessage implements Serializable {
     public Long transactionId;
     public BigDecimal amount;
     public String symbol;
+    public String currencyCode;
 }
