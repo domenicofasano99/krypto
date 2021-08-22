@@ -25,4 +25,6 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
 
     @Query("SELECT t FROM Transfer t where (t.sourceWallet.id =: wallet_id or t.destinationWallet.id =:wallet_id) and t.creationTimestamp>=:from and t.creationTimestamp<=:until")
     List<Transfer> findByAndCreationTimestampBetween(@Param("wallet_id") Long wallet_id, @Param("from") Instant from, @Param("until") Instant until);
+
+    List<Transfer> findBySourceWallet_IdOrDestinationWallet_Id(Long sourceWallet_id, Long destinationWallet_id);
 }

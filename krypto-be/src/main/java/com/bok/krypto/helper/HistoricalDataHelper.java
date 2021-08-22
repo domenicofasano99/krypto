@@ -34,11 +34,10 @@ public class HistoricalDataHelper {
             throw new RuntimeException("Wrong period format");
         }
 
-        //TODO fix this, due to Hibernate problems the query in not working, try to fix the query and prefer it to retrieving all the HistoricalData list and then filtering it
+        //due to Hibernate problems the query with Instants and between is not working, the support for this kind of complex queries should be added in following versions
         Krypto k = kryptoHelper.findBySymbol(symbol);
         List<HistoricalData> data = k.getHistoricalData().stream().filter(h -> h.getTimestamp().isAfter(start) && h.getTimestamp().isBefore(end)).collect(Collectors.toList());
 
-        //List<HistoricalData> data = historicalDataRepository.findHistoricalDataBetween(start, end, symbol);
         log.info("found {} records for Krypto {} between dates {} and {}", data.size(), symbol, start, end);
         HistoricalDataDTO dto = new HistoricalDataDTO();
         dto.symbol = symbol;

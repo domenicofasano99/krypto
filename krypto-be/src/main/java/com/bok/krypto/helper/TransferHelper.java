@@ -17,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -143,7 +143,12 @@ public class TransferHelper {
         return transferRepository.countPendingTransfers();
     }
 
-    public List<Transfer> findByWalletIdAndDateBetween(Wallet wallet, LocalDate startDate, LocalDate endDate) {
-        return transferRepository.findByAndCreationTimestampBetween(wallet.getId(), startDate.atStartOfDay().toInstant(ZoneOffset.UTC), endDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+    public List<Transfer> findByWalletIdAndDateBetween(Wallet wallet, Instant startDate, Instant endDate) {
+        List<Transfer> transfers = transferRepository.findBySourceWallet_IdOrDestinationWallet_Id(wallet.getId(), wallet.getId());
+        return transfers.stream()
+                .filter(t -> t.getCreationTimestamp().isAfter(startDate)
+                        && t.getCreationTimestamp().isBefore(endDate))
+                .collect(Collectors.toList());
+        //return transferRepository.findByAndCreationTimestampBetween(wallet.getId(), startDate.atStartOfDay().toInstant(ZoneOffset.UTC), endDate.atStartOfDay().toInstant(ZoneOffset.UTC));
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @RestController
@@ -41,7 +42,7 @@ public class WalletController {
     }
 
     @GetMapping("/{symbol}/info")
-    public WalletInfoDTO walletInfo(@RequestParam("accountId") Long accountId, @PathVariable("symbol") String symbol, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
-        return walletService.info(accountId, symbol, startDate, endDate);
+    public WalletInfoDTO walletInfo(@RequestParam("accountId") Long accountId, @PathVariable("symbol") String symbol, @RequestParam("startDate") Instant from, @RequestParam("endDate") Instant until) {
+        return walletService.info(accountId, symbol, from, until);
     }
 }

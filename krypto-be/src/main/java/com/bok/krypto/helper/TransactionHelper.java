@@ -6,10 +6,10 @@ import com.bok.krypto.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class TransactionHelper {
@@ -29,7 +29,14 @@ public class TransactionHelper {
         return transactionRepository.findById(transactionId).orElseThrow(() -> new RuntimeException("Transaction not found"));
     }
 
-    public List<Transaction> findByWalletIdAndDateBetween(Wallet wallet, LocalDate startDate, LocalDate endDate) {
-        return transactionRepository.findByWallet_IdAndCreationTimestampBetween(wallet.getId(), startDate.atStartOfDay().toInstant(ZoneOffset.UTC), endDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+    public List<Transaction> findByWalletIdAndDateBetween(Wallet wallet, Instant startDate, Instant endDate) {
+
+        List<Transaction> transactions = transactionRepository.findByWalletId(wallet.getId());
+        return transactions.stream()
+                .filter(t -> t.getCreationTimestamp().isAfter(startDate)
+                        && t.getCreationTimestamp().isBefore(endDate))
+                .collect(Collectors.toList());
+
+        //return transactionRepository.findByWallet_IdAndCreationTimestampBetween(wallet.getId(), startDate.atStartOfDay().toInstant(ZoneOffset.UTC), endDate.atStartOfDay().toInstant(ZoneOffset.UTC));
     }
 }

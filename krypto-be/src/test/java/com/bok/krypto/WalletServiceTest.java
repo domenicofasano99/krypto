@@ -6,10 +6,7 @@ import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
 import com.bok.krypto.helper.AccountHelper;
 import com.bok.krypto.integration.internal.dto.*;
-import com.bok.krypto.model.Account;
-import com.bok.krypto.model.Krypto;
-import com.bok.krypto.model.Transaction;
-import com.bok.krypto.model.Wallet;
+import com.bok.krypto.model.*;
 import com.bok.krypto.repository.TransactionRepository;
 import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.repository.WalletRepository;
@@ -29,7 +26,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -203,17 +201,23 @@ public class WalletServiceTest {
 
         Wallet w = walletRepository.findByAccount_IdAndKrypto_Symbol(u.getId(), k.getSymbol()).get();
 
-
-        List<Transaction> transactions = Collections.singletonList(new Transaction(Transaction.Type.PURCHASE, w, 100L));
+        Transaction t = new Transaction();
+        t.setAccount(u);
+        t.setType(Transaction.Type.PURCHASE);
+        t.setAmount(BigDecimal.ONE);
+        t.setStatus(Activity.Status.SETTLED);
+        t.setPublicId(UUID.randomUUID());
+        t.setWallet(w);
+        t.setFee(0d);
+        List<Transaction> transactions = Collections.singletonList(t);
         transactionRepository.saveAll(transactions);
 
         w.setTransactions(transactions);
         w = walletRepository.save(w);
 
-        WalletInfoDTO response = walletService.info(u.getId(), k.getSymbol(), LocalDate.now().minusDays(100), LocalDate.now());
+        WalletInfoDTO response = walletService.info(u.getId(), k.getSymbol(), Instant.now().minus(100, ChronoUnit.DAYS), Instant.now());
         assertEquals(w.getKrypto().getSymbol(), response.symbol);
         assertEquals(response.activities.size(), 1);
-
     }
 
 }

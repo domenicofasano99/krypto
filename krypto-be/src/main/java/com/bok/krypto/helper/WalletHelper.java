@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -201,17 +201,11 @@ public class WalletHelper {
         return info;
     }
 
-    @Transactional
-    public WalletInfoDTO info(Long accountId, String symbol, LocalDate startDate, LocalDate endDate) {
+
+    public WalletInfoDTO info(Long accountId, String symbol, Instant startDate, Instant endDate) {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
 
         Wallet wallet = findByAccountIdAndSymbol(accountId, symbol);
-        return getInfoFromWalletWithActivities(wallet, startDate, endDate);
-    }
-
-
-    //TODO add also transfers
-    private WalletInfoDTO getInfoFromWalletWithActivities(Wallet wallet, LocalDate startDate, LocalDate endDate) {
         WalletInfoDTO info = getInfoFromWallet(wallet);
         info.activities = transactionHelper.findByWalletIdAndDateBetween(wallet, startDate, endDate)
                 .stream()

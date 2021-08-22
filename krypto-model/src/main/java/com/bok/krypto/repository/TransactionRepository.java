@@ -24,6 +24,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT t  FROM Transaction t WHERE t.creationTimestamp>=:from AND t.creationTimestamp<=:until and t.wallet.id=:walletId")
     List<Transaction> findByWallet_IdAndCreationTimestampBetween(@Param("walletId") Long wallet_id, @Param("from") Instant from, @Param("until") Instant until);
 
+    List<Transaction> findByWalletId(Long walletId);
+
     public static class Projection {
         public interface Status {
             Transaction.Status getStatus();

@@ -88,7 +88,6 @@ public class MarketServiceImpl implements MarketService {
         return kryptoHelper.getKryptoInfos(requestDTO);
     }
 
-    //TODO fix query and remove transactional
     @Override
     @Transactional
     public HistoricalDataDTO getKryptoHistoricalData(String symbol, Instant startDate, Instant endDate) {
