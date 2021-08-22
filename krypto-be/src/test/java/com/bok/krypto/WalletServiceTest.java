@@ -199,6 +199,9 @@ public class WalletServiceTest {
         WalletResponseDTO responseDTO = walletService.create(u.getId(), requestDTO);
         modelTestUtils.await();
 
+        WalletInfoDTO response = walletService.info(u.getId(), k.getSymbol(), Instant.now(), Instant.now());
+        assertEquals(response.activities.size(), 0);
+
         Wallet w = walletRepository.findByAccount_IdAndKrypto_Symbol(u.getId(), k.getSymbol()).get();
 
         Transaction t = new Transaction();
@@ -215,7 +218,7 @@ public class WalletServiceTest {
         w.setTransactions(transactions);
         w = walletRepository.save(w);
 
-        WalletInfoDTO response = walletService.info(u.getId(), k.getSymbol(), Instant.now().minus(100, ChronoUnit.DAYS), Instant.now());
+        response = walletService.info(u.getId(), k.getSymbol(), Instant.now().minus(100, ChronoUnit.DAYS), Instant.now());
         assertEquals(w.getKrypto().getSymbol(), response.symbol);
         assertEquals(response.activities.size(), 1);
     }

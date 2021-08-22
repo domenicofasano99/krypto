@@ -17,4 +17,6 @@ public interface HistoricalDataRepository extends JpaRepository<HistoricalData, 
 
     List<HistoricalData> findHistoricalDataByTimestampAfterAndTimestampBeforeAndKrypto_Symbol(@NonNull Instant timestampStart, @NonNull Instant timestampEnd, @NonNull String symbol);
 
+    List<HistoricalData> findByKrypto_Symbol(String krypto_symbol);
+
 }

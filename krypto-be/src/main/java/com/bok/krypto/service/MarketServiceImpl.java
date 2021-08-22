@@ -89,7 +89,6 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    @Transactional
     public HistoricalDataDTO getKryptoHistoricalData(String symbol, Instant startDate, Instant endDate) {
         Preconditions.checkNotNull(startDate, "Start date Instant cannot be null");
         Preconditions.checkNotNull(endDate, "End date Instant cannot be null");

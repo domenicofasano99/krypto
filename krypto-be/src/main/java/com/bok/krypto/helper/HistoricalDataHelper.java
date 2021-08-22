@@ -26,24 +26,25 @@ public class HistoricalDataHelper {
     KryptoHelper kryptoHelper;
 
 
-    public HistoricalDataDTO getKryptoHistoricalData(String symbol, Instant start, Instant end) {
+    public HistoricalDataDTO getKryptoHistoricalData(String symbol, Instant from, Instant until) {
         if (!kryptoHelper.existsBySymbol(symbol)) {
             throw new KryptoNotFoundException("Krypto " + symbol + " does not exist");
         }
-        if (end.isBefore(start) || start.isAfter(end)) {
+        if (until.isBefore(from) || from.isAfter(until)) {
             throw new RuntimeException("Wrong period format");
         }
 
         //due to Hibernate problems the query with Instants and between is not working, the support for this kind of complex queries should be added in following versions
-        Krypto k = kryptoHelper.findBySymbol(symbol);
-        List<HistoricalData> data = k.getHistoricalData().stream().filter(h -> h.getTimestamp().isAfter(start) && h.getTimestamp().isBefore(end)).collect(Collectors.toList());
+        List<HistoricalData> data = historicalDataRepository.findByKrypto_Symbol(symbol).stream()
+                .filter(h -> h.getTimestamp().isAfter(from) && h.getTimestamp().isBefore(until))
+                .collect(Collectors.toList());
 
-        log.info("found {} records for Krypto {} between dates {} and {}", data.size(), symbol, start, end);
+        log.info("found {} records for Krypto {} between dates {} and {}", data.size(), symbol, from, until);
         HistoricalDataDTO dto = new HistoricalDataDTO();
         dto.symbol = symbol;
         dto.history = new ArrayList<>();
-        dto.start = start;
-        dto.end = end;
+        dto.start = from;
+        dto.end = until;
         for (HistoricalData datum : data) {
             RecordDTO record = new RecordDTO();
             record.id = datum.getId();

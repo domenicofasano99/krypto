@@ -135,7 +135,7 @@ public class MarketServiceTest {
 
     @Test
     @Transactional
-    public void getKryptoHistoricalData() {
+    public void getKryptoHistoricalData() throws InterruptedException {
         Krypto krypto = modelTestUtils.getRandomKrypto();
         Random random = new Random();
         Collection<HistoricalData> collection = new ArrayList<>();
@@ -143,9 +143,10 @@ public class MarketServiceTest {
             HistoricalData hd = new HistoricalData(krypto, random.nextDouble(), Instant.now().minusSeconds(random.nextInt(99999)));
             collection.add(hd);
         }
-        historicalDataRepository.saveAll(collection);
+        historicalDataRepository.saveAllAndFlush(collection);
         krypto.addHistoricalData(collection);
-        kryptoRepository.save(krypto);
+        kryptoRepository.saveAndFlush(krypto);
+        Thread.sleep(1000);
 
         HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), Instant.now().minus(300, ChronoUnit.HOURS), Instant.now());
         assertNotNull(response.history);
