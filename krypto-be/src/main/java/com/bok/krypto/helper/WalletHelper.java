@@ -179,21 +179,24 @@ public class WalletHelper {
         messageService.sendEmail(emailMessage);
     }
 
+    @Transactional
     public WalletsDTO getWallets(Long accountId) {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
         List<Wallet> wallets = walletRepository.findByAccount_Id(accountId);
         WalletsDTO walletsDTO = new WalletsDTO();
         walletsDTO.wallets = new ArrayList<>();
 
-        wallets.forEach(w -> {
+        for (Wallet w : wallets) {
+            WalletInfoDTO walletInfoDTO = new WalletInfoDTO();
             if (w.getStatus().equals(Wallet.Status.PENDING)) {
-                WalletInfoDTO walletInfoDTO = new WalletInfoDTO();
-                walletInfoDTO.symbol = w.getKrypto().getSymbol();
+                //walletInfoDTO.symbol = w.getKrypto().getSymbol(); not available if wallet has not been created first
                 walletInfoDTO.status = WalletInfoDTO.Status.valueOf(w.getStatus().name());
             } else {
-                walletsDTO.wallets.add(getInfoFromWallet(w));
+                walletInfoDTO = getInfoFromWallet(w);
             }
-        });
+            walletsDTO.wallets.add(walletInfoDTO);
+        }
+
         return walletsDTO;
     }
 
