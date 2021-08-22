@@ -17,15 +17,6 @@ public class BankGrpcClient {
     @GrpcClient("bank")
     BankGrpc.BankBlockingStub bankBlockingStub;
 
-    public AuthorizationResponse authorize(Long accountId, UUID extTransactionId) {
-        AuthorizationRequest.Builder requestBuilder = AuthorizationRequest.newBuilder();
-        requestBuilder.setAccountId(accountId);
-        requestBuilder.setExtTransactionId(extTransactionId.toString());
-
-        Money.Builder moneyBuilder = Money.newBuilder();
-        return bankBlockingStub.authorize(AuthorizationRequest.newBuilder().build());
-    }
-
     public AccountInfoResponse getAccountInfo(Long accountId) {
         AccountInfoRequest.Builder requestBuilder = AccountInfoRequest.newBuilder();
         requestBuilder.setAccountId(accountId);
