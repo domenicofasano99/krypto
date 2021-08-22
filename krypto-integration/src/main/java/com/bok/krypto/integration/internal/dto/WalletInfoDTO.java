@@ -17,4 +17,10 @@ public class WalletInfoDTO {
     public UUID id;
     public List<WalletBalanceInfoDTO> balanceHistory;
     public List<ActivityDTO> activities;
+    public Status status;
+
+    public enum Status {
+        PENDING,
+        CREATED
+    }
 }

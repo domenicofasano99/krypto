@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SellRequestDTO {
 
-    public Long userId;
     public String symbol;
     public BigDecimal amount;
     public String currencyCode;

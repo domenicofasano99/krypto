@@ -179,15 +179,21 @@ public class WalletHelper {
         messageService.sendEmail(emailMessage);
     }
 
-    public WalletsDTO wallets(Long accountId) {
+    public WalletsDTO getWallets(Long accountId) {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
         List<Wallet> wallets = walletRepository.findByAccount_Id(accountId);
         WalletsDTO walletsDTO = new WalletsDTO();
         walletsDTO.wallets = new ArrayList<>();
-        wallets.forEach(w -> {
-            walletsDTO.wallets.add(getInfoFromWallet(w));
-        });
 
+        wallets.forEach(w -> {
+            if (w.getStatus().equals(Wallet.Status.PENDING)) {
+                WalletInfoDTO walletInfoDTO = new WalletInfoDTO();
+                walletInfoDTO.symbol = w.getKrypto().getSymbol();
+                walletInfoDTO.status = WalletInfoDTO.Status.valueOf(w.getStatus().name());
+            } else {
+                walletsDTO.wallets.add(getInfoFromWallet(w));
+            }
+        });
         return walletsDTO;
     }
 
@@ -198,6 +204,7 @@ public class WalletHelper {
         info.symbol = wallet.getKrypto().getSymbol();
         info.creationTimestamp = wallet.getCreationTime();
         info.updateTimestamp = wallet.getUpdateTime();
+        info.status = WalletInfoDTO.Status.valueOf(wallet.getStatus().name());
         return info;
     }
 

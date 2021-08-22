@@ -39,6 +39,6 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public WalletsDTO listWallets(Long accountId) {
         Preconditions.checkNotNull(accountId);
-        return walletHelper.wallets(accountId);
+        return walletHelper.getWallets(accountId);
     }
 }
