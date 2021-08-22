@@ -121,6 +121,7 @@ public class WalletHelper {
         w.setAddress(addressGenerator.generateBitcoinAddress());
         w.setKrypto(kryptoHelper.findBySymbol(walletCreationMessage.symbol));
         w.setAvailableAmount(BigDecimal.ZERO);
+        w.setStatus(Wallet.Status.CREATED);
         walletRepository.save(w);
         messageService.sendEmail(emailWalletCreation(w, w.getAccount()));
     }
