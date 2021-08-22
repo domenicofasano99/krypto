@@ -3,14 +3,7 @@ package com.bok.krypto;
 import com.bok.bank.integration.grpc.AuthorizationResponse;
 import com.bok.bank.integration.grpc.Currency;
 import com.bok.bank.integration.grpc.Money;
-import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
-import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
-import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
-import com.bok.krypto.integration.internal.dto.KryptoInfosRequestDTO;
-import com.bok.krypto.integration.internal.dto.PriceResponseDTO;
-import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
-import com.bok.krypto.integration.internal.dto.RecordDTO;
-import com.bok.krypto.integration.internal.dto.ActivityDTO;
+import com.bok.krypto.integration.internal.dto.*;
 import com.bok.krypto.model.*;
 import com.bok.krypto.repository.HistoricalDataRepository;
 import com.bok.krypto.repository.KryptoRepository;
@@ -19,7 +12,6 @@ import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MarketService;
 import com.bok.krypto.utils.ModelTestUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,20 +23,14 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.bok.krypto.utils.Constants.BTC;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -200,7 +186,7 @@ public class MarketServiceTest {
         assertNotNull(response.publicId);
     }
 
-    @Ignore
+    //@Ignore
     public void evaluatePerformance() {
         int kryptos = 1000;
         int records = 1000;

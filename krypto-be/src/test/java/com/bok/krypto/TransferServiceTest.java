@@ -24,9 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 
 import static com.bok.krypto.utils.Constants.BTC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")

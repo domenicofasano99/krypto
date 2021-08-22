@@ -23,7 +23,6 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
 
     Optional<Transfer> findByPublicId(UUID transferId);
 
-    //TODO write the query to get all transfers with source or destination that ID
-    @Query("SELECT t FROM Transfer t where (t.sourceWallet =: id or t.destinationWallet =:id) and t.creationTimestamp between :start and :end")
-    List<Transfer> findByAndCreationTimestampBetween(Long id, Instant start, Instant end);
+    @Query("SELECT t FROM Transfer t where (t.sourceWallet.id =: wallet_id or t.destinationWallet.id =:wallet_id) and t.creationTimestamp>=:from and t.creationTimestamp<=:until")
+    List<Transfer> findByAndCreationTimestampBetween(@Param("wallet_id") Long wallet_id, @Param("from") Instant from, @Param("until") Instant until);
 }

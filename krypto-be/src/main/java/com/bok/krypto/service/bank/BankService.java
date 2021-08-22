@@ -1,12 +1,14 @@
 package com.bok.krypto.service.bank;
 
-import com.bok.bank.integration.grpc.*;
+import com.bok.bank.integration.grpc.AccountInfoResponse;
+import com.bok.bank.integration.grpc.AuthorizationResponse;
+import com.bok.bank.integration.grpc.Currency;
+import com.bok.bank.integration.grpc.Money;
 import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
-import com.bok.bank.integration.util.AuthorizationException;
+import com.bok.krypto.grpc.client.BankGrpcClient;
 import com.bok.krypto.service.interfaces.MessageService;
 import lombok.extern.slf4j.Slf4j;
-import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,35 +18,14 @@ import java.util.UUID;
 @Service
 public class BankService {
 
-    @GrpcClient("bank")
-    BankGrpc.BankBlockingStub bankBlockingStub;
+    @Autowired
+    BankGrpcClient bankGrpcClient;
 
     @Autowired
     MessageService messageService;
 
     public AuthorizationResponse authorize(Long accountId, UUID publicTransactionId, com.bok.bank.integration.util.Money money, String fromMarket) {
-
-        AuthorizationRequest.Builder authorizationRequestBuilder = AuthorizationRequest.newBuilder();
-        Money.Builder moneyBuilder = Money.newBuilder();
-
-        authorizationRequestBuilder.setAccountId(accountId);
-        authorizationRequestBuilder.setExtTransactionId(publicTransactionId.toString());
-        moneyBuilder.setCurrency(Currency.USD).setAmount(money.getAmount().doubleValue()).build();
-        authorizationRequestBuilder.setMoney(moneyBuilder);
-        authorizationRequestBuilder.setFromMarket(fromMarket);
-        try {
-            return bankBlockingStub.authorize(authorizationRequestBuilder.build());
-        } catch (Exception e) {
-            log.error("Error while authorizing transaction");
-            throw new AuthorizationException("Error while authorizing transaction, try again");
-        }
-
-    }
-
-    public AccountInfoResponse getAccountDetails(Long accountId) {
-        AccountInfoRequest.Builder requestBuilder = AccountInfoRequest.newBuilder();
-        requestBuilder.setAccountId(accountId);
-        return bankBlockingStub.getAccountInfo(requestBuilder.build());
+        return bankGrpcClient.authorize(accountId, publicTransactionId, money, fromMarket);
     }
 
     public void sendBankWithdrawal(BankWithdrawalMessage bankWithdrawalMessage) {
@@ -56,8 +37,10 @@ public class BankService {
     }
 
     public Money convertMoney(Money from, Currency to) {
-        ConversionRequest.Builder conversionRequest = ConversionRequest.newBuilder();
-        conversionRequest.setFrom(from).setTo(to);
-        return bankBlockingStub.convertMoney(conversionRequest.build());
+        return bankGrpcClient.convertMoney(from, to);
+    }
+
+    public AccountInfoResponse getAccountInfo(Long accountId) {
+        return bankGrpcClient.getAccountInfo(accountId);
     }
 }

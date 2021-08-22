@@ -1,17 +1,8 @@
 package com.bok.krypto.helper;
 
 import com.bok.krypto.core.AddressGenerator;
-import com.bok.krypto.exception.InvalidRequestException;
-import com.bok.krypto.exception.KryptoNotFoundException;
-import com.bok.krypto.exception.TransactionException;
-import com.bok.krypto.exception.WalletAlreadyExistsException;
-import com.bok.krypto.exception.WalletNotFoundException;
-import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
-import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
-import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
-import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
-import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
-import com.bok.krypto.integration.internal.dto.WalletsDTO;
+import com.bok.krypto.exception.*;
+import com.bok.krypto.integration.internal.dto.*;
 import com.bok.krypto.messaging.messages.WalletCreationMessage;
 import com.bok.krypto.messaging.messages.WalletDeleteMessage;
 import com.bok.krypto.model.Account;
@@ -210,6 +201,7 @@ public class WalletHelper {
         return info;
     }
 
+    @Transactional
     public WalletInfoDTO info(Long accountId, String symbol, LocalDate startDate, LocalDate endDate) {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
 

@@ -1,41 +1,43 @@
 package com.bok.krypto;
 
+import com.bok.bank.integration.grpc.AuthorizationResponse;
 import com.bok.krypto.core.AddressGenerator;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
-import com.bok.krypto.grpc.client.ParentGrpcClient;
 import com.bok.krypto.helper.AccountHelper;
-import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
-import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
-import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
-import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
-import com.bok.krypto.integration.internal.dto.WalletsDTO;
+import com.bok.krypto.integration.internal.dto.*;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Krypto;
+import com.bok.krypto.model.Transaction;
 import com.bok.krypto.model.Wallet;
+import com.bok.krypto.repository.TransactionRepository;
+import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.repository.WalletRepository;
-import com.bok.krypto.service.bank.BankClient;
 import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.WalletService;
+import com.bok.krypto.service.parent.ParentService;
 import com.bok.krypto.utils.ModelTestUtils;
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 import static com.bok.krypto.utils.Constants.BTC;
 import static com.bok.krypto.utils.Constants.ETH;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -56,29 +58,38 @@ public class WalletServiceTest {
     @Autowired
     WalletRepository walletRepository;
 
-    @Autowired
+    @Mock
     BankService bankService;
 
     @Autowired
     AddressGenerator addressGenerator;
 
-    @Mock
+    @Autowired
     AccountHelper accountHelper;
 
-    @Before
-    public void setup() {
-        BankClient bankClient = mock(BankClient.class);
-        ParentGrpcClient parentGrpcClient = mock(ParentGrpcClient.class);
-        when(accountHelper.getEmailByAccountId(anyLong())).thenReturn(faker.internet().emailAddress());
-        //Mockito.when(bankClient.authorize(anyLong(), any(AuthorizationRequestDTO)).thenReturn(true);
-        ReflectionTestUtils.setField(bankService, "bankClient", bankClient);
+    @Autowired
+    TransactionRepository transactionRepository;
 
-    }
+    @Autowired
+    TransferRepository transferRepository;
+
 
     @BeforeEach
     public void initialize() {
         modelTestUtils.clearAll();
         modelTestUtils.createBaseKryptos();
+
+
+        ParentService parentService = mock(ParentService.class);
+        Mockito.when(parentService.getEmailByAccountId(anyLong())).thenReturn(faker.internet().emailAddress());
+        ReflectionTestUtils.setField(accountHelper, "parentService", parentService);
+
+        //BankService bankService = mock(BankService.class);
+        AuthorizationResponse.Builder authResponse = AuthorizationResponse.newBuilder().setAuthorizationId(UUID.randomUUID().toString()).setAuthorized(true);
+        Mockito.when(bankService.authorize(any(), any(), any(), any())).thenReturn(authResponse.build());
+
+        // ReflectionTestUtils.setField(this.bankService, "bankService", bankService);
+
     }
 
     @Test
@@ -177,6 +188,32 @@ public class WalletServiceTest {
     public void generateWalletAddress() {
         String address = addressGenerator.generateBitcoinAddress();
         assertNotNull(address);
+    }
+
+    @Test
+    public void testWalletInfo() {
+
+        Account u = modelTestUtils.createAccount();
+        Krypto k = modelTestUtils.getRandomKrypto();
+
+        WalletRequestDTO requestDTO = new WalletRequestDTO();
+        requestDTO.symbol = k.getSymbol();
+        WalletResponseDTO responseDTO = walletService.create(u.getId(), requestDTO);
+        modelTestUtils.await();
+
+        Wallet w = walletRepository.findByAccount_IdAndKrypto_Symbol(u.getId(), k.getSymbol()).get();
+
+
+        List<Transaction> transactions = Collections.singletonList(new Transaction(Transaction.Type.PURCHASE, w, 100L));
+        transactionRepository.saveAll(transactions);
+
+        w.setTransactions(transactions);
+        w = walletRepository.save(w);
+
+        WalletInfoDTO response = walletService.info(u.getId(), k.getSymbol(), LocalDate.now().minusDays(100), LocalDate.now());
+        assertEquals(w.getKrypto().getSymbol(), response.symbol);
+        assertEquals(response.activities.size(), 1);
+
     }
 
 }
