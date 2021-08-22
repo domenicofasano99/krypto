@@ -36,7 +36,7 @@ public class BankGrpcClient {
         try {
             return bankBlockingStub.authorize(authorizationRequestBuilder.build());
         } catch (Exception e) {
-            log.error("Error while authorizing transaction");
+            log.error("Error while authorizing transaction, exception: {}", e);
             throw new AuthorizationException("Error while authorizing transaction, try again");
         }
 
