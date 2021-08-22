@@ -148,7 +148,7 @@ public class MarketServiceTest {
         kryptoRepository.saveAndFlush(krypto);
         Thread.sleep(1000);
 
-        HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), Instant.now().minus(300, ChronoUnit.HOURS), Instant.now());
+        HistoricalDataDTO response = marketService.getKryptoHistoricalData(krypto.getSymbol(), java.time.Instant.parse("2021-08-10T22:00:00.000Z"), Instant.now());
         assertNotNull(response.history);
         assertThat(response.history.size(), greaterThan(0));
         log.info(String.valueOf(response.history));
