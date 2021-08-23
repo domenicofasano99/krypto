@@ -46,7 +46,7 @@ public class WalletController {
         return walletService.info(accountId, symbol, from, until);
     }
 
-    @GetMapping("/validateAddress")
+    @PostMapping("/validateAddress")
     public Boolean exists(@RequestParam("accountId") Long accountId, @RequestBody ValidationRequestDTO validationRequestDTO){
         return walletService.validateAddress(validationRequestDTO);
     }

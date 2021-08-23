@@ -14,6 +14,10 @@ import com.bok.krypto.utils.ModelTestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -67,14 +71,18 @@ public class MarketServiceTest {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
         Wallet wallet = modelTestUtils.createWallet(account, krypto, new BigDecimal("0.9"));
+
         when(bankService.authorize(any(), any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
         when(bankService.convertMoney(any(), any())).thenReturn(Money.newBuilder().setCurrency(Currency.USD).setAmount(10).build());
+
         PurchaseRequestDTO purchaseRequestDTO = new PurchaseRequestDTO();
         purchaseRequestDTO.symbol = BTC;
         purchaseRequestDTO.amount = new BigDecimal("10");
         purchaseRequestDTO.currencyCode = "USD";
+        purchaseRequestDTO.cardToken = "randomToken";
         ActivityDTO activityDTO = marketService.buy(account.getId(), purchaseRequestDTO);
         modelTestUtils.await();
+        Thread.sleep(100);
         Transaction transaction = transactionRepository.findByPublicId(activityDTO.publicId).orElse(null);
         assertNotNull(transaction);
         assertEquals(Transaction.Status.AUTHORIZED, transaction.getStatus());
@@ -168,6 +176,8 @@ public class MarketServiceTest {
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
         purchaseRequest.symbol = krypto.getSymbol();
+        purchaseRequest.currencyCode = "USD";
+        purchaseRequest.cardToken = "token";
 
         ActivityDTO response = marketService.buy(account.getId(), purchaseRequest);
     }
@@ -181,6 +191,8 @@ public class MarketServiceTest {
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
         purchaseRequest.symbol = krypto.getSymbol();
+        purchaseRequest.currencyCode = "USD";
+        purchaseRequest.cardToken = "token";
 
         ActivityDTO response = marketService.buy(account.getId(), purchaseRequest);
         assertNotNull(response.publicId);
@@ -199,9 +211,10 @@ public class MarketServiceTest {
     }
 
     @Test
-    public void testMarketHistory() {
+    public void testMarketHistory() throws InterruptedException {
         Krypto k = modelTestUtils.getRandomKrypto();
         modelTestUtils.addHistoricalDataForKrypto(k, 100);
+        Thread.sleep(100);
         HistoricalDataDTO response = marketService.getKryptoHistoricalData(k.getSymbol(), Instant.now().minusSeconds(999999999), Instant.now());
         assertEquals(100, response.history.size());
     }
