@@ -28,9 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.bok.krypto.utils.Constants.BTC;
 import static com.bok.krypto.utils.Constants.ETH;
@@ -84,7 +82,7 @@ public class WalletServiceTest {
 
         //BankService bankService = mock(BankService.class);
         AuthorizationResponse.Builder authResponse = AuthorizationResponse.newBuilder().setAuthorizationId(UUID.randomUUID().toString()).setAuthorized(true);
-        Mockito.when(bankService.authorize(any(), any(), any(), any())).thenReturn(authResponse.build());
+        Mockito.when(bankService.authorize(any(), any(), any(), any(), any())).thenReturn(authResponse.build());
 
         // ReflectionTestUtils.setField(this.bankService, "bankService", bankService);
 
@@ -189,6 +187,18 @@ public class WalletServiceTest {
     }
 
     @Test
+    public void checkForWalletAddressUniqueness() {
+        Set<String> addresses = new HashSet<>();
+
+        for (int c = 0; c < 1000; c++) {
+            String address = addressGenerator.generateBitcoinAddress();
+            assertFalse(addresses.contains(address));
+            addresses.add(address);
+        }
+    }
+
+
+    @Test
     public void testWalletInfo() {
 
         Account u = modelTestUtils.createAccount();
@@ -221,6 +231,28 @@ public class WalletServiceTest {
         response = walletService.info(u.getId(), k.getSymbol(), Instant.now().minus(100, ChronoUnit.DAYS), Instant.now());
         assertEquals(w.getKrypto().getSymbol(), response.symbol);
         assertEquals(response.activities.size(), 1);
+    }
+
+    @Test
+    public void testAddressValidation_validAddress() {
+        Account a = modelTestUtils.createAccount();
+        Krypto k = modelTestUtils.getRandomKrypto();
+        Wallet w = modelTestUtils.createWallet(a, k, BigDecimal.ZERO);
+
+        ValidationRequestDTO request = new ValidationRequestDTO();
+        request.address = w.getAddress();
+        request.symbol = k.getSymbol();
+        assertTrue(walletService.validateAddress(request));
+    }
+
+    @Test
+    public void testAddressValidation_invalidAddress() {
+        Krypto k = modelTestUtils.getRandomKrypto();
+
+        ValidationRequestDTO request = new ValidationRequestDTO();
+        request.address = "address";
+        request.symbol = k.getSymbol();
+        assertFalse(walletService.validateAddress(request));
     }
 
 }

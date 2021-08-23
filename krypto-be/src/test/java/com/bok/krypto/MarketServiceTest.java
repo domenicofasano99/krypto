@@ -22,7 +22,6 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,7 +67,7 @@ public class MarketServiceTest {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
         Wallet wallet = modelTestUtils.createWallet(account, krypto, new BigDecimal("0.9"));
-        when(bankService.authorize(any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
+        when(bankService.authorize(any(), any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
         when(bankService.convertMoney(any(), any())).thenReturn(Money.newBuilder().setCurrency(Currency.USD).setAmount(10).build());
         PurchaseRequestDTO purchaseRequestDTO = new PurchaseRequestDTO();
         purchaseRequestDTO.symbol = BTC;
@@ -164,7 +163,7 @@ public class MarketServiceTest {
     public void deniedPurchaseTest_insufficientBalance() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.authorize(any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(false).setAuthorizationId(UUID.randomUUID().toString()).build());
+        when(bankService.authorize(any(), any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(false).setAuthorizationId(UUID.randomUUID().toString()).build());
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");
@@ -177,7 +176,7 @@ public class MarketServiceTest {
     public void purchaseTest_permitted() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
-        when(bankService.authorize(any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
+        when(bankService.authorize(any(), any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");

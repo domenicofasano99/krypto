@@ -41,4 +41,12 @@ public class WalletServiceImpl implements WalletService {
         Preconditions.checkNotNull(accountId);
         return walletHelper.getWallets(accountId);
     }
+
+    @Override
+    public Boolean validateAddress(ValidationRequestDTO requestDTO) {
+        Preconditions.checkNotNull(requestDTO);
+        Preconditions.checkNotNull(requestDTO.symbol, "wallet symbol cannot be null");
+        Preconditions.checkNotNull(requestDTO.address, "wallet address cannot be null");
+        return walletHelper.validateAddress(requestDTO);
+    }
 }

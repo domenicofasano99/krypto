@@ -24,8 +24,8 @@ public class BankService {
     @Autowired
     MessageService messageService;
 
-    public AuthorizationResponse authorize(Long accountId, UUID publicTransactionId, com.bok.bank.integration.util.Money money, String fromMarket) {
-        return bankGrpcClient.authorize(accountId, publicTransactionId, money, fromMarket);
+    public AuthorizationResponse authorize(Long accountId, UUID publicTransactionId, String cardToken, com.bok.bank.integration.util.Money money, String fromMarket) {
+        return bankGrpcClient.authorize(accountId, publicTransactionId, cardToken, money, fromMarket);
     }
 
     public void sendBankWithdrawal(BankWithdrawalMessage bankWithdrawalMessage) {

@@ -13,4 +13,6 @@ public interface WalletService {
     WalletInfoDTO info(Long userId, String symbol, Instant startDate, Instant endDate);
 
     WalletsDTO listWallets(Long userId);
+
+    Boolean validateAddress(ValidationRequestDTO validationRequestDTO);
 }

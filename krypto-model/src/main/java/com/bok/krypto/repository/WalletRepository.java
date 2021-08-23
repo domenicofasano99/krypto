@@ -23,4 +23,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
     Integer countPendingWallets();
 
     List<Wallet> findByAccount_Id(Long accountId);
+
+    Boolean existsByAddressAndKrypto_Symbol(String address, String krypto_symbol);
 }

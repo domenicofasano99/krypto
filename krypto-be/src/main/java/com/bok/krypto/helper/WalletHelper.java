@@ -230,4 +230,7 @@ public class WalletHelper {
         return info;
     }
 
+    public Boolean validateAddress(ValidationRequestDTO validationRequestDTO) {
+        return walletRepository.existsByAddressAndKrypto_Symbol(validationRequestDTO.address, validationRequestDTO.symbol);
+    }
 }

@@ -1,8 +1,6 @@
 package com.bok.krypto.grpc.client;
 
 import com.bok.bank.integration.grpc.*;
-import com.bok.bank.integration.message.BankDepositMessage;
-import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.bank.integration.util.AuthorizationException;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -24,8 +22,7 @@ public class BankGrpcClient {
     }
 
 
-    //TODO check currency
-    public AuthorizationResponse authorize(Long accountId, UUID publicTransactionId, com.bok.bank.integration.util.Money money, String fromMarket) {
+    public AuthorizationResponse authorize(Long accountId, UUID publicTransactionId, String cardToken, com.bok.bank.integration.util.Money money, String fromMarket) {
 
         AuthorizationRequest.Builder authorizationRequestBuilder = AuthorizationRequest.newBuilder();
         Money.Builder moneyBuilder = Money.newBuilder();
@@ -35,6 +32,8 @@ public class BankGrpcClient {
         moneyBuilder.setCurrency(Currency.USD).setAmount(money.getAmount().doubleValue()).build();
         authorizationRequestBuilder.setMoney(moneyBuilder);
         authorizationRequestBuilder.setFromMarket(fromMarket);
+        authorizationRequestBuilder.setCardToken(cardToken);
+
         try {
             return bankBlockingStub.authorize(authorizationRequestBuilder.build());
         } catch (Exception e) {

@@ -20,6 +20,14 @@ public class ActivityDTO {
     public BigDecimal amount;
     public String status;
 
+    public ActivityDTO(UUID publicId, Long accountId, Type type, BigDecimal amount, String status) {
+        this.publicId = publicId;
+        this.accountId = accountId;
+        this.type = type;
+        this.amount = amount;
+        this.status = status;
+    }
+
     public enum Type {
         PURCHASE,
         SELL,

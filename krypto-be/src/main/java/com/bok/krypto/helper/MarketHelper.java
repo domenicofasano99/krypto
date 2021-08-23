@@ -56,13 +56,12 @@ public class MarketHelper {
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(purchaseRequest.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(purchaseRequest.amount.compareTo(BigDecimal.ZERO) > 0, ErrorCodes.NEGATIVE_AMOUNT_GIVEN);
 
-        //Krypto k = kryptoHelper.findBySymbol(purchaseRequest.symbol);
         Money money = convertIntoMoney(purchaseRequest.amount, purchaseRequest.currencyCode);
 
         Transaction transaction = new Transaction(Transaction.Type.PURCHASE);
         transaction = transactionHelper.saveOrUpdate(transaction);
 
-        AuthorizationResponse authorizationResponse = bankService.authorize(accountId, transaction.getPublicId(), money, purchaseRequest.symbol);
+        AuthorizationResponse authorizationResponse = bankService.authorize(accountId, transaction.getPublicId(), purchaseRequest.cardToken, money, purchaseRequest.symbol);
         transaction.status = authorizationResponse.getAuthorized() ? Activity.Status.AUTHORIZED : Activity.Status.DECLINED;
         log.info("Received {} from Bank for transaction {}", transaction.status.name(), transaction.getId());
         transaction.setPublicId(UUID.fromString(authorizationResponse.getAuthorizationId()));

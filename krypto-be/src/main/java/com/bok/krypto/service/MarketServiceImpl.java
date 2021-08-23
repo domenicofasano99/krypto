@@ -48,7 +48,8 @@ public class MarketServiceImpl implements MarketService {
         Preconditions.checkNotNull(purchaseRequestDTO, "Request body was empty");
         Preconditions.checkNotNull(purchaseRequestDTO.symbol, "Symbol cannot be null");
         Preconditions.checkNotNull(purchaseRequestDTO.amount, "Amount cannot be null");
-        Preconditions.checkNotNull(purchaseRequestDTO.currencyCode, "Currency cannot be null");
+        Preconditions.checkNotNull(purchaseRequestDTO.currencyCode, "Currency Code cannot be null");
+        Preconditions.checkNotNull(purchaseRequestDTO.cardToken, "Card Token cannot be null");
         return marketHelper.buy(accountId, purchaseRequestDTO);
     }
 

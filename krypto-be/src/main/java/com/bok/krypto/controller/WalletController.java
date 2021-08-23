@@ -1,5 +1,6 @@
 package com.bok.krypto.controller;
 
+import com.bok.krypto.integration.internal.dto.ValidationRequestDTO;
 import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
 import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
 import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/wallet")
@@ -44,5 +44,10 @@ public class WalletController {
     @GetMapping("/{symbol}/info")
     public WalletInfoDTO walletInfo(@RequestParam("accountId") Long accountId, @PathVariable("symbol") String symbol, @RequestParam("startDate") Instant from, @RequestParam("endDate") Instant until) {
         return walletService.info(accountId, symbol, from, until);
+    }
+
+    @GetMapping("/validateAddress")
+    public Boolean exists(@RequestParam("accountId") Long accountId, @RequestBody ValidationRequestDTO validationRequestDTO){
+        return walletService.validateAddress(validationRequestDTO);
     }
 }
