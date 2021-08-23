@@ -23,6 +23,8 @@ public class BankGrpcClient {
         return bankBlockingStub.getAccountInfo(requestBuilder.build());
     }
 
+
+    //TODO check currency
     public AuthorizationResponse authorize(Long accountId, UUID publicTransactionId, com.bok.bank.integration.util.Money money, String fromMarket) {
 
         AuthorizationRequest.Builder authorizationRequestBuilder = AuthorizationRequest.newBuilder();
