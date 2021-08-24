@@ -43,6 +43,7 @@ spring:
         - com.bok.bank
         - java.lang
         - java.sql
+        - java.math
     user: developer
     password: password4testing
     broker-url: tcp://activemq:61616
