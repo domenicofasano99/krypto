@@ -6,16 +6,12 @@ import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.bank.integration.util.Money;
 import com.bok.krypto.exception.ErrorCodes;
 import com.bok.krypto.exception.TransactionException;
+import com.bok.krypto.integration.internal.dto.ActivityDTO;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
-import com.bok.krypto.integration.internal.dto.ActivityDTO;
 import com.bok.krypto.messaging.messages.PurchaseMessage;
 import com.bok.krypto.messaging.messages.SellMessage;
-import com.bok.krypto.model.Account;
-import com.bok.krypto.model.Activity;
-import com.bok.krypto.model.Krypto;
-import com.bok.krypto.model.Transaction;
-import com.bok.krypto.model.Wallet;
+import com.bok.krypto.model.*;
 import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.bok.parent.integration.message.EmailMessage;
@@ -26,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.UUID;
 
@@ -222,6 +219,6 @@ public class MarketHelper {
     }
 
     private BigDecimal getKryptoAmount(Krypto k, BigDecimal usdMoneyAmount) {
-        return usdMoneyAmount.divide(k.getPrice());
+        return usdMoneyAmount.divide(k.getPrice(), 10, RoundingMode.HALF_EVEN);
     }
 }
