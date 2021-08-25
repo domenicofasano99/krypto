@@ -1,17 +1,14 @@
 package com.bok.krypto.utils;
 
+import com.bok.krypto.helper.BalanceSnapshotHelper;
 import com.bok.krypto.helper.KryptoHelper;
 import com.bok.krypto.helper.TransferHelper;
+import com.bok.krypto.helper.WalletHelper;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.HistoricalData;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.model.Wallet;
-import com.bok.krypto.repository.AccountRepository;
-import com.bok.krypto.repository.HistoricalDataRepository;
-import com.bok.krypto.repository.KryptoRepository;
-import com.bok.krypto.repository.TransactionRepository;
-import com.bok.krypto.repository.TransferRepository;
-import com.bok.krypto.repository.WalletRepository;
+import com.bok.krypto.repository.*;
 import com.bok.krypto.service.interfaces.TransferService;
 import com.github.javafaker.Faker;
 import lombok.SneakyThrows;
@@ -52,6 +49,10 @@ public class ModelTestUtils {
     TransferService transferService;
     @Autowired
     TransferRepository transferRepository;
+    @Autowired
+    BalanceSnapshotHelper balanceSnapshotHelper;
+    @Autowired
+    WalletHelper walletHelper;
 
     private static Instant between(Instant startInclusive, Instant endExclusive) {
         long startSeconds = startInclusive.getEpochSecond();
@@ -115,7 +116,8 @@ public class ModelTestUtils {
         w.setAvailableAmount(baseAmount);
         w = walletRepository.saveAndFlush(w);
         w.setStatus(Wallet.Status.CREATED);
-        return walletRepository.save(w);
+        balanceSnapshotHelper.save(w.createSnapshot());
+        return walletRepository.saveAndFlush(w);
     }
 
     public Krypto getKrypto(String krypto) {
@@ -169,6 +171,5 @@ public class ModelTestUtils {
         }
         historicalDataRepository.saveAll(historicalDataList);
     }
-
 
 }

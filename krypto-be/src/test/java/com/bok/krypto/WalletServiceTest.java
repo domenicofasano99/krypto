@@ -5,8 +5,10 @@ import com.bok.krypto.core.AddressGenerator;
 import com.bok.krypto.exception.KryptoNotFoundException;
 import com.bok.krypto.exception.WalletAlreadyExistsException;
 import com.bok.krypto.helper.AccountHelper;
+import com.bok.krypto.helper.WalletHelper;
 import com.bok.krypto.integration.internal.dto.*;
 import com.bok.krypto.model.*;
+import com.bok.krypto.repository.BalanceSnapshotRepository;
 import com.bok.krypto.repository.TransactionRepository;
 import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.repository.WalletRepository;
@@ -69,22 +71,23 @@ public class WalletServiceTest {
     @Autowired
     TransferRepository transferRepository;
 
+    @Autowired
+    BalanceSnapshotRepository balanceSnapshotRepository;
+    @Autowired
+    WalletHelper walletHelper;
+
 
     @BeforeEach
     public void initialize() {
         modelTestUtils.clearAll();
         modelTestUtils.createBaseKryptos();
 
-
         ParentService parentService = mock(ParentService.class);
         Mockito.when(parentService.getEmailByAccountId(anyLong())).thenReturn(faker.internet().emailAddress());
         ReflectionTestUtils.setField(accountHelper, "parentService", parentService);
 
-        //BankService bankService = mock(BankService.class);
         AuthorizationResponse.Builder authResponse = AuthorizationResponse.newBuilder().setAuthorizationId(UUID.randomUUID().toString()).setAuthorized(true);
         Mockito.when(bankService.authorize(any(), any(), any(), any(), any())).thenReturn(authResponse.build());
-
-        // ReflectionTestUtils.setField(this.bankService, "bankService", bankService);
 
     }
 
@@ -97,9 +100,20 @@ public class WalletServiceTest {
         WalletRequestDTO requestDTO = new WalletRequestDTO();
         requestDTO.symbol = k.getSymbol();
         WalletResponseDTO responseDTO = walletService.create(u.getId(), requestDTO);
-        modelTestUtils.await();
         assertNotNull(responseDTO);
+    }
 
+    @Test
+    public void testFirstBalanceHistoryOnWalletCreation() {
+        Account a = modelTestUtils.createAccount();
+        Krypto k = modelTestUtils.getRandomKrypto();
+        Wallet w = modelTestUtils.createWallet(a, k, BigDecimal.ZERO);
+
+        List<BalanceSnapshot> balanceSnapshot = balanceSnapshotRepository.findByWallet_Id(w.getId());
+        assertEquals(1, balanceSnapshot.size());
+        assertEquals(0, BigDecimal.ZERO.compareTo(balanceSnapshot.get(0).getAmount()));
+        assertEquals(0, BigDecimal.ZERO.compareTo(balanceSnapshot.get(0).getValue()));
+        assertEquals(w, balanceSnapshot.get(0).getWallet());
     }
 
     @Test
@@ -253,6 +267,25 @@ public class WalletServiceTest {
         request.address = "address";
         request.symbol = k.getSymbol();
         assertFalse(walletService.validateAddress(request));
+    }
+
+    @Test
+    public void balanceHistoryTest() throws InterruptedException {
+        Account a = modelTestUtils.createAccount();
+        Krypto k = modelTestUtils.getRandomKrypto();
+        Wallet w = modelTestUtils.createWallet(a, k, BigDecimal.ZERO);
+
+        walletHelper.deposit(w, BigDecimal.TEN);
+        assertEquals(2, balanceSnapshotRepository.findByWallet_Id(w.getId()).size());
+        assertEquals(0, BigDecimal.TEN.compareTo(balanceSnapshotRepository.findByWallet_Id(w.getId()).get(1).getAmount()));
+        Thread.sleep(100);
+
+
+        walletHelper.withdraw(w, BigDecimal.ONE);
+
+        WalletInfoDTO wInfo = walletService.info(a.getId(), k.getSymbol(), Instant.now().minus(30, ChronoUnit.DAYS), Instant.now());
+        assertEquals(3, wInfo.balanceHistory.size());
+        assertEquals(3, balanceSnapshotRepository.findByWallet_Id(w.getId()).size());
     }
 
 }

@@ -1,5 +1,6 @@
 package com.bok.krypto.model;
 
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,16 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -59,6 +51,9 @@ public class Wallet {
     @OneToMany
     private List<Transaction> transactions;
 
+    @OneToMany
+    private List<BalanceSnapshot> balanceSnapshot;
+
 
     public Wallet(Account u, Krypto k) {
         this.account = u;
@@ -70,8 +65,30 @@ public class Wallet {
         this.status = Status.PENDING;
     }
 
+    public BalanceSnapshot createSnapshot() {
+        BalanceSnapshot bh = new BalanceSnapshot();
+        bh.setWallet(this);
+        bh.setAmount(this.availableAmount);
+        bh.setValue(this.availableAmount.multiply(this.krypto.getPrice()));
+        return bh;
+    }
+
+
     public enum Status {
         PENDING,
         CREATED
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Wallet wallet = (Wallet) o;
+        return Objects.equal(address, wallet.address);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(address);
     }
 }

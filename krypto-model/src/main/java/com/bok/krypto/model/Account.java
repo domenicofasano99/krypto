@@ -1,5 +1,6 @@
 package com.bok.krypto.model;
 
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,5 +49,18 @@ public class Account {
     public Account(Set<Wallet> wallets, Set<Transaction> transactions) {
         this.wallets = wallets;
         this.transactions = transactions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return Objects.equal(id, account.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

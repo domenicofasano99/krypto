@@ -6,6 +6,7 @@ import com.bok.krypto.integration.internal.dto.*;
 import com.bok.krypto.messaging.messages.WalletCreationMessage;
 import com.bok.krypto.messaging.messages.WalletDeleteMessage;
 import com.bok.krypto.model.Account;
+import com.bok.krypto.model.BalanceSnapshot;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.bank.BankService;
@@ -55,6 +56,9 @@ public class WalletHelper {
     @Autowired
     AddressGenerator addressGenerator;
 
+    @Autowired
+    BalanceSnapshotHelper balanceSnapshotHelper;
+
 
     public Wallet findByPublicId(String publicId) {
         return walletRepository.findByAddress(publicId).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
@@ -67,14 +71,16 @@ public class WalletHelper {
 
     @Transactional
     public BigDecimal withdraw(Wallet wallet, BigDecimal amount) {
-        if (wallet.getAvailableAmount().compareTo(amount) < 0) {
+        Wallet w = findByPublicId(wallet.getAddress());
+        if (w.getAvailableAmount().compareTo(amount) < 0) {
             throw new TransactionException("not enough funds to perform the withdrawal");
         }
-        log.info("withdrawing {} from wallet {}", amount, wallet.getAddress());
-        BigDecimal newBalance = wallet.getAvailableAmount().subtract(amount);
-        wallet.setAvailableAmount(newBalance);
-        walletRepository.saveAndFlush(wallet);
-        log.info("wallet {} balance: {}", wallet.getAddress(), newBalance);
+        log.info("withdrawing {} from wallet {}", amount, w.getAddress());
+        BigDecimal newBalance = w.getAvailableAmount().subtract(amount);
+        w.setAvailableAmount(newBalance);
+        balanceSnapshotHelper.save(w.createSnapshot());
+        walletRepository.saveAndFlush(w);
+        log.info("wallet {} balance: {}", w.getAddress(), newBalance);
         return amount;
     }
 
@@ -87,6 +93,7 @@ public class WalletHelper {
         log.info("depositing {} {} to wallet {}", amount, w.getKrypto().getSymbol(), wallet.getAddress());
         BigDecimal newBalance = w.getAvailableAmount().add(amount);
         w.setAvailableAmount(newBalance);
+        balanceSnapshotHelper.save(w.createSnapshot());
         walletRepository.saveAndFlush(w);
         log.info("wallet {} balance: {}", wallet.getAddress(), newBalance);
         return amount;
@@ -104,16 +111,19 @@ public class WalletHelper {
             throw new WalletAlreadyExistsException("A wallet with the same Krypto exists for this user");
         }
         log.info("Creating {} wallet for account {}", requestDTO.symbol, accountId);
+
         Wallet w = new Wallet();
         w.setAccount(accountHelper.findById(accountId));
-        w = walletRepository.save(w);
+        w = walletRepository.saveAndFlush(w);
         WalletCreationMessage walletCreationMessage = new WalletCreationMessage();
         walletCreationMessage.id = w.getId();
         walletCreationMessage.symbol = requestDTO.symbol;
         messageService.sendWallet(walletCreationMessage);
+
         return new WalletResponseDTO(WalletResponseDTO.Status.ACCEPTED);
     }
 
+    @Transactional
     public void handleMessage(WalletCreationMessage walletCreationMessage) {
         Wallet w = walletRepository.findById(walletCreationMessage.id)
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
@@ -122,7 +132,8 @@ public class WalletHelper {
         w.setKrypto(kryptoHelper.findBySymbol(walletCreationMessage.symbol));
         w.setAvailableAmount(BigDecimal.ZERO);
         w.setStatus(Wallet.Status.CREATED);
-        walletRepository.save(w);
+        walletRepository.saveAndFlush(w);
+        balanceSnapshotHelper.save(w.createSnapshot());
         messageService.sendEmail(emailWalletCreation(w, w.getAccount()));
     }
 
@@ -218,6 +229,7 @@ public class WalletHelper {
 
         Wallet wallet = findByAccountIdAndSymbol(accountId, symbol);
         WalletInfoDTO info = getInfoFromWallet(wallet);
+
         info.activities = transactionHelper.findByWalletIdAndDateBetween(wallet, startDate, endDate)
                 .stream()
                 .map(DTOUtils::toDTO)
@@ -227,7 +239,21 @@ public class WalletHelper {
                 .stream()
                 .map(DTOUtils::toDTO)
                 .collect(Collectors.toList()));
+
+        info.balanceHistory = findBalanceSnapshotByWalletAndDateBetween(wallet, startDate, endDate)
+                .stream()
+                .map(DTOUtils::toDTO)
+                .collect(Collectors.toList());
         return info;
+    }
+
+    public List<BalanceSnapshot> findBalanceSnapshotByWalletAndDateBetween(Wallet wallet, Instant from, Instant until) {
+        return balanceSnapshotHelper.findHistory(wallet)
+                .stream()
+                .filter(t -> t.getTimestamp().isAfter(from)
+                        && t.getTimestamp().isBefore(until))
+                .collect(Collectors.toList());
+
     }
 
     public Boolean validateAddress(ValidationRequestDTO validationRequestDTO) {
