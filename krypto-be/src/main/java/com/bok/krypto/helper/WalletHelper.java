@@ -133,7 +133,7 @@ public class WalletHelper {
         w.setKrypto(kryptoHelper.findBySymbol(walletCreationMessage.symbol));
         w.setAvailableAmount(BigDecimal.ZERO);
         w.setStatus(Wallet.Status.CREATED);
-        walletRepository.saveAndFlush(w);
+        save(w);
         balanceSnapshotHelper.save(w.createSnapshot());
         messageService.sendEmail(emailWalletCreation(w, w.getAccount()));
     }
@@ -144,8 +144,9 @@ public class WalletHelper {
         w.setAddress(addressGenerator.generateWalletAddress());
         w.setKrypto(k);
         w.setAvailableAmount(BigDecimal.ZERO);
+        w = save(w);
         w.setStatus(Wallet.Status.CREATED);
-        walletRepository.saveAndFlush(w);
+        w = save(w);
         balanceSnapshotHelper.save(w.createSnapshot());
         messageService.sendEmail(emailWalletCreation(w, w.getAccount()));
         return w;
@@ -272,5 +273,9 @@ public class WalletHelper {
 
     public Boolean validateAddress(ValidationRequestDTO validationRequestDTO) {
         return walletRepository.existsByAddressAndKrypto_Symbol(validationRequestDTO.address, validationRequestDTO.symbol);
+    }
+
+    public Wallet save(Wallet wallet) {
+        return walletRepository.save(wallet);
     }
 }

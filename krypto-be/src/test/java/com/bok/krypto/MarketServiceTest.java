@@ -3,17 +3,23 @@ package com.bok.krypto;
 import com.bok.bank.integration.grpc.AuthorizationResponse;
 import com.bok.bank.integration.grpc.Currency;
 import com.bok.bank.integration.grpc.Money;
+import com.bok.krypto.helper.AccountHelper;
+import com.bok.krypto.helper.MarketHelper;
 import com.bok.krypto.integration.internal.dto.*;
 import com.bok.krypto.model.*;
 import com.bok.krypto.repository.HistoricalDataRepository;
 import com.bok.krypto.repository.KryptoRepository;
 import com.bok.krypto.repository.TransactionRepository;
+import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MarketService;
+import com.bok.krypto.service.parent.ParentService;
 import com.bok.krypto.utils.ModelTestUtils;
+import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,6 +37,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -50,20 +57,40 @@ public class MarketServiceTest {
     @Autowired
     HistoricalDataRepository historicalDataRepository;
 
+    @Autowired
+    MarketService marketService;
+
+    @Autowired
+    WalletRepository walletRepository;
+
+    //mocks initialization
+
     @MockBean
     BankService bankService;
 
     @Autowired
-    MarketService marketService;
+    @InjectMocks
+    MarketHelper marketHelper;
+
+    @MockBean
+    ParentService parentService;
+
+    @Autowired
+    @InjectMocks
+    AccountHelper accountHelper;
+
+    final Faker faker = new Faker();
 
     @BeforeEach
     public void init() {
         modelTestUtils.clearAll();
         modelTestUtils.createBaseKryptos();
+
+        when(parentService.getEmailByAccountId(anyLong())).thenReturn(faker.internet().emailAddress());
     }
 
-    @Test //if it doesn't pass try running it alone, message timing problems...
-    public void purchaseTest() throws InterruptedException {
+    @Test
+    public void purchaseTest() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
         Wallet wallet = modelTestUtils.createWallet(account, krypto, new BigDecimal("0.9"));
@@ -78,19 +105,12 @@ public class MarketServiceTest {
         purchaseRequestDTO.cardToken = "randomToken";
         ActivityDTO activityDTO = marketService.buy(account.getId(), purchaseRequestDTO);
         modelTestUtils.await();
-        Thread.sleep(100);
+
         Transaction transaction = transactionRepository.findByPublicId(activityDTO.publicId).orElse(null);
         assertNotNull(transaction);
-        assertEquals(Transaction.Status.AUTHORIZED, transaction.getStatus());
-        assertEquals(transaction.getPublicId(), activityDTO.publicId);
-        Thread.sleep(100);
         assertEquals(Transaction.Status.SETTLED, transaction.getStatus());
+        assertEquals(transaction.getPublicId(), activityDTO.publicId);
 
-    }
-
-    @Test
-    public void testPurchaseMessage() {
-        //test purchase by sending a message to the processor
     }
 
     @Test
@@ -176,6 +196,7 @@ public class MarketServiceTest {
         purchaseRequest.cardToken = "token";
 
         ActivityDTO response = marketService.buy(account.getId(), purchaseRequest);
+        assertEquals(Activity.Status.DECLINED.name(), response.status);
     }
 
     @Test
@@ -234,6 +255,27 @@ public class MarketServiceTest {
         request.currencyCode = "USD";
 
         ActivityDTO response = marketService.sell(account.getId(), request);
+    }
+
+    @Test
+    public void testPurchaseWithoutWallet() {
+        Account account = modelTestUtils.createAccount();
+        Krypto krypto = modelTestUtils.getKrypto(BTC);
+
+        when(bankService.authorize(any(), any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
+        when(bankService.convertMoney(any(), any())).thenReturn(Money.newBuilder().setCurrency(Currency.USD).setAmount(10).build());
+
+        PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
+        purchaseRequest.amount = new BigDecimal("0.012001023");
+        purchaseRequest.symbol = krypto.getSymbol();
+        purchaseRequest.currencyCode = "USD";
+        purchaseRequest.cardToken = "token";
+        marketService.buy(account.getId(), purchaseRequest);
+
+        modelTestUtils.await();
+
+        Wallet wallet = walletRepository.findByAccount_IdAndKrypto_Symbol(account.getId(), krypto.getSymbol()).orElseThrow(RuntimeException::new);
+        assertEquals(krypto, wallet.getKrypto());
     }
 
 }

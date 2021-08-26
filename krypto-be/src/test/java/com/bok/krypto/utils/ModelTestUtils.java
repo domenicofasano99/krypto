@@ -53,6 +53,8 @@ public class ModelTestUtils {
     BalanceSnapshotHelper balanceSnapshotHelper;
     @Autowired
     WalletHelper walletHelper;
+    @Autowired
+    BalanceSnapshotRepository balanceSnapshotRepository;
 
     private static Instant between(Instant startInclusive, Instant endExclusive) {
         long startSeconds = startInclusive.getEpochSecond();
@@ -78,6 +80,7 @@ public class ModelTestUtils {
         historicalDataRepository.deleteAll();
         transactionRepository.deleteAll();
         transferRepository.deleteAll();
+        balanceSnapshotRepository.deleteAll();
         walletRepository.deleteAll();
         kryptoRepository.deleteAll();
         accountRepository.deleteAll();
@@ -151,17 +154,16 @@ public class ModelTestUtils {
         }
     }
 
+    /**
+     * method to wait for async completition of processes relying on the jms layer
+     */
     @SneakyThrows
     public void await() {
-        int times = 0;
-        int maxTimes = 100;
         do {
-            Thread.sleep(500);
-            times++;
-        } while (transferRepository.countPendingTransfers() > 0 &&
-                walletRepository.countPendingWallets() > 0 &&
-                transactionRepository.countPendingTransactions() > 0 &&
-                times < maxTimes);
+            Thread.sleep(100);
+        } while (transferRepository.countPendingTransfers() > 0 ||
+                walletRepository.countPendingWallets() > 0 ||
+                transactionRepository.countPendingTransactions() > 0 || transactionRepository.countAuthorizedTransactions() > 0);
     }
 
     public void addHistoricalDataForKrypto(Krypto krypto, int numOfRecords) {

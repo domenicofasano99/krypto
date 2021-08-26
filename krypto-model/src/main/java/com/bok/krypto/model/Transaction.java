@@ -27,9 +27,6 @@ public class Transaction extends Activity {
     @ManyToOne
     private Wallet wallet;
 
-    @Column
-    private Long transactionId;
-
 
     public Transaction(Type type) {
         super();

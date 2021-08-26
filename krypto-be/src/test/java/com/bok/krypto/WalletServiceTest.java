@@ -73,6 +73,7 @@ public class WalletServiceTest {
 
     @Autowired
     BalanceSnapshotRepository balanceSnapshotRepository;
+
     @Autowired
     WalletHelper walletHelper;
 

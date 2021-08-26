@@ -29,7 +29,7 @@ import java.util.UUID;
 
 @Component
 @Slf4j
-public class MarketHelper {
+public class MarketHelper{
 
     @Autowired
     WalletHelper walletHelper;
@@ -106,28 +106,28 @@ public class MarketHelper {
         transaction.setWallet(destination);
         transaction.setAmount(kryptoAmount);
         transaction.setAccount(account);
+        transactionHelper.saveOrUpdate(transaction);
 
+        EmailMessage email = new EmailMessage();
         try {
             walletHelper.deposit(destination, kryptoAmount);
 
             BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(money, message.accountId, destination.getKrypto().getSymbol(), transaction.getPublicId());
             bankService.sendBankWithdrawal(bankWithdrawalMessage);
+            log.info("Completed purchase ID:{} for {} of {} {}", message.transactionId, message.accountId, message.symbol, message.amount);
+            email.subject = "Purchase completed!";
+            email.to = accountHelper.getEmailByAccountId(account.getId());
+            email.body = "Your PURCHASE of " + money.amount + " " + money.getCurrency() + " of " + message.symbol + " has been ACCEPTED.";
+            transaction.setStatus(Activity.Status.SETTLED);
 
         } catch (TransactionException ex) {
             log.info("Purchase {} error, insufficient balance", message);
-            EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";
             email.to = accountHelper.getEmailByAccountId(account.getId());
-            email.body = "Your PURCHASE transaction of " + money.amount + money.getCurrency() + " of " + message.symbol + " has been DECLINED due to insufficient balance.";
+            email.body = "Your PURCHASE transaction of " + money.amount + " " + money.getCurrency() + " of " + message.symbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
-            messageService.sendEmail(email);
         }
-        log.info("Completed purchase ID:{} for {} of {} {}", message.transactionId, message.accountId, message.symbol, message.amount);
-        EmailMessage email = new EmailMessage();
-        email.subject = "Purchase completed!";
-        email.to = accountHelper.getEmailByAccountId(account.getId());
-        email.body = "Your PURCHASE of " + money.amount + money.getCurrency() + " of " + message.symbol + " has been ACCEPTED.";
-        transaction.setStatus(Activity.Status.SETTLED);
+
         transactionHelper.saveOrUpdate(transaction);
         messageService.sendEmail(email);
     }
@@ -145,22 +145,21 @@ public class MarketHelper {
         String subject, to, text;
         try {
             walletHelper.withdraw(source, sellMessage.amount);
-
             Money amountToDeposit = convertIntoMoney(sellMessage.amount, sellMessage.currencyCode);
             BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, sellMessage.accountId, source.getKrypto().getSymbol());
             bankService.sendBankDeposit(bankDepositMessage);
+            subject = "Sell executed";
+            to = accountHelper.getEmailByAccountId(account.getId());
+            text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
+            transaction.setStatus(Activity.Status.SETTLED);
 
         } catch (TransactionException ex) {
             subject = "Insufficient Balance in your account";
             to = accountHelper.getEmailByAccountId(account.getId());
             text = "Your SELL transaction of " + sellMessage.amount + " " + sellMessage.symbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
-            sendMarketEmail(subject, to, text);
         }
-        subject = "Sell executed";
-        to = accountHelper.getEmailByAccountId(account.getId());
-        text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
-        transaction.setStatus(Activity.Status.SETTLED);
+
         transactionHelper.saveOrUpdate(transaction);
         sendMarketEmail(subject, to, text);
     }
