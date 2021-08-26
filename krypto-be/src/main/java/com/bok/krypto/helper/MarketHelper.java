@@ -125,7 +125,7 @@ public class MarketHelper {
         }
         log.info("Completed purchase ID:{} for {} of {} {}", message.transactionId, message.accountId, message.symbol, message.amount);
         EmailMessage email = new EmailMessage();
-        email.subject = "Transfer executed";
+        email.subject = "Purchase completed!";
         email.to = accountHelper.getEmailByAccountId(account.getId());
         email.body = "Your PURCHASE of " + money.amount + money.getCurrency() + " of " + message.symbol + " has been ACCEPTED.";
         transaction.setStatus(Activity.Status.SETTLED);
