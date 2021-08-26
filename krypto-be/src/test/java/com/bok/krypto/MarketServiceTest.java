@@ -222,4 +222,18 @@ public class MarketServiceTest {
         assertTrue(kryptoInfosDTO.kryptos.size() > 0);
     }
 
+    @Test
+    public void sellTest() {
+        Account account = modelTestUtils.createAccount();
+        Krypto krypto = modelTestUtils.getKrypto(BTC);
+        Wallet wallet = modelTestUtils.createWallet(account, krypto, BigDecimal.valueOf(1000000));
+
+        SellRequestDTO request = new SellRequestDTO();
+        request.amount = BigDecimal.ONE;
+        request.symbol = krypto.getSymbol();
+        request.currencyCode = "USD";
+
+        ActivityDTO response = marketService.sell(account.getId(), request);
+    }
+
 }

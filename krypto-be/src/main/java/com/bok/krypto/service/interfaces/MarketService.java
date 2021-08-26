@@ -16,9 +16,9 @@ import java.time.Instant;
 
 public interface MarketService {
 
-    ActivityDTO buy(Long userId, PurchaseRequestDTO purchaseRequestDTO);
+    ActivityDTO buy(Long accountId, PurchaseRequestDTO purchaseRequestDTO);
 
-    ActivityDTO sell(Long userId, SellRequestDTO sellRequestDTO);
+    ActivityDTO sell(Long accountId, SellRequestDTO sellRequestDTO);
 
     PriceResponseDTO getKryptoPrice(String symbol);
 
