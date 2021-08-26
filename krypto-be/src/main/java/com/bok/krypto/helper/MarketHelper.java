@@ -6,6 +6,7 @@ import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.bank.integration.util.Money;
 import com.bok.krypto.exception.ErrorCodes;
 import com.bok.krypto.exception.TransactionException;
+import com.bok.krypto.exception.WalletNotFoundException;
 import com.bok.krypto.integration.internal.dto.ActivityDTO;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
@@ -84,16 +85,22 @@ public class MarketHelper {
         return new ActivityDTO(transaction.getPublicId(), accountId, ActivityDTO.Type.SELL, sellRequest.amount, transaction.status.name());
     }
 
-    public void handle(PurchaseMessage purchaseMessage) {
-        log.info("Processing purchase {}", purchaseMessage);
-        Transaction transaction = transactionHelper.findById(purchaseMessage.transactionId);
-        Wallet destination = walletHelper.findByAccountIdAndSymbol(purchaseMessage.accountId, purchaseMessage.symbol);
-        Account account = accountHelper.findById(purchaseMessage.accountId);
+    public void handle(PurchaseMessage message) {
+        log.info("Processing purchase {}", message);
 
+        Account account = accountHelper.findById(message.accountId);
+        Krypto k = kryptoHelper.findBySymbol(message.symbol);
+        Transaction transaction = transactionHelper.findById(message.transactionId);
+        Wallet destination;
 
-        Krypto k = kryptoHelper.findBySymbol(purchaseMessage.symbol);
+        try {
+            destination = walletHelper.findByAccountIdAndSymbol(message.accountId, message.symbol);
+        } catch (WalletNotFoundException we) {
+            log.warn("account {} made a purchase of {} but does not have a wallet for krypto {}, creating a wallet for it", message.accountId, message.symbol, message.symbol);
+            destination = walletHelper.createWallet(account, k);
+        }
 
-        Money money = convertIntoMoney(purchaseMessage.amount, purchaseMessage.currencyCode);
+        Money money = convertIntoMoney(message.amount, message.currencyCode);
         BigDecimal usd = BigDecimal.valueOf(bankService.convertMoney(money.toGrpcMoney(), com.bok.bank.integration.grpc.Currency.USD).getAmount());
         BigDecimal kryptoAmount = getKryptoAmount(k, usd);
 
@@ -104,23 +111,23 @@ public class MarketHelper {
         try {
             walletHelper.deposit(destination, kryptoAmount);
 
-            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(money, purchaseMessage.accountId, destination.getKrypto().getSymbol(), transaction.getPublicId());
+            BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(money, message.accountId, destination.getKrypto().getSymbol(), transaction.getPublicId());
             bankService.sendBankWithdrawal(bankWithdrawalMessage);
 
         } catch (TransactionException ex) {
-            log.info("Purchase {} error, insufficient balance", purchaseMessage);
+            log.info("Purchase {} error, insufficient balance", message);
             EmailMessage email = new EmailMessage();
             email.subject = "Insufficient Balance in your account";
             email.to = accountHelper.getEmailByAccountId(account.getId());
-            email.body = "Your PURCHASE transaction of " + money.amount + money.getCurrency() + " of " + purchaseMessage.symbol + " has been DECLINED due to insufficient balance.";
+            email.body = "Your PURCHASE transaction of " + money.amount + money.getCurrency() + " of " + message.symbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
             messageService.sendEmail(email);
         }
-        log.info("Completed purchase ID:{} for {} of {} {}", purchaseMessage.transactionId, purchaseMessage.accountId, purchaseMessage.symbol, purchaseMessage.amount);
+        log.info("Completed purchase ID:{} for {} of {} {}", message.transactionId, message.accountId, message.symbol, message.amount);
         EmailMessage email = new EmailMessage();
         email.subject = "Transfer executed";
         email.to = accountHelper.getEmailByAccountId(account.getId());
-        email.body = "Your PURCHASE of " + money.amount + money.getCurrency() + " of " + purchaseMessage.symbol + " has been ACCEPTED.";
+        email.body = "Your PURCHASE of " + money.amount + money.getCurrency() + " of " + message.symbol + " has been ACCEPTED.";
         transaction.setStatus(Activity.Status.SETTLED);
         transactionHelper.saveOrUpdate(transaction);
         messageService.sendEmail(email);

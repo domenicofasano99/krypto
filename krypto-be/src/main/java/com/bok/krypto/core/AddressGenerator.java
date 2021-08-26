@@ -38,7 +38,7 @@ public class AddressGenerator {
     }
 
     @SneakyThrows
-    public String generateBitcoinAddress() {
+    public String generateWalletAddress() {
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
         ECGenParameterSpec ecSpec = new ECGenParameterSpec("secp256k1");
         keyGen.initialize(ecSpec);

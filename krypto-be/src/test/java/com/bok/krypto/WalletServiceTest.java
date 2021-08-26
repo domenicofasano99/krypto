@@ -196,7 +196,7 @@ public class WalletServiceTest {
 
     @Test
     public void generateWalletAddress() {
-        String address = addressGenerator.generateBitcoinAddress();
+        String address = addressGenerator.generateWalletAddress();
         assertNotNull(address);
     }
 
@@ -205,7 +205,7 @@ public class WalletServiceTest {
         Set<String> addresses = new HashSet<>();
 
         for (int c = 0; c < 1000; c++) {
-            String address = addressGenerator.generateBitcoinAddress();
+            String address = addressGenerator.generateWalletAddress();
             assertFalse(addresses.contains(address));
             addresses.add(address);
         }

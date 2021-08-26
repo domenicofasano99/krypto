@@ -7,6 +7,7 @@ import com.bok.krypto.messaging.messages.WalletCreationMessage;
 import com.bok.krypto.messaging.messages.WalletDeleteMessage;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.BalanceSnapshot;
+import com.bok.krypto.model.Krypto;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.bank.BankService;
@@ -64,7 +65,7 @@ public class WalletHelper {
         return walletRepository.findByAddress(publicId).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
     }
 
-    public Wallet findByAccountIdAndSymbol(Long userId, String symbol) {
+    public Wallet findByAccountIdAndSymbol(Long userId, String symbol) throws WalletNotFoundException {
         return walletRepository.findByAccount_IdAndKrypto_Symbol(userId, symbol).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
 
     }
@@ -128,13 +129,26 @@ public class WalletHelper {
         Wallet w = walletRepository.findById(walletCreationMessage.id)
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
 
-        w.setAddress(addressGenerator.generateBitcoinAddress());
+        w.setAddress(addressGenerator.generateWalletAddress());
         w.setKrypto(kryptoHelper.findBySymbol(walletCreationMessage.symbol));
         w.setAvailableAmount(BigDecimal.ZERO);
         w.setStatus(Wallet.Status.CREATED);
         walletRepository.saveAndFlush(w);
         balanceSnapshotHelper.save(w.createSnapshot());
         messageService.sendEmail(emailWalletCreation(w, w.getAccount()));
+    }
+
+    public Wallet createWallet(Account account, Krypto k) {
+        Wallet w = new Wallet();
+        w.setAccount(account);
+        w.setAddress(addressGenerator.generateWalletAddress());
+        w.setKrypto(k);
+        w.setAvailableAmount(BigDecimal.ZERO);
+        w.setStatus(Wallet.Status.CREATED);
+        walletRepository.saveAndFlush(w);
+        balanceSnapshotHelper.save(w.createSnapshot());
+        messageService.sendEmail(emailWalletCreation(w, w.getAccount()));
+        return w;
     }
 
     private EmailMessage emailWalletCreation(Wallet wallet, Account account) {
