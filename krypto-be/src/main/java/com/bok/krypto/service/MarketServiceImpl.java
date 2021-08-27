@@ -5,6 +5,7 @@ import com.bok.krypto.helper.HistoricalDataHelper;
 import com.bok.krypto.helper.KryptoHelper;
 import com.bok.krypto.helper.MarketHelper;
 import com.bok.krypto.helper.WalletHelper;
+import com.bok.krypto.integration.internal.dto.ActivityDTO;
 import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
 import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
@@ -15,13 +16,11 @@ import com.bok.krypto.integration.internal.dto.PricesResponseDTO;
 import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
 import com.bok.krypto.integration.internal.dto.SymbolsDTO;
-import com.bok.krypto.integration.internal.dto.ActivityDTO;
 import com.bok.krypto.service.interfaces.MarketService;
 import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.Instant;
 
 @Service

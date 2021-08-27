@@ -8,7 +8,13 @@ import com.bok.krypto.model.Account;
 import com.bok.krypto.model.HistoricalData;
 import com.bok.krypto.model.Krypto;
 import com.bok.krypto.model.Wallet;
-import com.bok.krypto.repository.*;
+import com.bok.krypto.repository.AccountRepository;
+import com.bok.krypto.repository.BalanceSnapshotRepository;
+import com.bok.krypto.repository.HistoricalDataRepository;
+import com.bok.krypto.repository.KryptoRepository;
+import com.bok.krypto.repository.TransactionRepository;
+import com.bok.krypto.repository.TransferRepository;
+import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.TransferService;
 import com.github.javafaker.Faker;
 import lombok.SneakyThrows;
@@ -159,11 +165,15 @@ public class ModelTestUtils {
      */
     @SneakyThrows
     public void await() {
+        long start = System.currentTimeMillis();
         do {
-            Thread.sleep(100);
+            Thread.sleep(10);
         } while (transferRepository.countPendingTransfers() > 0 ||
                 walletRepository.countPendingWallets() > 0 ||
                 transactionRepository.countPendingTransactions() > 0 || transactionRepository.countAuthorizedTransactions() > 0);
+        long end = System.currentTimeMillis();
+        long elapsed = end - start;
+        log.info("waited for {} milliseconds", elapsed);
     }
 
     public void addHistoricalDataForKrypto(Krypto krypto, int numOfRecords) {

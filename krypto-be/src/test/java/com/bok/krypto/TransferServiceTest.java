@@ -29,7 +29,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.math.BigDecimal;
 
 import static com.bok.krypto.utils.Constants.BTC;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 
@@ -37,28 +39,21 @@ import static org.mockito.Mockito.mock;
 @ActiveProfiles("test")
 public class TransferServiceTest {
 
+    final Faker faker = new Faker();
     @Autowired
     ModelTestUtils modelTestUtils;
-
     @Autowired
     TransferService transferService;
-
     @Autowired
     WalletRepository walletRepository;
-
     @Autowired
     TransferHelper transferHelper;
-
     @Autowired
     TransactionRepository transactionRepository;
-
     @Autowired
     TransferRepository transferRepository;
-
     @Autowired
     AccountHelper accountHelper;
-
-    final Faker faker = new Faker();
 
     @BeforeEach
     public void setup() {

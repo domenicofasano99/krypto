@@ -12,7 +12,11 @@ import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
 import com.bok.krypto.integration.internal.dto.SellRequestDTO;
 import com.bok.krypto.messaging.messages.PurchaseMessage;
 import com.bok.krypto.messaging.messages.SellMessage;
-import com.bok.krypto.model.*;
+import com.bok.krypto.model.Account;
+import com.bok.krypto.model.Activity;
+import com.bok.krypto.model.Krypto;
+import com.bok.krypto.model.Transaction;
+import com.bok.krypto.model.Wallet;
 import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.bok.parent.integration.message.EmailMessage;
@@ -29,7 +33,7 @@ import java.util.UUID;
 
 @Component
 @Slf4j
-public class MarketHelper{
+public class MarketHelper {
 
     @Autowired
     WalletHelper walletHelper;
@@ -69,19 +73,6 @@ public class MarketHelper{
             sendPurchase(accountId, transaction.getId(), purchaseRequest.amount, purchaseRequest.currencyCode, purchaseRequest.symbol);
         }
         return new ActivityDTO(transaction.getPublicId(), accountId, ActivityDTO.Type.PURCHASE, purchaseRequest.amount, transaction.status.name());
-    }
-
-    @Transactional
-    public ActivityDTO sell(Long accountId, SellRequestDTO sellRequest) {
-        Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
-        Preconditions.checkArgument(kryptoHelper.existsBySymbol(sellRequest.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
-        Preconditions.checkArgument(sellRequest.amount.compareTo(BigDecimal.ZERO) >= 0, "Cannot SELL a negative amount.");
-
-        Transaction transaction = new Transaction(Transaction.Type.SELL);
-        transaction = transactionHelper.saveOrUpdate(transaction);
-
-        sendSell(accountId, transaction.getId(), sellRequest.amount, sellRequest.currencyCode, sellRequest.symbol);
-        return new ActivityDTO(transaction.getPublicId(), accountId, ActivityDTO.Type.SELL, sellRequest.amount, transaction.status.name());
     }
 
     public void handle(PurchaseMessage message) {
@@ -132,34 +123,50 @@ public class MarketHelper{
         messageService.sendEmail(email);
     }
 
+
     @Transactional
-    public void handle(SellMessage sellMessage) {
-        log.info("Processing sell {}", sellMessage);
-        Transaction transaction = transactionHelper.findById(sellMessage.transactionId);
-        Wallet source = walletHelper.findByAccountIdAndSymbol(sellMessage.accountId, sellMessage.kryptoSymbol);
-        Account account = accountHelper.findById(sellMessage.accountId);
+    public ActivityDTO sell(Long accountId, SellRequestDTO request) {
+        Preconditions.checkArgument(accountHelper.existsById(accountId), ErrorCodes.USER_DOES_NOT_EXIST);
+        Preconditions.checkArgument(kryptoHelper.existsBySymbol(request.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
+        Preconditions.checkArgument(request.amount.compareTo(BigDecimal.ZERO) >= 0, "Cannot SELL a negative amount.");
+
+        Transaction transaction = new Transaction(Transaction.Type.SELL);
+        transaction = transactionHelper.saveOrUpdate(transaction);
+
+        sendSell(accountId, transaction.getId(), request.amount, request.currencyCode, request.symbol);
+        return new ActivityDTO(transaction.getPublicId(), accountId, ActivityDTO.Type.SELL, request.amount, transaction.status.name());
+    }
+
+    @Transactional
+    public void handle(SellMessage message) {
+        log.info("Processing sell {}", message);
+        Transaction transaction = transactionHelper.findById(message.transactionId);
+        Wallet source = walletHelper.findByAccountIdAndSymbol(message.accountId, message.kryptoSymbol);
+        Account account = accountHelper.findById(message.accountId);
         transaction.setWallet(source);
-        transaction.setAmount(sellMessage.moneyAmount);
+        transaction.setAmount(message.moneyAmount);
         transaction.setAccount(account);
 
         String subject, to, text;
         try {
-            walletHelper.withdraw(source, sellMessage.moneyAmount);
-            Money amountToDeposit = convertIntoMoney(sellMessage.moneyAmount, sellMessage.currencyCode);
-            BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, sellMessage.accountId, source.getKrypto().getSymbol());
+            walletHelper.withdraw(source, message.moneyAmount);
+            Money amountToDeposit = convertIntoMoney(message.moneyAmount, message.currencyCode);
+            BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, message.accountId, source.getKrypto().getSymbol());
             bankService.sendBankDeposit(bankDepositMessage);
             subject = "Sell executed";
             to = accountHelper.getEmailByAccountId(account.getId());
-            text = "Your SELL of " + sellMessage.moneyAmount + " " + sellMessage.kryptoSymbol + " has been ACCEPTED.";
+            text = "Your SELL of " + message.moneyAmount + " " + message.kryptoSymbol + " has been ACCEPTED.";
             transaction.setStatus(Activity.Status.SETTLED);
+            log.info("SETTLED {}", transaction);
 
         } catch (TransactionException ex) {
             subject = "Insufficient KryptoBalance in your account";
             to = accountHelper.getEmailByAccountId(account.getId());
-            text = "Your SELL transaction of " + sellMessage.moneyAmount + " " + sellMessage.kryptoSymbol + " has been DECLINED due to insufficient balance.";
+            text = "Your SELL transaction of " + message.moneyAmount + " " + message.kryptoSymbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
+            log.info("DECLINED {}", transaction);
         }
-
+        log.info("transaction {} processed", transaction.getId());
         transactionHelper.saveOrUpdate(transaction);
         sendMarketEmail(subject, to, text);
     }

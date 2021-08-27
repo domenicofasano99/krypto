@@ -1,7 +1,13 @@
 package com.bok.krypto.service;
 
 import com.bok.krypto.helper.WalletHelper;
-import com.bok.krypto.integration.internal.dto.*;
+import com.bok.krypto.integration.internal.dto.ValidationRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletDeleteResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletInfoDTO;
+import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
+import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
+import com.bok.krypto.integration.internal.dto.WalletsDTO;
 import com.bok.krypto.service.interfaces.WalletService;
 import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;

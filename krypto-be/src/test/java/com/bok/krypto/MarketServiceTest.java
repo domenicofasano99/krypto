@@ -5,8 +5,22 @@ import com.bok.bank.integration.grpc.Currency;
 import com.bok.bank.integration.grpc.Money;
 import com.bok.krypto.helper.AccountHelper;
 import com.bok.krypto.helper.MarketHelper;
-import com.bok.krypto.integration.internal.dto.*;
-import com.bok.krypto.model.*;
+import com.bok.krypto.helper.TransactionHelper;
+import com.bok.krypto.integration.internal.dto.ActivityDTO;
+import com.bok.krypto.integration.internal.dto.HistoricalDataDTO;
+import com.bok.krypto.integration.internal.dto.KryptoInfoDTO;
+import com.bok.krypto.integration.internal.dto.KryptoInfosDTO;
+import com.bok.krypto.integration.internal.dto.KryptoInfosRequestDTO;
+import com.bok.krypto.integration.internal.dto.PriceResponseDTO;
+import com.bok.krypto.integration.internal.dto.PurchaseRequestDTO;
+import com.bok.krypto.integration.internal.dto.RecordDTO;
+import com.bok.krypto.integration.internal.dto.SellRequestDTO;
+import com.bok.krypto.model.Account;
+import com.bok.krypto.model.Activity;
+import com.bok.krypto.model.HistoricalData;
+import com.bok.krypto.model.Krypto;
+import com.bok.krypto.model.Transaction;
+import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.HistoricalDataRepository;
 import com.bok.krypto.repository.KryptoRepository;
 import com.bok.krypto.repository.TransactionRepository;
@@ -28,14 +42,20 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.bok.krypto.utils.Constants.BTC;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -45,41 +65,33 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 public class MarketServiceTest {
 
+    final Faker faker = new Faker();
     @Autowired
     ModelTestUtils modelTestUtils;
-
     @Autowired
     TransactionRepository transactionRepository;
-
     @Autowired
     KryptoRepository kryptoRepository;
-
     @Autowired
     HistoricalDataRepository historicalDataRepository;
-
     @Autowired
     MarketService marketService;
-
     @Autowired
     WalletRepository walletRepository;
 
     //mocks initialization
-
+    @Autowired
+    TransactionHelper transactionHelper;
     @MockBean
     BankService bankService;
-
     @Autowired
     @InjectMocks
     MarketHelper marketHelper;
-
     @MockBean
     ParentService parentService;
-
     @Autowired
     @InjectMocks
     AccountHelper accountHelper;
-
-    final Faker faker = new Faker();
 
     @BeforeEach
     public void init() {
@@ -256,6 +268,14 @@ public class MarketServiceTest {
         request.currencyCode = "USD";
 
         ActivityDTO response = marketService.sell(account.getId(), request);
+        modelTestUtils.await();
+
+        Transaction t = transactionHelper.findByPublicId(response.publicId);
+        assertEquals(Activity.Status.SETTLED, t.getStatus());
+        assertEquals(response.publicId, t.getPublicId());
+        assertEquals(wallet, t.getWallet());
+        assertEquals(account, t.getAccount());
+        assertEquals(0, BigDecimal.ONE.compareTo(t.getAmount()));
     }
 
     @Test

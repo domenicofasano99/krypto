@@ -8,7 +8,16 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -73,12 +82,6 @@ public class Wallet {
         return bh;
     }
 
-
-    public enum Status {
-        PENDING,
-        CREATED
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -90,5 +93,10 @@ public class Wallet {
     @Override
     public int hashCode() {
         return Objects.hashCode(address);
+    }
+
+    public enum Status {
+        PENDING,
+        CREATED
     }
 }

@@ -47,7 +47,7 @@ public class WalletController {
     }
 
     @PostMapping("/validateAddress")
-    public Boolean exists(@RequestParam("accountId") Long accountId, @RequestBody ValidationRequestDTO validationRequestDTO){
+    public Boolean exists(@RequestParam("accountId") Long accountId, @RequestBody ValidationRequestDTO validationRequestDTO) {
         return walletService.validateAddress(validationRequestDTO);
     }
 }

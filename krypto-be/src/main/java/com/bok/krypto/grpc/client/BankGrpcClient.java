@@ -1,6 +1,13 @@
 package com.bok.krypto.grpc.client;
 
-import com.bok.bank.integration.grpc.*;
+import com.bok.bank.integration.grpc.AccountInfoRequest;
+import com.bok.bank.integration.grpc.AccountInfoResponse;
+import com.bok.bank.integration.grpc.AuthorizationRequest;
+import com.bok.bank.integration.grpc.AuthorizationResponse;
+import com.bok.bank.integration.grpc.BankGrpc;
+import com.bok.bank.integration.grpc.ConversionRequest;
+import com.bok.bank.integration.grpc.Currency;
+import com.bok.bank.integration.grpc.Money;
 import com.bok.bank.integration.util.AuthorizationException;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;

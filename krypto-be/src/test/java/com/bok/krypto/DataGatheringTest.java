@@ -6,7 +6,6 @@ import com.bok.krypto.model.Krypto;
 import com.bok.krypto.repository.KryptoRepository;
 import com.bok.krypto.utils.ModelTestUtils;
 import lombok.extern.slf4j.Slf4j;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

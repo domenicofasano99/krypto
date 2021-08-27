@@ -2,8 +2,8 @@ package com.bok.krypto.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -16,16 +16,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
+@ToString
 @DiscriminatorColumn(name = "transaction_type",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class Activity {
@@ -57,8 +56,7 @@ public abstract class Activity {
     @Column
     private Double fee;
 
-    @PrePersist
-    public void prePersist() {
+    public Activity() {
         this.status = Status.PENDING;
         this.publicId = UUID.randomUUID();
     }
