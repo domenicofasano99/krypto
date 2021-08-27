@@ -11,6 +11,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class SellMessage extends MarketMessage {
     public Long transactionId;
-    public BigDecimal amount;
-    public String symbol;
+    public BigDecimal moneyAmount;
+    public String kryptoSymbol;
 }

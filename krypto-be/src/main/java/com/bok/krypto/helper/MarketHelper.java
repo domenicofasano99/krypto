@@ -88,18 +88,18 @@ public class MarketHelper{
         log.info("Processing purchase {}", message);
 
         Account account = accountHelper.findById(message.accountId);
-        Krypto k = kryptoHelper.findBySymbol(message.symbol);
+        Krypto k = kryptoHelper.findBySymbol(message.kryptoSymbol);
         Transaction transaction = transactionHelper.findById(message.transactionId);
         Wallet destination;
 
         try {
-            destination = walletHelper.findByAccountIdAndSymbol(message.accountId, message.symbol);
+            destination = walletHelper.findByAccountIdAndSymbol(message.accountId, message.kryptoSymbol);
         } catch (WalletNotFoundException we) {
-            log.warn("account {} made a purchase of {} but does not have a wallet for krypto {}, creating a wallet for it", message.accountId, message.symbol, message.symbol);
+            log.warn("account {} made a purchase of {} but does not have a wallet for krypto {}, creating a wallet for it", message.accountId, message.kryptoSymbol, message.kryptoSymbol);
             destination = walletHelper.createWallet(account, k);
         }
 
-        Money money = convertIntoMoney(message.amount, message.currencyCode);
+        Money money = convertIntoMoney(message.moneyAmount, message.currencyCode);
         BigDecimal usd = BigDecimal.valueOf(bankService.convertMoney(money.toGrpcMoney(), com.bok.bank.integration.grpc.Currency.USD).getAmount());
         BigDecimal kryptoAmount = getKryptoAmount(k, usd);
 
@@ -114,17 +114,17 @@ public class MarketHelper{
 
             BankWithdrawalMessage bankWithdrawalMessage = new BankWithdrawalMessage(money, message.accountId, destination.getKrypto().getSymbol(), transaction.getPublicId());
             bankService.sendBankWithdrawal(bankWithdrawalMessage);
-            log.info("Completed purchase ID:{} for {} of {} {}", message.transactionId, message.accountId, message.symbol, message.amount);
+            log.info("Completed purchase ID:{} for {} of {} {}", message.transactionId, message.accountId, message.kryptoSymbol, message.moneyAmount);
             email.subject = "Purchase completed!";
             email.to = accountHelper.getEmailByAccountId(account.getId());
-            email.body = "Your PURCHASE of " + money.amount + " " + money.getCurrency() + " of " + message.symbol + " has been ACCEPTED.";
+            email.body = "Your PURCHASE of " + money.amount + " " + money.getCurrency() + " of " + message.kryptoSymbol + " has been ACCEPTED.";
             transaction.setStatus(Activity.Status.SETTLED);
 
         } catch (TransactionException ex) {
             log.info("Purchase {} error, insufficient balance", message);
             email.subject = "Insufficient Balance in your account";
             email.to = accountHelper.getEmailByAccountId(account.getId());
-            email.body = "Your PURCHASE transaction of " + money.amount + " " + money.getCurrency() + " of " + message.symbol + " has been DECLINED due to insufficient balance.";
+            email.body = "Your PURCHASE transaction of " + money.amount + " " + money.getCurrency() + " of " + message.kryptoSymbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
         }
 
@@ -136,27 +136,27 @@ public class MarketHelper{
     public void handle(SellMessage sellMessage) {
         log.info("Processing sell {}", sellMessage);
         Transaction transaction = transactionHelper.findById(sellMessage.transactionId);
-        Wallet source = walletHelper.findByAccountIdAndSymbol(sellMessage.accountId, sellMessage.symbol);
+        Wallet source = walletHelper.findByAccountIdAndSymbol(sellMessage.accountId, sellMessage.kryptoSymbol);
         Account account = accountHelper.findById(sellMessage.accountId);
         transaction.setWallet(source);
-        transaction.setAmount(sellMessage.amount);
+        transaction.setAmount(sellMessage.moneyAmount);
         transaction.setAccount(account);
 
         String subject, to, text;
         try {
-            walletHelper.withdraw(source, sellMessage.amount);
-            Money amountToDeposit = convertIntoMoney(sellMessage.amount, sellMessage.currencyCode);
+            walletHelper.withdraw(source, sellMessage.moneyAmount);
+            Money amountToDeposit = convertIntoMoney(sellMessage.moneyAmount, sellMessage.currencyCode);
             BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, sellMessage.accountId, source.getKrypto().getSymbol());
             bankService.sendBankDeposit(bankDepositMessage);
             subject = "Sell executed";
             to = accountHelper.getEmailByAccountId(account.getId());
-            text = "Your SELL of " + sellMessage.amount + " " + sellMessage.symbol + " has been ACCEPTED.";
+            text = "Your SELL of " + sellMessage.moneyAmount + " " + sellMessage.kryptoSymbol + " has been ACCEPTED.";
             transaction.setStatus(Activity.Status.SETTLED);
 
         } catch (TransactionException ex) {
-            subject = "Insufficient Balance in your account";
+            subject = "Insufficient KryptoBalance in your account";
             to = accountHelper.getEmailByAccountId(account.getId());
-            text = "Your SELL transaction of " + sellMessage.amount + " " + sellMessage.symbol + " has been DECLINED due to insufficient balance.";
+            text = "Your SELL transaction of " + sellMessage.moneyAmount + " " + sellMessage.kryptoSymbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
         }
 
@@ -203,12 +203,12 @@ public class MarketHelper{
         messageService.sendEmail(emailMessage);
     }
 
-    private void sendPurchase(Long accountId, Long transactionId, BigDecimal amount, String currencyCode, String symbol) {
+    private void sendPurchase(Long accountId, Long transactionId, BigDecimal moneyAmount, String currencyCode, String symbol) {
         PurchaseMessage message = new PurchaseMessage();
         message.accountId = accountId;
         message.transactionId = transactionId;
-        message.amount = amount;
-        message.symbol = symbol;
+        message.moneyAmount = moneyAmount;
+        message.kryptoSymbol = symbol;
         message.currencyCode = currencyCode;
         messageService.sendPurchase(message);
     }
@@ -217,9 +217,9 @@ public class MarketHelper{
         SellMessage message = new SellMessage();
         message.accountId = accountId;
         message.transactionId = transactionId;
-        message.amount = amount;
+        message.moneyAmount = amount;
         message.currencyCode = currency;
-        message.symbol = symbol;
+        message.kryptoSymbol = symbol;
         messageService.sendSell(message);
     }
 

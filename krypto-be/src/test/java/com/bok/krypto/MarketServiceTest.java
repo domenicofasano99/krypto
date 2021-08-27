@@ -203,6 +203,7 @@ public class MarketServiceTest {
     public void purchaseTest_permitted() {
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
+        Wallet wallet = modelTestUtils.createWallet(account, krypto, BigDecimal.ZERO);
         when(bankService.authorize(any(), any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();

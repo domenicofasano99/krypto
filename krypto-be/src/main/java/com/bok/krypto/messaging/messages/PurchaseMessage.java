@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class PurchaseMessage extends MarketMessage {
     public Long accountId;
     public Long transactionId;
-    public String symbol;
-    public BigDecimal amount;
+    public String kryptoSymbol;
+    public BigDecimal moneyAmount;
 
 }
