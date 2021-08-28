@@ -27,11 +27,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.UUID;
 
 import static com.bok.krypto.util.Constants.STANDARD_CURRENCY;
+import static com.bok.krypto.util.Constants.mathContext;
 
 @Component
 @Slf4j
@@ -203,7 +203,7 @@ public class MarketHelper {
     }
 
     public Money convertKryptoIntoMoney(Krypto k, BigDecimal amount) {
-        return new Money(Currency.getInstance("USD"), k.getPrice().multiply(amount));
+        return new Money(Currency.getInstance("USD"), k.getPrice().multiply(amount, mathContext));
     }
 
 
@@ -239,6 +239,6 @@ public class MarketHelper {
         if (!money.getCurrency().equals(STANDARD_CURRENCY)) {
             money = bankService.convertMoney(money, STANDARD_CURRENCY);
         }
-        return money.getAmount().divide(krypto.getPrice(), 10, RoundingMode.HALF_EVEN);
+        return money.getAmount().divide(krypto.getPrice(), mathContext);
     }
 }

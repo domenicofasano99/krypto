@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.bok.krypto.util.Constants.mathContext;
+
 @Slf4j
 @Component
 public class WalletHelper {
@@ -87,7 +89,7 @@ public class WalletHelper {
             throw new TransactionException("not enough funds to perform the withdrawal");
         }
         log.info("withdrawing {} from wallet {}", amount, w.getAddress());
-        BigDecimal newBalance = w.getAvailableAmount().subtract(amount);
+        BigDecimal newBalance = w.getAvailableAmount().subtract(amount, mathContext);
         w.setAvailableAmount(newBalance);
         balanceSnapshotHelper.save(w.createSnapshot());
         walletRepository.saveAndFlush(w);
@@ -102,7 +104,7 @@ public class WalletHelper {
             throw new InvalidRequestException("Cannot deposit negative amounts");
         }
         log.info("depositing {} {} to wallet {}", amount, w.getKrypto().getSymbol(), wallet.getAddress());
-        BigDecimal newBalance = w.getAvailableAmount().add(amount);
+        BigDecimal newBalance = w.getAvailableAmount().add(amount, mathContext);
         w.setAvailableAmount(newBalance);
         balanceSnapshotHelper.save(w.createSnapshot());
         walletRepository.saveAndFlush(w);
@@ -222,7 +224,6 @@ public class WalletHelper {
         for (Wallet w : wallets) {
             WalletInfoDTO walletInfoDTO = new WalletInfoDTO();
             if (w.getStatus().equals(Wallet.Status.PENDING)) {
-                //walletInfoDTO.symbol = w.getKrypto().getSymbol(); not available if wallet has not been created first
                 walletInfoDTO.status = WalletInfoDTO.Status.valueOf(w.getStatus().name());
             } else {
                 walletInfoDTO = getInfoFromWallet(w);
