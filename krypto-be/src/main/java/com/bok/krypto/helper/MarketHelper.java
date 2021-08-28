@@ -165,14 +165,14 @@ public class MarketHelper {
             bankService.sendBankDeposit(bankDepositMessage);
             subject = "Sell executed";
             to = accountHelper.getEmailByAccountId(account.getId());
-            text = "Your SELL of " + message.moneyAmount + " " + message.kryptoSymbol + " has been ACCEPTED.";
+            text = "Your SELL of " + message.moneyAmount + " "+message.currencyCode + " of " + message.kryptoSymbol + " has been ACCEPTED.";
             transaction.setStatus(Activity.Status.SETTLED);
             log.info("SETTLED {}", transaction);
 
         } catch (TransactionException ex) {
             subject = "Insufficient KryptoBalance in your account";
             to = accountHelper.getEmailByAccountId(account.getId());
-            text = "Your SELL transaction of " + message.moneyAmount + " " + message.kryptoSymbol + " has been DECLINED due to insufficient balance.";
+            text = "Your SELL transaction of " + message.moneyAmount + " "+message.currencyCode + " of " + message.kryptoSymbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
             log.info("DECLINED {}", transaction);
         }

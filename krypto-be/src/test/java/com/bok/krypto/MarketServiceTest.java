@@ -258,6 +258,7 @@ public class MarketServiceTest {
 
     @Test
     public void sellTest() {
+        when(bankService.convertMoney(any(), any())).thenReturn(Money.newBuilder().setCurrency(Currency.USD).setAmount(10).build());
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
         Wallet wallet = modelTestUtils.createWallet(account, krypto, BigDecimal.valueOf(1000000));
