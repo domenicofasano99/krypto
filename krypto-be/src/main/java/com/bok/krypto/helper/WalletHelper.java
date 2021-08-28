@@ -74,11 +74,11 @@ public class WalletHelper {
 
 
     public Wallet findByPublicId(String publicId) {
-        return walletRepository.findByAddress(publicId).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
+        return walletRepository.findByAddressAndDeletedIsFalse(publicId).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
     }
 
     public Wallet findByAccountIdAndSymbol(Long userId, String symbol) throws WalletNotFoundException {
-        return walletRepository.findByAccount_IdAndKrypto_Symbol(userId, symbol).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
+        return walletRepository.findByAccount_IdAndKrypto_SymbolAndDeletedIsFalse(userId, symbol).orElseThrow(() -> new WalletNotFoundException("wallet not found"));
 
     }
 
@@ -113,14 +113,14 @@ public class WalletHelper {
     }
 
     public Boolean existsByAccountIdAndSymbol(Long accountId, String symbol) {
-        return walletRepository.existsByAccount_IdAndKrypto_Symbol(accountId, symbol);
+        return walletRepository.existsByAccount_IdAndKrypto_SymbolAndDeletedIsFalse(accountId, symbol);
     }
 
     public WalletResponseDTO createWallet(Long accountId, WalletRequestDTO requestDTO) {
         if (!kryptoHelper.existsBySymbol(requestDTO.symbol)) {
             throw new KryptoNotFoundException("This krypto doesn't exists");
         }
-        if (walletRepository.existsByAccount_IdAndKrypto_Symbol(accountId, requestDTO.symbol)) {
+        if (walletRepository.existsByAccount_IdAndKrypto_SymbolAndDeletedIsFalse(accountId, requestDTO.symbol)) {
             throw new WalletAlreadyExistsException("A wallet with the same Krypto exists for this user");
         }
         log.info("Creating {} wallet for account {}", requestDTO.symbol, accountId);
@@ -174,7 +174,7 @@ public class WalletHelper {
 
     public WalletDeleteResponseDTO delete(Long accountId, WalletDeleteRequestDTO deleteRequestDTO) {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
-        Preconditions.checkArgument(walletRepository.existsByAccount_IdAndKrypto_Symbol(accountId, deleteRequestDTO.symbol));
+        Preconditions.checkArgument(walletRepository.existsByAccount_IdAndKrypto_SymbolAndDeletedIsFalse(accountId, deleteRequestDTO.symbol));
 
         WalletDeleteMessage message = new WalletDeleteMessage();
         message.accountId = accountId;
@@ -184,13 +184,19 @@ public class WalletHelper {
         Account account = accountHelper.findById(accountId);
         Wallet wallet = findByAccountIdAndSymbol(accountId, deleteRequestDTO.symbol);
         marketHelper.emptyWallet(account, wallet);
-        walletRepository.delete(wallet);
+
+        delete(wallet);
         String to, subject, text;
         to = accountHelper.getEmailByAccountId(account.getId());
         subject = "BOK - Wallet deletion";
         text = "Your wallet " + wallet.getKrypto().getSymbol() + " has been deleted.";
         sendMarketEmail(subject, to, text);
         return new WalletDeleteResponseDTO(wallet.getAddress());
+    }
+
+    private void delete(Wallet wallet) {
+        wallet.setDeleted(true);
+        walletRepository.saveAndFlush(wallet);
     }
 
     public void handleWalletDeletion(WalletDeleteMessage walletDeleteMessage) {
@@ -217,7 +223,7 @@ public class WalletHelper {
     @Transactional
     public WalletsDTO getWallets(Long accountId) {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
-        List<Wallet> wallets = walletRepository.findByAccount_Id(accountId);
+        List<Wallet> wallets = walletRepository.findByAccount_IdAndDeletedIsFalse(accountId);
         WalletsDTO walletsDTO = new WalletsDTO();
         walletsDTO.wallets = new ArrayList<>();
 
@@ -279,7 +285,7 @@ public class WalletHelper {
     }
 
     public Boolean validateAddress(ValidationRequestDTO validationRequestDTO) {
-        return walletRepository.existsByAddressAndKrypto_Symbol(validationRequestDTO.address, validationRequestDTO.symbol);
+        return walletRepository.existsByAddressAndKrypto_SymbolAndDeletedIsFalse(validationRequestDTO.address, validationRequestDTO.symbol);
     }
 
     public Wallet save(Wallet wallet) {

@@ -14,11 +14,11 @@ public interface WalletService {
 
     WalletResponseDTO create(Long userId, WalletRequestDTO walletRequestDTO);
 
-    WalletDeleteResponseDTO delete(Long userId, WalletDeleteRequestDTO walletDeleteRequestDTO);
+    WalletDeleteResponseDTO delete(Long accountId, WalletDeleteRequestDTO walletDeleteRequestDTO);
 
-    WalletInfoDTO info(Long userId, String symbol, Instant startDate, Instant endDate);
+    WalletInfoDTO info(Long accountId, String symbol, Instant startDate, Instant endDate);
 
-    WalletsDTO listWallets(Long userId);
+    WalletsDTO listWallets(Long accountId);
 
     Boolean validateAddress(ValidationRequestDTO validationRequestDTO);
 }

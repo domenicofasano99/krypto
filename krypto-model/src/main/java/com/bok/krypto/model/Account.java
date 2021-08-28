@@ -29,12 +29,15 @@ public class Account {
     private Long id;
 
     @OneToMany
+    @ToString.Exclude
     private Set<Wallet> wallets;
 
     @OneToMany
+    @ToString.Exclude
     private Set<Transaction> transactions;
 
     @OneToMany
+    @ToString.Exclude
     private Set<Transfer> transfers;
 
     @CreationTimestamp

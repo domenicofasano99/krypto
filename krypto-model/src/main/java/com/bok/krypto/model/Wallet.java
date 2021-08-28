@@ -68,6 +68,9 @@ public class Wallet {
     @ToString.Exclude
     private List<BalanceSnapshot> balanceSnapshot;
 
+    @Column
+    private boolean deleted;
+
 
     public Wallet(Account u, Krypto k) {
         this.account = u;

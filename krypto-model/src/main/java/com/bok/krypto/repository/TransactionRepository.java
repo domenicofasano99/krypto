@@ -29,6 +29,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("select count(t.id) from Transaction t where t.status like 'AUTHORIZED'")
     Integer countAuthorizedTransactions();
 
+    void deleteByWalletId(Long wallet_id);
+
     public static class Projection {
         public interface Status {
             Transaction.Status getStatus();

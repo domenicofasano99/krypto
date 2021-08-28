@@ -246,7 +246,7 @@ public class WalletServiceTest {
         WalletInfoDTO response = walletService.info(u.getId(), k.getSymbol(), Instant.now(), Instant.now());
         assertEquals(response.activities.size(), 0);
 
-        Wallet w = walletRepository.findByAccount_IdAndKrypto_Symbol(u.getId(), k.getSymbol()).get();
+        Wallet w = walletRepository.findByAccount_IdAndKrypto_SymbolAndDeletedIsFalse(u.getId(), k.getSymbol()).get();
 
         Transaction t = new Transaction();
         t.setAccount(u);
@@ -306,6 +306,27 @@ public class WalletServiceTest {
         WalletInfoDTO wInfo = walletService.info(a.getId(), k.getSymbol(), Instant.now().minus(30, ChronoUnit.DAYS), Instant.now());
         assertEquals(3, wInfo.balanceHistory.size());
         assertEquals(3, balanceSnapshotRepository.findByWallet_Id(w.getId()).size());
+    }
+
+    @Test
+    public void testWalletDelete() {
+        Account a = modelTestUtils.createAccount();
+        Krypto k = modelTestUtils.getRandomKrypto();
+        Wallet w = modelTestUtils.createWallet(a, k, BigDecimal.ZERO);
+        walletHelper.deposit(w, BigDecimal.TEN);
+
+        Transaction t = new Transaction();
+        t.setStatus(Activity.Status.SETTLED);
+        t.setAccount(a);
+        t.setWallet(w);
+        t.setPublicId(UUID.randomUUID());
+        t.setType(Transaction.Type.PURCHASE);
+
+        transactionRepository.save(t);
+
+        WalletDeleteRequestDTO request = new WalletDeleteRequestDTO();
+        request.symbol = w.getKrypto().getSymbol();
+        walletService.delete(a.getId(), request);
     }
 
 }
