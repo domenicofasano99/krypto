@@ -83,7 +83,7 @@ public class TransferHelper {
         message.accountId = accountId;
         message.symbol = requestDTO.symbol;
         message.destination = requestDTO.destination;
-        message.amount = requestDTO.amount;
+        message.amount = amount;
 
         messageService.sendTransfer(message);
 
