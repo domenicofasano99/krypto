@@ -1,8 +1,6 @@
 package com.bok.krypto;
 
 import com.bok.bank.integration.grpc.AuthorizationResponse;
-import com.bok.bank.integration.grpc.Currency;
-import com.bok.bank.integration.grpc.Money;
 import com.bok.krypto.helper.AccountHelper;
 import com.bok.krypto.helper.MarketHelper;
 import com.bok.krypto.helper.TransactionHelper;
@@ -49,6 +47,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.bok.krypto.util.Constants.STANDARD_CURRENCY;
 import static com.bok.krypto.utils.Constants.BTC;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
@@ -108,7 +107,7 @@ public class MarketServiceTest {
         Wallet wallet = modelTestUtils.createWallet(account, krypto, new BigDecimal("0.9"));
 
         when(bankService.authorize(any(), any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
-        when(bankService.convertMoney(any(), any())).thenReturn(Money.newBuilder().setCurrency(Currency.USD).setAmount(10).build());
+        when(bankService.convertMoney(any(), any())).thenReturn(new com.bok.bank.integration.util.Money(STANDARD_CURRENCY, BigDecimal.TEN));
 
         PurchaseRequestDTO purchaseRequestDTO = new PurchaseRequestDTO();
         purchaseRequestDTO.symbol = BTC;
@@ -258,7 +257,7 @@ public class MarketServiceTest {
 
     @Test
     public void sellTest() {
-        when(bankService.convertMoney(any(), any())).thenReturn(Money.newBuilder().setCurrency(Currency.USD).setAmount(10).build());
+        when(bankService.convertMoney(any(), any())).thenReturn(new com.bok.bank.integration.util.Money(STANDARD_CURRENCY, BigDecimal.TEN));
         Account account = modelTestUtils.createAccount();
         Krypto krypto = modelTestUtils.getKrypto(BTC);
         Wallet wallet = modelTestUtils.createWallet(account, krypto, BigDecimal.valueOf(1000000));
@@ -285,7 +284,7 @@ public class MarketServiceTest {
         Krypto krypto = modelTestUtils.getKrypto(BTC);
 
         when(bankService.authorize(any(), any(), any(), any(), any())).thenReturn(AuthorizationResponse.newBuilder().setAuthorized(true).setAuthorizationId(UUID.randomUUID().toString()).build());
-        when(bankService.convertMoney(any(), any())).thenReturn(Money.newBuilder().setCurrency(Currency.USD).setAmount(10).build());
+        when(bankService.convertMoney(any(), any())).thenReturn(new com.bok.bank.integration.util.Money(STANDARD_CURRENCY, BigDecimal.TEN));
 
         PurchaseRequestDTO purchaseRequest = new PurchaseRequestDTO();
         purchaseRequest.amount = new BigDecimal("0.012001023");

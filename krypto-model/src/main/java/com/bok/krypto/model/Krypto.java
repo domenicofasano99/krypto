@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -25,6 +26,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 public class Krypto {
     @Id
@@ -48,9 +50,11 @@ public class Krypto {
     private Instant updateTimestamp;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<HistoricalData> historicalData = new ArrayList<>();
 
     @OneToMany
+    @ToString.Exclude
     private List<Wallet> wallets;
 
 

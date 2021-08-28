@@ -170,10 +170,6 @@ public class WalletHelper {
         return email;
     }
 
-    public Boolean hasSufficientBalance(Long accountId, String symbol, BigDecimal amount) {
-        return walletRepository.existsByAccount_IdAndKrypto_SymbolAndAvailableAmountGreaterThanEqual(accountId, symbol, amount);
-    }
-
     public WalletDeleteResponseDTO delete(Long accountId, WalletDeleteRequestDTO deleteRequestDTO) {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
         Preconditions.checkArgument(walletRepository.existsByAccount_IdAndKrypto_Symbol(accountId, deleteRequestDTO.symbol));

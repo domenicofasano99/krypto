@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -26,6 +27,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 public class Wallet {
     @Id
@@ -55,12 +57,15 @@ public class Wallet {
     private Status status;
 
     @OneToMany
+    @ToString.Exclude
     private List<Transfer> transfers;
 
     @OneToMany
+    @ToString.Exclude
     private List<Transaction> transactions;
 
     @OneToMany
+    @ToString.Exclude
     private List<BalanceSnapshot> balanceSnapshot;
 
 

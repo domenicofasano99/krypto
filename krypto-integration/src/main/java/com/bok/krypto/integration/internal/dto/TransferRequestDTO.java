@@ -12,6 +12,7 @@ public class TransferRequestDTO {
     public String source;
     public String destination;
     public BigDecimal amount;
+    public String currencyCode;
 
     public TransferRequestDTO() {
     }

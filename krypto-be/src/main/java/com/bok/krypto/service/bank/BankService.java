@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Slf4j
@@ -36,8 +37,16 @@ public class BankService {
         messageService.sendBankDeposit(bankDepositMessage);
     }
 
-    public Money convertMoney(Money from, Currency to) {
-        return bankGrpcClient.convertMoney(from, to);
+    public com.bok.bank.integration.util.Money convertMoney(com.bok.bank.integration.util.Money from, java.util.Currency to) {
+        Money.Builder moneyBuilder = Money.newBuilder();
+        moneyBuilder.setCurrency(Currency.valueOf(from.currency.getCurrencyCode()));
+        moneyBuilder.setAmount(from.amount.doubleValue());
+        Money response = bankGrpcClient.convertMoney(moneyBuilder.build(), Currency.valueOf(to.getCurrencyCode()));
+
+        com.bok.bank.integration.util.Money converted = new com.bok.bank.integration.util.Money();
+        converted.setAmount(BigDecimal.valueOf(response.getAmount()));
+        converted.setCurrency(java.util.Currency.getInstance(response.getCurrency().toString()));
+        return converted;
     }
 
     public AccountInfoResponse getAccountInfo(Long accountId) {

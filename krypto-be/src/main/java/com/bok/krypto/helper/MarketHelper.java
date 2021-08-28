@@ -31,6 +31,8 @@ import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.UUID;
 
+import static com.bok.krypto.util.Constants.STANDARD_CURRENCY;
+
 @Component
 @Slf4j
 public class MarketHelper {
@@ -91,8 +93,7 @@ public class MarketHelper {
         }
 
         Money money = convertIntoMoney(message.moneyAmount, message.currencyCode);
-        BigDecimal usd = BigDecimal.valueOf(bankService.convertMoney(money.toGrpcMoney(), com.bok.bank.integration.grpc.Currency.USD).getAmount());
-        BigDecimal kryptoAmount = getKryptoAmount(k, usd);
+        BigDecimal kryptoAmount = getKryptoAmount(k, money);
 
         transaction.setWallet(destination);
         transaction.setAmount(kryptoAmount);
@@ -146,13 +147,7 @@ public class MarketHelper {
         transaction.setWallet(source);
 
         Money money = convertIntoMoney(message.moneyAmount, message.currencyCode);
-
-        com.bok.bank.integration.grpc.Money.Builder moneyBuilder = com.bok.bank.integration.grpc.Money.newBuilder();
-        moneyBuilder.setAmount(money.getAmount().doubleValue());
-        moneyBuilder.setCurrencyValue(com.bok.bank.integration.grpc.Currency.valueOf(money.currency.getCurrencyCode()).getNumber());
-
-        com.bok.bank.integration.grpc.Money usdMoney = bankService.convertMoney(moneyBuilder.build(), com.bok.bank.integration.grpc.Currency.USD);
-        BigDecimal kryptoAmount = getKryptoAmount(source.getKrypto(), BigDecimal.valueOf(usdMoney.getAmount()));
+        BigDecimal kryptoAmount = getKryptoAmount(source.getKrypto(), money);
 
         transaction.setAmount(kryptoAmount);
         transaction.setAccount(account);
@@ -165,14 +160,14 @@ public class MarketHelper {
             bankService.sendBankDeposit(bankDepositMessage);
             subject = "Sell executed";
             to = accountHelper.getEmailByAccountId(account.getId());
-            text = "Your SELL of " + message.moneyAmount + " "+message.currencyCode + " of " + message.kryptoSymbol + " has been ACCEPTED.";
+            text = "Your SELL of " + message.moneyAmount + " " + message.currencyCode + " of " + message.kryptoSymbol + " has been ACCEPTED.";
             transaction.setStatus(Activity.Status.SETTLED);
             log.info("SETTLED {}", transaction);
 
         } catch (TransactionException ex) {
             subject = "Insufficient KryptoBalance in your account";
             to = accountHelper.getEmailByAccountId(account.getId());
-            text = "Your SELL transaction of " + message.moneyAmount + " "+message.currencyCode + " of " + message.kryptoSymbol + " has been DECLINED due to insufficient balance.";
+            text = "Your SELL transaction of " + message.moneyAmount + " " + message.currencyCode + " of " + message.kryptoSymbol + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
             log.info("DECLINED {}", transaction);
         }
@@ -240,7 +235,10 @@ public class MarketHelper {
         messageService.sendSell(message);
     }
 
-    private BigDecimal getKryptoAmount(Krypto k, BigDecimal usdMoneyAmount) {
-        return usdMoneyAmount.divide(k.getPrice(), 10, RoundingMode.HALF_EVEN);
+    public BigDecimal getKryptoAmount(Krypto krypto, Money money) {
+        if (!money.getCurrency().equals(STANDARD_CURRENCY)) {
+            money = bankService.convertMoney(money, STANDARD_CURRENCY);
+        }
+        return money.getAmount().divide(krypto.getPrice(), 10, RoundingMode.HALF_EVEN);
     }
 }

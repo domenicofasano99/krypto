@@ -53,9 +53,9 @@ public class CoinMarketAPI {
         try {
             return makeAPICall(endpoint, paratmers);
         } catch (IOException e) {
-            log.error("Error: cannont access content - " + e.toString());
+            log.error("Error: cannont access content - " + e);
         } catch (URISyntaxException e) {
-            log.error("Error: Invalid URL " + e.toString());
+            log.error("Error: Invalid URL " + e);
         }
         return null;
     }
