@@ -1,5 +1,6 @@
 package com.bok.krypto.messaging.messages;
 
+import com.bok.bank.integration.util.Money;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -13,7 +14,6 @@ import java.math.BigDecimal;
 public abstract class MarketMessage implements Serializable {
     public Long accountId;
     public Long transactionId;
-    public BigDecimal amount;
     public String symbol;
-    public String currencyCode;
+    public Money money;
 }
