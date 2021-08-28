@@ -144,14 +144,24 @@ public class MarketHelper {
         Wallet source = walletHelper.findByAccountIdAndSymbol(message.accountId, message.kryptoSymbol);
         Account account = accountHelper.findById(message.accountId);
         transaction.setWallet(source);
-        transaction.setAmount(message.moneyAmount);
+
+        Money money = convertIntoMoney(message.moneyAmount, message.currencyCode);
+
+        com.bok.bank.integration.grpc.Money.Builder moneyBuilder = com.bok.bank.integration.grpc.Money.newBuilder();
+        moneyBuilder.setAmount(money.getAmount().doubleValue());
+        moneyBuilder.setCurrencyValue(com.bok.bank.integration.grpc.Currency.valueOf(money.currency.getCurrencyCode()).getNumber());
+
+        com.bok.bank.integration.grpc.Money usdMoney = bankService.convertMoney(moneyBuilder.build(), com.bok.bank.integration.grpc.Currency.USD);
+        BigDecimal kryptoAmount = getKryptoAmount(source.getKrypto(), BigDecimal.valueOf(usdMoney.getAmount()));
+
+        transaction.setAmount(kryptoAmount);
         transaction.setAccount(account);
 
         String subject, to, text;
         try {
-            walletHelper.withdraw(source, message.moneyAmount);
-            Money amountToDeposit = convertIntoMoney(message.moneyAmount, message.currencyCode);
-            BankDepositMessage bankDepositMessage = new BankDepositMessage(amountToDeposit, message.accountId, source.getKrypto().getSymbol());
+            walletHelper.withdraw(source, kryptoAmount);
+
+            BankDepositMessage bankDepositMessage = new BankDepositMessage(money, message.accountId, source.getKrypto().getSymbol());
             bankService.sendBankDeposit(bankDepositMessage);
             subject = "Sell executed";
             to = accountHelper.getEmailByAccountId(account.getId());
@@ -220,11 +230,11 @@ public class MarketHelper {
         messageService.sendPurchase(message);
     }
 
-    private void sendSell(Long accountId, Long transactionId, BigDecimal amount, String currency, String symbol) {
+    private void sendSell(Long accountId, Long transactionId, BigDecimal moneyAmount, String currency, String symbol) {
         SellMessage message = new SellMessage();
         message.accountId = accountId;
         message.transactionId = transactionId;
-        message.moneyAmount = amount;
+        message.moneyAmount = moneyAmount;
         message.currencyCode = currency;
         message.kryptoSymbol = symbol;
         messageService.sendSell(message);
