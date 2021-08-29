@@ -131,10 +131,24 @@ public class MarketHelper {
         Preconditions.checkArgument(kryptoHelper.existsBySymbol(request.symbol), ErrorCodes.KRYPTO_DOES_NOT_EXIST);
         Preconditions.checkArgument(request.amount.compareTo(BigDecimal.ZERO) >= 0, "Cannot SELL a negative amount.");
 
+        Krypto krypto = kryptoHelper.findBySymbol(request.symbol);
+        Wallet wallet = walletHelper.findByAccountIdAndSymbol(accountId, krypto.getSymbol());
+        Account account = accountHelper.findById(accountId);
+
         Transaction transaction = new Transaction(Transaction.Type.SELL);
+        transaction.setWallet(wallet);
+        transaction.setAccount(account);
         transaction = transactionHelper.saveOrUpdate(transaction);
         Money money = convertIntoMoney(request.amount, request.currencyCode);
-        sendSell(accountId, transaction.getId(), money, request.symbol);
+        transaction.setAmount(getKryptoAmount(krypto, money));
+
+        if (wallet.getAvailableAmount().compareTo(transaction.getAmount()) <= 0) {
+            transaction.setStatus(Activity.Status.DECLINED);
+            transactionHelper.saveOrUpdate(transaction);
+            return new ActivityDTO(transaction.getPublicId(), accountId, ActivityDTO.Type.SELL, request.amount, transaction.status.name());
+        }
+
+        sendSell(accountId, transaction.getId(), money);
         return new ActivityDTO(transaction.getPublicId(), accountId, ActivityDTO.Type.SELL, request.amount, transaction.status.name());
     }
 
@@ -142,32 +156,23 @@ public class MarketHelper {
     public void handle(SellMessage message) {
         log.info("Processing sell {}", message);
         Transaction transaction = transactionHelper.findById(message.transactionId);
-        Wallet source = walletHelper.findByAccountIdAndSymbol(message.accountId, message.kryptoSymbol);
-        Account account = accountHelper.findById(message.accountId);
-        transaction.setWallet(source);
-
-
-        BigDecimal kryptoAmount = getKryptoAmount(source.getKrypto(), message.money);
-
-        transaction.setAmount(kryptoAmount);
-        transaction.setAccount(account);
 
         String subject, to, text;
         try {
-            walletHelper.withdraw(source, kryptoAmount);
+            walletHelper.withdraw(transaction.getWallet(), transaction.getAmount());
 
-            BankDepositMessage bankDepositMessage = new BankDepositMessage(message.money, message.accountId, source.getKrypto().getSymbol());
+            BankDepositMessage bankDepositMessage = new BankDepositMessage(message.money, message.accountId, transaction.getWallet().getKrypto().getSymbol());
             bankService.sendBankDeposit(bankDepositMessage);
             subject = "Sell executed";
-            to = accountHelper.getEmailByAccountId(account.getId());
-            text = "Your SELL of " + message.money + " of " + message.kryptoSymbol + " has been ACCEPTED.";
+            to = accountHelper.getEmailByAccountId(transaction.getAccount().getId());
+            text = "Your SELL of " + message.money + " of " + transaction.getWallet().getKrypto().getSymbol() + " has been ACCEPTED.";
             transaction.setStatus(Activity.Status.SETTLED);
             log.info("SETTLED {}", transaction);
 
         } catch (TransactionException ex) {
             subject = "Insufficient KryptoBalance in your account";
-            to = accountHelper.getEmailByAccountId(account.getId());
-            text = "Your SELL transaction of " + message.money + " of " + message.kryptoSymbol + " has been DECLINED due to insufficient balance.";
+            to = accountHelper.getEmailByAccountId(transaction.getAccount().getId());
+            text = "Your SELL transaction of " + message.money + " of " + transaction.getWallet().getKrypto().getSymbol() + " has been DECLINED due to insufficient balance.";
             transaction.setStatus(Activity.Status.DECLINED);
             log.info("DECLINED {}", transaction);
         }
@@ -224,12 +229,11 @@ public class MarketHelper {
         messageService.sendPurchase(message);
     }
 
-    private void sendSell(Long accountId, Long transactionId, Money money, String symbol) {
+    private void sendSell(Long accountId, Long transactionId, Money money) {
         SellMessage message = new SellMessage();
         message.accountId = accountId;
         message.transactionId = transactionId;
         message.money = money;
-        message.kryptoSymbol = symbol;
         messageService.sendSell(message);
     }
 

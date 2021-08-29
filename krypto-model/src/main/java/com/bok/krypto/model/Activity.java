@@ -50,7 +50,7 @@ public abstract class Activity {
     @ManyToOne(targetEntity = Account.class)
     private Account account;
 
-    @Column(updatable = false)
+    @Column
     private BigDecimal amount;
 
     @Column

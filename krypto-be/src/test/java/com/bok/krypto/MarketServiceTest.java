@@ -275,7 +275,23 @@ public class MarketServiceTest {
         assertEquals(response.publicId, t.getPublicId());
         assertEquals(wallet, t.getWallet());
         assertEquals(account, t.getAccount());
-        //assertEquals(0, BigDecimal.ONE.compareTo(t.getAmount()));
+        assertNotNull(t.getAmount());
+    }
+
+    @Test
+    public void sellUnavailableAmount() {
+        when(bankService.convertMoney(any(), any())).thenReturn(new com.bok.bank.integration.util.Money(STANDARD_CURRENCY, BigDecimal.TEN));
+        Account account = modelTestUtils.createAccount();
+        Krypto krypto = modelTestUtils.getKrypto(BTC);
+        Wallet wallet = modelTestUtils.createWallet(account, krypto, BigDecimal.valueOf(0.0000000001));
+
+        SellRequestDTO request = new SellRequestDTO();
+        request.amount = BigDecimal.TEN;
+        request.symbol = krypto.getSymbol();
+        request.currencyCode = "USD";
+
+        ActivityDTO response = marketService.sell(account.getId(), request);
+        assertEquals(Activity.Status.DECLINED.name(), response.status);
     }
 
     @Test
