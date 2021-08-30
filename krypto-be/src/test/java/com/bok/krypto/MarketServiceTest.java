@@ -121,7 +121,10 @@ public class MarketServiceTest {
         assertNotNull(transaction);
         assertEquals(Transaction.Status.SETTLED, transaction.getStatus());
         assertEquals(transaction.getPublicId(), activityDTO.publicId);
-
+        assertNotNull(transaction.getAmount());
+        assertEquals(wallet, transaction.getWallet());
+        assertEquals(Transaction.Type.PURCHASE, transaction.getType());
+        assertEquals(account, transaction.getAccount());
     }
 
     @Test

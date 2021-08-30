@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @ToString
 @NoArgsConstructor

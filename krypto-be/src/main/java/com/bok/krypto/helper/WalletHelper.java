@@ -14,7 +14,6 @@ import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
 import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 import com.bok.krypto.integration.internal.dto.WalletsDTO;
 import com.bok.krypto.messaging.messages.WalletCreationMessage;
-import com.bok.krypto.messaging.messages.WalletDeleteMessage;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.BalanceSnapshot;
 import com.bok.krypto.model.Krypto;
@@ -176,11 +175,6 @@ public class WalletHelper {
         Preconditions.checkArgument(accountHelper.existsById(accountId));
         Preconditions.checkArgument(walletRepository.existsByAccount_IdAndKrypto_SymbolAndDeletedIsFalse(accountId, deleteRequestDTO.symbol));
 
-        WalletDeleteMessage message = new WalletDeleteMessage();
-        message.accountId = accountId;
-        message.symbol = deleteRequestDTO.symbol;
-        messageService.sendWalletDeletion(message);
-
         Account account = accountHelper.findById(accountId);
         Wallet wallet = findByAccountIdAndSymbol(accountId, deleteRequestDTO.symbol);
         marketHelper.emptyWallet(account, wallet);
@@ -199,18 +193,6 @@ public class WalletHelper {
         walletRepository.saveAndFlush(wallet);
     }
 
-    public void handleWalletDeletion(WalletDeleteMessage walletDeleteMessage) {
-
-        Account account = accountHelper.findById(walletDeleteMessage.accountId);
-        Wallet wallet = findByAccountIdAndSymbol(walletDeleteMessage.accountId, walletDeleteMessage.symbol);
-        marketHelper.emptyWallet(account, wallet);
-        walletRepository.delete(wallet);
-        String to, subject, text;
-        to = accountHelper.getEmailByAccountId(account.getId());
-        subject = "BOK - Wallet deletion";
-        text = "Your wallet " + wallet.getKrypto().getSymbol() + " has been deleted.";
-        sendMarketEmail(subject, to, text);
-    }
 
     public void sendMarketEmail(String subject, String email, String text) {
         EmailMessage emailMessage = new EmailMessage();

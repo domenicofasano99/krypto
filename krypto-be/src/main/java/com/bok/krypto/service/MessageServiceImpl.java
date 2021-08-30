@@ -6,7 +6,6 @@ import com.bok.krypto.messaging.messages.PurchaseMessage;
 import com.bok.krypto.messaging.messages.SellMessage;
 import com.bok.krypto.messaging.messages.TransferMessage;
 import com.bok.krypto.messaging.messages.WalletCreationMessage;
-import com.bok.krypto.messaging.messages.WalletDeleteMessage;
 import com.bok.krypto.messaging.producer.BankProducer;
 import com.bok.krypto.messaging.producer.EmailProducer;
 import com.bok.krypto.messaging.producer.MarketProducer;
@@ -68,10 +67,5 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void sendBankWithdrawal(BankWithdrawalMessage bankWithdrawalMessage) {
         bankProducer.send(bankWithdrawalMessage);
-    }
-
-    @Override
-    public void sendWalletDeletion(WalletDeleteMessage message) {
-        walletProducer.send(message);
     }
 }
