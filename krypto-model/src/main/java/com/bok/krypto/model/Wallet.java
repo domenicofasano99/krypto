@@ -43,7 +43,7 @@ public class Wallet {
     @OneToOne
     private Krypto krypto;
 
-    @Column
+    @Column(precision = 30, scale = 10)
     private BigDecimal availableAmount;
 
     @CreationTimestamp

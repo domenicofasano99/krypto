@@ -178,7 +178,7 @@ public class MarketHelper {
         }
         log.info("transaction {} processed", transaction.getId());
         transactionHelper.saveOrUpdate(transaction);
-        sendMarketEmail(subject, to, text);
+        sendEmail(subject, to, text);
     }
 
     @Transactional
@@ -198,7 +198,7 @@ public class MarketHelper {
         to = accountHelper.getEmailByAccountId(account.getId());
         text = "Your " + walletToEmpty.getKrypto().getSymbol() + " wallet has been emptied, you should receive " +
                 "the converted amount in your bank account in a few minutes.";
-        sendMarketEmail(subject, to, text);
+        sendEmail(subject, to, text);
         return sellTransaction;
 
     }
@@ -212,7 +212,7 @@ public class MarketHelper {
     }
 
 
-    public void sendMarketEmail(String subject, String email, String text) {
+    public void sendEmail(String subject, String email, String text) {
         EmailMessage emailMessage = new EmailMessage();
         emailMessage.subject = subject;
         emailMessage.to = email;
