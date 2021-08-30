@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
@@ -50,7 +51,8 @@ public abstract class Activity {
     @ManyToOne(targetEntity = Account.class)
     private Account account;
 
-    @Column
+    @Column(precision = 30, scale = 10)
+    @Type(type = "big_decimal")
     private BigDecimal amount;
 
     @Column

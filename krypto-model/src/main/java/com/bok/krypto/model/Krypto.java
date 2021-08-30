@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,8 @@ public class Krypto {
     @Column
     private Double networkFee;
 
-    @Column
+    @Column(precision = 30, scale = 10)
+    @Type(type = "big_decimal")
     private BigDecimal price;
 
     @Column

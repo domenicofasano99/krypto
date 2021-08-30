@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
@@ -44,6 +45,7 @@ public class Wallet {
     private Krypto krypto;
 
     @Column(precision = 30, scale = 10)
+    @Type(type = "big_decimal")
     private BigDecimal availableAmount;
 
     @CreationTimestamp
