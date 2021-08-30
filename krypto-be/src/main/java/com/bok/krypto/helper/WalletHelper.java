@@ -126,6 +126,7 @@ public class WalletHelper {
 
         Wallet w = new Wallet();
         w.setAccount(accountHelper.findById(accountId));
+        w.setKrypto(kryptoHelper.findBySymbol(requestDTO.symbol));
         w = walletRepository.saveAndFlush(w);
         WalletCreationMessage walletCreationMessage = new WalletCreationMessage();
         walletCreationMessage.id = w.getId();
@@ -141,7 +142,6 @@ public class WalletHelper {
                 .orElseThrow(() -> new RuntimeException("This wallet should have been pre-persisted."));
 
         w.setAddress(addressGenerator.generateWalletAddress());
-        w.setKrypto(kryptoHelper.findBySymbol(walletCreationMessage.symbol));
         w.setAvailableAmount(BigDecimal.ZERO);
         w.setStatus(Wallet.Status.CREATED);
         save(w);
