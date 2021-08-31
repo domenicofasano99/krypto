@@ -21,7 +21,7 @@ public class AccountConsumer {
         accountHelper.createAccount(message);
     }
 
-    @JmsListener(destination = "${account.account.deletion}")
+    @JmsListener(destination = "${queue.account.deletion}")
     public void accountDeletionListener(AccountClosureMessage accountClosureMessage){
         log.info("Received an account closure message");
         accountHelper.closeAccount(accountClosureMessage);
