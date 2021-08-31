@@ -6,17 +6,7 @@ option java_outer_classname = "KryptoProto";
 
 service Krypto {
 
-  rpc CreateAccount(AccountCreationRequest) returns (AccountCreationResponse){
+};
 
-  };
 
-}
-message AccountCreationResponse {
-  bool created = 1;
-  string error = 2;
-}
 
-message AccountCreationRequest {
-  int64 accountId = 1;
-  string email = 2;
-}

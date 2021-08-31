@@ -46,6 +46,9 @@ public class Account {
     @UpdateTimestamp
     private Instant updateTimestamp;
 
+    @Column
+    private boolean deleted;
+
 
     public Account(Long id) {
         this.id = id;

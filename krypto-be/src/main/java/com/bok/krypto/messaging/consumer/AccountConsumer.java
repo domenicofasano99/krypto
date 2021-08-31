@@ -1,6 +1,7 @@
 package com.bok.krypto.messaging.consumer;
 
 import com.bok.krypto.helper.AccountHelper;
+import com.bok.parent.integration.message.AccountClosureMessage;
 import com.bok.parent.integration.message.AccountCreationMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,12 @@ public class AccountConsumer {
     @JmsListener(destination = "${queue.account.creation}")
     public void marketListener(AccountCreationMessage message) {
         log.info("Received Account Creation Message: " + message.toString());
-        accountHelper.handle(message);
+        accountHelper.createAccount(message);
+    }
+
+    @JmsListener(destination = "${queues.krypto-account-deletion}")
+    public void accountDeletionListener(AccountClosureMessage accountClosureMessage){
+        log.info("Received an account closure message");
+        accountHelper.closeAccount(accountClosureMessage);
     }
 }

@@ -65,6 +65,7 @@ public class TransferHelper {
         Wallet source = walletHelper.findByPublicId(requestDTO.source);
 
         Preconditions.checkNotNull(account);
+        Preconditions.checkArgument(!requestDTO.source.equalsIgnoreCase(requestDTO.destination), "Source and destination coincide.");
         Preconditions.checkArgument(requestDTO.amount.compareTo(BigDecimal.ZERO) > 0);
         Preconditions.checkArgument(walletHelper.existsByAccountIdAndSymbol(accountId, requestDTO.symbol));
 

@@ -8,6 +8,7 @@ import com.bok.krypto.integration.internal.dto.WalletRequestDTO;
 import com.bok.krypto.integration.internal.dto.WalletResponseDTO;
 import com.bok.krypto.integration.internal.dto.WalletsDTO;
 import com.bok.krypto.service.interfaces.WalletService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ public class WalletController {
     WalletService walletService;
 
     @PostMapping("/create")
+    @ApiOperation("Handles the wallet creation")
     public WalletResponseDTO create(@RequestParam("accountId") Long accountId, @RequestBody WalletRequestDTO requestDTO) {
         return walletService.create(accountId, requestDTO);
     }
