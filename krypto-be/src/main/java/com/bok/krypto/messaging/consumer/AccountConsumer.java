@@ -21,7 +21,7 @@ public class AccountConsumer {
         accountHelper.createAccount(message);
     }
 
-    @JmsListener(destination = "${queues.krypto-account-deletion}")
+    @JmsListener(destination = "${account.account.deletion}")
     public void accountDeletionListener(AccountClosureMessage accountClosureMessage){
         log.info("Received an account closure message");
         accountHelper.closeAccount(accountClosureMessage);
