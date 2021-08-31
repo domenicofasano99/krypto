@@ -22,6 +22,7 @@ import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.bank.BankService;
 import com.bok.krypto.service.interfaces.MessageService;
 import com.bok.krypto.util.DTOUtils;
+import com.bok.parent.integration.message.AccountClosureMessage;
 import com.bok.parent.integration.message.EmailMessage;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
@@ -177,7 +178,6 @@ public class WalletHelper {
 
         Account account = accountHelper.findById(accountId);
         Wallet wallet = findByAccountIdAndSymbol(accountId, deleteRequestDTO.symbol);
-        marketHelper.emptyWallet(account, wallet);
 
         delete(wallet);
         String to, subject, text;
@@ -189,6 +189,7 @@ public class WalletHelper {
     }
 
     private void delete(Wallet wallet) {
+        marketHelper.emptyWallet(wallet);
         wallet.setDeleted(true);
         walletRepository.saveAndFlush(wallet);
     }
@@ -272,5 +273,13 @@ public class WalletHelper {
 
     public Wallet save(Wallet wallet) {
         return walletRepository.save(wallet);
+    }
+
+    public void closeWallets(AccountClosureMessage message) {
+        List<Wallet> wallets = walletRepository.findByAccount_IdAndDeletedIsFalse(message.accountId);
+        for (Wallet w : wallets) {
+            delete(w);
+        }
+        bankService.sendAccountClosure(message);
     }
 }

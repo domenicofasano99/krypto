@@ -19,6 +19,7 @@ queue:
   bank:
     deposit: bank-deposit
     withdrawal: bank-withdrawal
+    account-deletion: bank-account-deletion
   transfers: transfers
   market:
     sell: market-sell

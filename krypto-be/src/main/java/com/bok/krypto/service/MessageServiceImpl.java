@@ -12,6 +12,7 @@ import com.bok.krypto.messaging.producer.MarketProducer;
 import com.bok.krypto.messaging.producer.TransferProducer;
 import com.bok.krypto.messaging.producer.WalletProducer;
 import com.bok.krypto.service.interfaces.MessageService;
+import com.bok.parent.integration.message.AccountClosureMessage;
 import com.bok.parent.integration.message.EmailMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,5 +68,10 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void sendBankWithdrawal(BankWithdrawalMessage bankWithdrawalMessage) {
         bankProducer.send(bankWithdrawalMessage);
+    }
+
+    @Override
+    public void sendAccountClosure(AccountClosureMessage message) {
+        bankProducer.send(message);
     }
 }

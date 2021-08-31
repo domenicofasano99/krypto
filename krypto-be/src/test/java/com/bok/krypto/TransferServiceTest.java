@@ -16,6 +16,7 @@ import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.TransferService;
 import com.bok.krypto.service.parent.ParentService;
+import com.bok.krypto.util.Constants;
 import com.bok.krypto.utils.ModelTestUtils;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 
+import static com.bok.krypto.util.Constants.STANDARD_CURRENCY;
 import static com.bok.krypto.utils.Constants.BTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -140,6 +142,7 @@ public class TransferServiceTest {
         transferRequestDTO.source = wa.getAddress();
         transferRequestDTO.destination = wb.getAddress();
         transferRequestDTO.amount = BigDecimal.valueOf(5);
+        transferRequestDTO.currencyCode = STANDARD_CURRENCY.getCurrencyCode();
         TransferResponseDTO responseDTO = transferService.transfer(a.getId(), transferRequestDTO);
         modelTestUtils.await();
 

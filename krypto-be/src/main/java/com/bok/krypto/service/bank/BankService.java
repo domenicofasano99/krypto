@@ -8,6 +8,7 @@ import com.bok.bank.integration.message.BankDepositMessage;
 import com.bok.bank.integration.message.BankWithdrawalMessage;
 import com.bok.krypto.grpc.client.BankGrpcClient;
 import com.bok.krypto.service.interfaces.MessageService;
+import com.bok.parent.integration.message.AccountClosureMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,5 +52,9 @@ public class BankService {
 
     public AccountInfoResponse getAccountInfo(Long accountId) {
         return bankGrpcClient.getAccountInfo(accountId);
+    }
+
+    public void sendAccountClosure(AccountClosureMessage message) {
+        messageService.sendAccountClosure(message);
     }
 }

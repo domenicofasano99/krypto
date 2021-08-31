@@ -182,8 +182,8 @@ public class MarketHelper {
     }
 
     @Transactional
-    public Transaction emptyWallet(Account account, Wallet walletToEmpty) {
-
+    public Transaction emptyWallet(Wallet walletToEmpty) {
+        Account account = walletToEmpty.getAccount();
         BigDecimal amountToSell = walletToEmpty.getAvailableAmount();
         Transaction sellTransaction = new Transaction();
         sellTransaction.setAmount(amountToSell);
