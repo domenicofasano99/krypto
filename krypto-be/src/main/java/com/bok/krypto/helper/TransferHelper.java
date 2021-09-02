@@ -72,7 +72,7 @@ public class TransferHelper {
         Money money = new Money(Currency.getInstance(requestDTO.currencyCode), requestDTO.amount);
 
         BigDecimal amount = marketHelper.getKryptoAmount(source.getKrypto(), money);
-        if (source.getAvailableAmount().compareTo(amount) > 0) {
+        if (source.getAvailableAmount().compareTo(amount) < 0) {
             throw new TransactionException("Insufficient balance");
         }
 

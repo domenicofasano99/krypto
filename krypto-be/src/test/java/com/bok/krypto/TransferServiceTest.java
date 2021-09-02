@@ -9,14 +9,13 @@ import com.bok.krypto.integration.internal.dto.TransferRequestDTO;
 import com.bok.krypto.integration.internal.dto.TransferResponseDTO;
 import com.bok.krypto.model.Account;
 import com.bok.krypto.model.Krypto;
-import com.bok.krypto.model.Transaction;
+import com.bok.krypto.model.Transfer;
 import com.bok.krypto.model.Wallet;
 import com.bok.krypto.repository.TransactionRepository;
 import com.bok.krypto.repository.TransferRepository;
 import com.bok.krypto.repository.WalletRepository;
 import com.bok.krypto.service.interfaces.TransferService;
 import com.bok.krypto.service.parent.ParentService;
-import com.bok.krypto.util.Constants;
 import com.bok.krypto.utils.ModelTestUtils;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +28,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 
+import static com.bok.krypto.model.Activity.Status.SETTLED;
 import static com.bok.krypto.util.Constants.STANDARD_CURRENCY;
 import static com.bok.krypto.utils.Constants.BTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 
@@ -82,14 +81,14 @@ public class TransferServiceTest {
         transferRequestDTO.destination = wb.getAddress();
         transferRequestDTO.symbol = BTC;
         transferRequestDTO.amount = BigDecimal.valueOf(5);
+        transferRequestDTO.currencyCode = "USD";
 
         TransferResponseDTO responseDTO = transferService.transfer(a.getId(), transferRequestDTO);
         modelTestUtils.await();
         Wallet fwa = walletRepository.findById(wa.getId()).get();
         Wallet fwb = walletRepository.findById(wb.getId()).get();
-
-        assertTrue(fwa.getAvailableAmount().compareTo(BigDecimal.valueOf(95)) == 0);
-        assertTrue(fwb.getAvailableAmount().compareTo(BigDecimal.valueOf(15)) == 0);
+        Transfer t = transferRepository.findByPublicId(responseDTO.publicId).orElseThrow(RuntimeException::new);
+        assertEquals(SETTLED, t.getStatus());
 
     }
 
@@ -125,7 +124,8 @@ public class TransferServiceTest {
         transferRequestDTO.source = wa.getAddress();
         transferRequestDTO.destination = wb.getAddress();
         transferRequestDTO.symbol = BTC;
-        transferRequestDTO.amount = BigDecimal.valueOf(5);
+        transferRequestDTO.amount = BigDecimal.valueOf(5000000);
+        transferRequestDTO.currencyCode = "USD";
         assertThrows(TransactionException.class, () -> transferService.transfer(a.getId(), transferRequestDTO));
 
     }
@@ -150,7 +150,7 @@ public class TransferServiceTest {
         TransferInfoRequestDTO req = new TransferInfoRequestDTO();
         req.transferId = responseDTO.publicId;
         TransferInfoDTO info = transferService.transferInfo(a.getId(), responseDTO.publicId);
-        assertEquals(Transaction.Status.SETTLED.name(), info.status);
+        assertEquals(SETTLED.name(), info.status);
         assertEquals(info.publicId, responseDTO.publicId);
     }
 
