@@ -68,7 +68,7 @@ public class TransferHelper {
         Preconditions.checkArgument(!requestDTO.source.equalsIgnoreCase(requestDTO.destination), "Source and destination coincide.");
         Preconditions.checkArgument(requestDTO.amount.compareTo(BigDecimal.ZERO) > 0);
         Preconditions.checkArgument(walletHelper.existsByAccountIdAndSymbol(accountId, requestDTO.symbol));
-
+        Preconditions.checkArgument(walletHelper.existsByAddress(requestDTO.destination), "Destination walle tnot present within BOK");
         Money money = new Money(Currency.getInstance(requestDTO.currencyCode), requestDTO.amount);
 
         BigDecimal amount = marketHelper.getKryptoAmount(source.getKrypto(), money);

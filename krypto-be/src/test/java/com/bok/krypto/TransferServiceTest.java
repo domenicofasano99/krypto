@@ -146,12 +146,26 @@ public class TransferServiceTest {
         TransferResponseDTO responseDTO = transferService.transfer(a.getId(), transferRequestDTO);
         modelTestUtils.await();
 
-
         TransferInfoRequestDTO req = new TransferInfoRequestDTO();
         req.transferId = responseDTO.publicId;
         TransferInfoDTO info = transferService.transferInfo(a.getId(), responseDTO.publicId);
         assertEquals(SETTLED.name(), info.status);
         assertEquals(info.publicId, responseDTO.publicId);
+    }
+
+    @Test
+    public void tryTransferToUnknownAccount() {
+        Krypto k = modelTestUtils.getKrypto(BTC);
+        Account a = modelTestUtils.createAccount();
+        Wallet wa = modelTestUtils.createWallet(a, k, BigDecimal.valueOf(100));
+
+        TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
+        transferRequestDTO.symbol = BTC;
+        transferRequestDTO.source = wa.getAddress();
+        transferRequestDTO.destination = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
+        transferRequestDTO.amount = BigDecimal.valueOf(5);
+        transferRequestDTO.currencyCode = STANDARD_CURRENCY.getCurrencyCode();
+        assertThrows(RuntimeException.class, () -> transferService.transfer(a.getId(), transferRequestDTO));
     }
 
 }

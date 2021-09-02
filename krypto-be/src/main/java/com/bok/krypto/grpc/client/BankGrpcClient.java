@@ -36,13 +36,17 @@ public class BankGrpcClient {
 
         authorizationRequestBuilder.setAccountId(accountId);
         authorizationRequestBuilder.setExtTransactionId(publicTransactionId.toString());
-        moneyBuilder.setCurrency(Currency.USD).setAmount(money.getAmount().doubleValue()).build();
+        moneyBuilder.setCurrency(Currency.valueOf(money.getCurrency().getCurrencyCode()));
+        moneyBuilder.setAmount(money.getAmount().doubleValue());
+        moneyBuilder.build();
         authorizationRequestBuilder.setMoney(moneyBuilder);
         authorizationRequestBuilder.setFromMarket(fromMarket);
         authorizationRequestBuilder.setCardToken(cardToken);
 
         try {
-            return bankBlockingStub.authorize(authorizationRequestBuilder.build());
+            AuthorizationRequest authReq = authorizationRequestBuilder.build();
+            log.info("authorizing {}", authReq);
+            return bankBlockingStub.authorize(authReq);
         } catch (Exception e) {
             log.error("Error while authorizing transaction, exception: {}", e);
             throw new AuthorizationException("Error while authorizing transaction, try again");

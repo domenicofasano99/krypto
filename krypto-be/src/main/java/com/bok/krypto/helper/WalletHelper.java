@@ -282,4 +282,8 @@ public class WalletHelper {
         }
         bankService.sendAccountClosure(message);
     }
+
+    public boolean existsByAddress(String destination) {
+        return walletRepository.existsByAddress(destination);
+    }
 }

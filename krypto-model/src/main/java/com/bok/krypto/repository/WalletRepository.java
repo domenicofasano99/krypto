@@ -21,4 +21,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
     List<Wallet> findByAccount_IdAndDeletedIsFalse(Long accountId);
 
     Boolean existsByAddressAndKrypto_SymbolAndDeletedIsFalse(String address, String krypto_symbol);
+
+    Boolean existsByAddress(String address);
 }
